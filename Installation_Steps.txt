@@ -1,0 +1,10 @@
+Python 3.11.0
+1. python -m venv venv
+2. Open Git Bash
+3. touch .gitignore
+4. add this in .gitignore file ; /venv
+5. .\venv\Scripts\activate (For activating venv)
+If not activated (Set-ExecutionPolicy RemoteSigned)
+
+6. Created VData Project
+7. Created Home app (views.py, urls.py(both), settings.py)
