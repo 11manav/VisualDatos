@@ -1,0 +1,42 @@
+{% extends "base.html" %} 
+
+{% block operation %}
+
+<div class="row my-3">
+    <div class="col" style="background-color: burlywood;">
+        <button class="btn btn-primary">Preprocessing</button>
+        <div>
+            <ol>
+                <li>Removing Null Values</li>
+                <li>Filling NULL Values</li>
+                <li>Scaling (Standard , MinMax)</li>
+                <li>Delete Columns</li>
+                <li>Outlier Detection and Removal</li>
+            </ol>
+        </div>
+    </div>
+    <div class="col" style="background-color: rgb(173, 24, 231);">
+        <button class="btn btn-primary">ML Operations</button>
+        <div>
+            <ol>
+                <li>Linear Regression</li>
+                <li>Logistic Regression</li>
+                <li>KNN</li>
+                <li>SVM</li>
+            </ol>
+        </div>
+    </div>
+    
+    <div class="col" style="background-color: darkred;">
+        <button class="btn btn-primary">Visualization</button>
+        <div>
+            <ol>
+                <li>Histogram</li>
+                <li>Boxplot</li>
+                <li>PieChart</li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

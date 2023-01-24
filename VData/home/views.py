@@ -7,7 +7,7 @@ import os
 import pandas as pd
 # Create your views here.
 
-
+code = []
 
 def home(request):
     if request.method == 'POST' and request.FILES['myfile']:
@@ -15,8 +15,9 @@ def home(request):
         fs = FileSystemStorage()
         filename = fs.save(myfile.name, myfile)
         data = pd.read_csv('./media/{}'.format(myfile.name))
+        data = data.head(10)
         data_html = data.to_html()
         context = {'loaded_data': data_html}
-        return render(request, './testTable.html',context)
+        return render(request, './main.html',context)
     return render(request, './index.html')
 
