@@ -1,1 +1,4 @@
-Create scrollable div for dataset
+1. Create scrollable div for dataset , div sizing - Aryan
+2. Refer same dataframe on pressing back - Pushpak
+3. Remove need to redirect to another page for processing - TBD
+4. Give options to user when selecting any operation 
