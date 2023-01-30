@@ -25,7 +25,6 @@ def home(request):
         # data = data.head(10)
         data_html = data.to_html()
         data_shape = data.shape
-        print(data_shape)
         context = {'loaded_data': data_html,
                     'shape_of_data': data_shape}
         return render(request, './main.html',context)
@@ -38,8 +37,9 @@ def preprocessing(request):
      global data
     #  data = data.head(10)
      data_html = data.to_html()
-     context = {'loaded_data': data_html}
-     print("hello")
+     data_shape = data.shape
+     context = {'loaded_data': data_html,
+                    'shape_of_data': data_shape}
      return render(request,'./preprocessing.html',context)
 
 
@@ -48,8 +48,9 @@ def dropingnull(request):
      data =data.dropna()
     #  data = data.head(10)
      data_html = data.to_html()
-     context = {'loaded_data': data_html}
-     print(data)
+     data_shape = data.shape
+     context = {'loaded_data': data_html,
+                    'shape_of_data': data_shape}
      return render(request,'./preprocessing.html',context)
 
 def minmaxScaler(request):
@@ -58,6 +59,7 @@ def minmaxScaler(request):
     model=scaler.fit(data)
     data=model.transform(data)
     data_html = data.to_html()
-    context = {'loaded_data': data_html}
-    print(data)
+    data_shape = data.shape
+    context = {'loaded_data': data_html,
+                    'shape_of_data': data_shape}
     return render(request,'./preprocessing.html',context)
