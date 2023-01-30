@@ -5,13 +5,16 @@ from django.conf import settings
 from django.templatetags.static import static
 import os
 import pandas as pd
+
+# IMPORTANT!!! pip install scikit-learn
 from sklearn.preprocessing import StandardScaler
-# Create your views here.
+
 
 code = [] 
 data=None
 
 def home(request):
+
     global data
     if request.method == 'POST' and request.FILES['myfile']:
         myfile = request.FILES['myfile']
@@ -19,9 +22,12 @@ def home(request):
         filename = fs.save(myfile.name, myfile)
         data = pd.read_csv('./media/{}'.format(myfile.name))
         file_name=myfile.name
-        data = data.head(10)
+        # data = data.head(10)
         data_html = data.to_html()
-        context = {'loaded_data': data_html}
+        data_shape = data.shape
+        print(data_shape)
+        context = {'loaded_data': data_html,
+                    'shape_of_data': data_shape}
         return render(request, './main.html',context)
     return render(request, './index.html')
 

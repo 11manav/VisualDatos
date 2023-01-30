@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -10,32 +12,41 @@
       integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
   </head>
   <body>
-
-    <div class="text-center my-3 ">
-        <h3>VisualDatos</h3>
+    <div class="text-center my-3">
+      <h3>VisualDatos</h3>
     </div>
 
     {% block content %}
 
     <div class="container text-center">
       <div class="row">
-        <div class="col-3" style="background-color: rgb(80, 81, 81);">
-            <h2 style="color: white;">Code</h2>
-        </div>
+
         <div class="col">
-            <h2 style="background-color: aqua;">Dataset</h2>
-            {{loaded_data | safe}}
+          <h2>Code</h2>
+          <div class="code"></div>
+        </div>
+        
+        <div class="col">
+          <h2>Dataset</h2>
+          <div class="dataset">{{loaded_data | safe}}</div>
         </div>
 
-        {% block operation %}
-        {% endblock %}
+        <div class="col">
+          <h2>Statistics</h2>
+          <div class="stats">
+            Shape : 
+            {{shape_of_data | safe}}
+          </div>
+        </div>
 
       </div>
+      {% block operation %} {% endblock operation %}
     </div>
 
-    {% endblock %}
+    {% endblock content%}
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"

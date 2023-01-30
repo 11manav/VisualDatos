@@ -1,0 +1,27 @@
+.code {
+    background-color: grey;
+    overflow: scroll;
+    height: 60vh;
+    width: 30vw;
+}
+
+.dataset {
+    /* background-color: aqua; */
+    overflow: scroll;
+    height: 60vh;
+    width: 41vw;
+}
+
+.stats{
+    background-color:darksalmon;
+    height: 60vh;
+    width: 10vw;
+}
+
+div h2 {
+    background-color: aqua;
+}
+
+.container{
+    border: 2px solid black;
+}
