@@ -3,7 +3,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1" /> -->
     <title>VisualDatos</title>
 
     <link rel="stylesheet" href="{% static 'css/index.css' %}" />
@@ -14,6 +15,7 @@
       integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
       crossorigin="anonymous"
     />
+
   </head>
   <body>
     {% load static %}
@@ -29,19 +31,36 @@
       </h1>
     </div>
 
-    <div class="card text-center" style="width: 40rem; margin: auto">
+    
+    <div class="container1">
+      <div class="card1">
+        <div class="drop_box1">
+          
+          <h4>Upload Dataset here</h4>
+          
+          <p>Files Supported: CSV</p>
+          <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="file" accept=".csv" name="myfile">
+          <button class="btn1" type="submit">Upload</button>
+          </form>
+          {% if uploaded_file_url %}
+        <script>
+          window.alert("File Uploaded Successfully");
+        </script>
+        {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- <div class="card text-center" style="width: 40rem; margin: auto">
       <div class="card-body">
-        <h5 class="card-title">Select Dataset</h5>
+        <h5 class="card-title">Upload Dataset</h5>
         <p class="card-text">Currently only .csv files are supported</p>
       </div>
       <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <input
-          class="btn btn-priamry"
-          type="file"
-          accept=".csv"
-          name="myfile"
-        />
+        <input class="btn btn-priamry" type="file" accept=".csv" name="myfile"/>
         <button class="btn btn-primary" type="submit">Upload Dataset</button>
       </form>
 
@@ -50,7 +69,7 @@
         window.alert("File Uploaded Successfully");
       </script>
       {% endif %}
-    </div>
+    </div> -->
     {% load static %}
     <script src="{% static 'js/index.js' %}"></script>
     <script
@@ -58,5 +77,7 @@
       integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
       crossorigin="anonymous"
     ></script>
+    
+
   </body>
 </html>

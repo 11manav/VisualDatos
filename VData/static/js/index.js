@@ -23,5 +23,3 @@ let intro = document.querySelector('.intro')
     })
   })
 
-
-// alert("working")
