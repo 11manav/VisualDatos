@@ -10,23 +10,30 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 
 
-code = [] 
+code = ["import pandas as pd"] 
 data=None
 
 def home(request):
 
     global data
+    
     if request.method == 'POST' and request.FILES['myfile']:
+        global code
         myfile = request.FILES['myfile']
         fs = FileSystemStorage()
         filename = fs.save(myfile.name, myfile)
+        code.append("df = pd.read_csv('{}')".format(filename))
         data = pd.read_csv('./media/{}'.format(myfile.name))
         file_name=myfile.name
         # data = data.head(10)
         data_html = data.to_html()
-        data_shape = data.shape
+        data_shape, nullValues = getStatistics(data)
         context = {'loaded_data': data_html,
-                    'shape_of_data': data_shape}
+                    'shape_of_data': data_shape,
+                    'null_count': nullValues,
+                    'backgroundCode': code}
+        
+        print(code)
         return render(request, './main.html',context)
     return render(request, './index.html')
 
@@ -37,21 +44,23 @@ def preprocessing(request):
      global data
     #  data = data.head(10)
      data_html = data.to_html()
-     data_shape = data.shape
+     data_shape, nullValues = getStatistics(data)
      context = {'loaded_data': data_html,
-                    'shape_of_data': data_shape}
+                    'shape_of_data': data_shape,
+                    'null_count': nullValues}
      return render(request,'./preprocessing.html',context)
 
 
 def dropingnull(request):
-     global data
-     data =data.dropna()
-    #  data = data.head(10)
-     data_html = data.to_html()
-     data_shape = data.shape
-     context = {'loaded_data': data_html,
-                    'shape_of_data': data_shape}
-     return render(request,'./preprocessing.html',context)
+    global data
+    data =data.dropna()
+#  data = data.head(10)
+    data_html = data.to_html()
+    data_shape, nullValues = getStatistics(data)
+    context = {'loaded_data': data_html,
+                'shape_of_data': data_shape,
+                'null_count': nullValues}
+    return render(request,'./preprocessing.html',context)
 
 def minmaxScaler(request):
     global data
@@ -59,7 +68,12 @@ def minmaxScaler(request):
     model=scaler.fit(data)
     data=model.transform(data)
     data_html = data.to_html()
-    data_shape = data.shape
+    data_shape, nullValues = getStatistics(data)
     context = {'loaded_data': data_html,
-                    'shape_of_data': data_shape}
+                    'shape_of_data': data_shape,
+                    'null_count': nullValues}
     return render(request,'./preprocessing.html',context)
+
+
+def getStatistics(data):
+    return data.shape,data.isna().sum().sum()

@@ -26,7 +26,9 @@
 
         <div class="col">
           <h2>Code</h2>
-          <div class="code"></div>
+          <div class="code">
+            {{backgroundCode | safe}}
+          </div>
         </div>
         
         <div class="col">
@@ -39,6 +41,9 @@
           <div class="stats">
             Shape : 
             {{shape_of_data | safe}}
+            <hr>
+            Null Values :
+            {{null_count | safe}}
           </div>
         </div>
 
