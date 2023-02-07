@@ -45,9 +45,10 @@ def preprocessing(request):
     #  data = data.head(10)
      data_html = data.to_html()
      data_shape, nullValues = getStatistics(data)
+     columns=list(data.columns)
      context = {'loaded_data': data_html,
                     'shape_of_data': data_shape,
-                    'null_count': nullValues}
+                    'null_count': nullValues,'columns':columns}
      return render(request,'./preprocessing.html',context)
 
 
@@ -77,3 +78,64 @@ def minmaxScaler(request):
 
 def getStatistics(data):
     return data.shape,data.isna().sum().sum()
+
+
+
+
+def fillingNullMean(request):
+    global data
+    data=data.fillna(data.mean())
+    print("MEAN")
+    print(data)
+    data_html = data.to_html()
+    data_shape, nullValues = getStatistics(data)
+    context = {'loaded_data': data_html,
+                'shape_of_data': data_shape,
+                'null_count': nullValues}
+    return render(request,'./preprocessing.html',context)
+
+
+
+
+
+def fillingNullMedian(request):
+    global data
+    data=data.fillna(data.median())
+    print(data)
+    data_html = data.to_html()
+    data_shape, nullValues = getStatistics(data)
+    context = {'loaded_data': data_html,
+                'shape_of_data': data_shape,
+                'null_count': nullValues}
+    return render(request,'./preprocessing.html',context)
+
+
+
+
+def fillingNullMode(request):
+    global data
+    data=data.fillna(data.mean())
+    print(data)
+    data_html = data.to_html()
+    data_shape, nullValues = getStatistics(data)
+    context = {'loaded_data': data_html,
+                'shape_of_data': data_shape,
+                'null_count': nullValues}
+    return render(request,'./preprocessing.html',context)
+
+
+
+def deleteColumns(request):
+     global data
+    #  data = data.head(10)
+     name = request.GET.get('name')
+     print(name)
+     if name is not None:
+        data=data.drop([name], axis=1)
+        data_html = data.to_html()
+        columns=list(data.columns)
+        data_shape, nullValues = getStatistics(data)
+        context = {'loaded_data': data_html,
+                    'shape_of_data': data_shape,
+                    'null_count': nullValues,'columns':columns}
+        return render(request,'./preprocessing.html',context)

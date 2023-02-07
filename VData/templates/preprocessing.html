@@ -1,20 +1,68 @@
+
+
 {% extends "base.html" %} 
 
 {% block operation %}
-
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/base.css' %}" />
 <div class="row my-3">
     <div class="col" style="background-color: burlywood;">
-        <button class="btn btn-primary">Preprocessing</button>
+      
         <div>
             <ol>
                 <li><a href="{% url 'dropnull_preprocessing'%}" class="btn btn-info" role="button">Removing Null Values</a></li>
-                <li>Filling NULL Values</li>
-                <li><a href="{% url 'minmaxScaler'%}" class="btn btn-info" role="button">MinMax Scaling</a></li>
-                <li>Delete Columns</li>
-                <li>Outlier Detection and Removal</li>
+                
             </ol>
         </div>
     </div>
+    <div class="col" style="background-color: burlywood;">
+      
+        <div>
+            <ol>
+              
+                <li><a href="" class="btn btn-info" role="button">Filling Null Values</a></li>
+                <li><a href="{% url 'fillingNullMean'%}" class="btn btn-info" role="button">Mean</a></li>
+                <li><a href="" class="btn btn-info" role="button">Median</a></li>
+                <li><a href="" class="btn btn-info" role="button">Mode</a></li>
+               
+
+             
+            </ol>
+        </div>
+    </div>
+    <div class="col" style="background-color: burlywood;">
+  
+        <div>
+            <ol>
+               
+                <li><a href="{% url 'minmaxScaler'%}" class="btn btn-info" role="button">MinMax Scaling</a></li>
+                <li><a href="" class="btn btn-info" role="button">Method 1</a></li>
+                <li><a href="" class="btn btn-info" role="button">Method 2</a></li>
+               
+            </ol>
+        </div>
+    </div>
+
+    <div class="col" style="background-color: burlywood;">
+   
+        <div>
+            <ol>
+                <li><a href="" class="btn btn-info" role="button">Delete columns</a></li>
+                {% for col in columns %}
+                <li><button  onclick="location.href='{% url 'deleteColumn' %}?name={{col}}'" type="button" class="btn btn-primary">
+                    {{col | safe}}
+                  </button>
+                </li>
+              
+                {% endfor %}
+                
+            </ol>
+        </div>
+    </div>
+
+
+
+
    
 </div>
 
