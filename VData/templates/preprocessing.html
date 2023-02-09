@@ -5,7 +5,71 @@
 {% block operation %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/base.css' %}" />
-<div class="row my-3">
+
+<nav class="navbar navbar-expand-md navbar-light func">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ">
+            <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4 active">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="{% url 'preprocessing'%}" role="button" aria-haspopup="true" aria-expanded="false">Removing NULL Values</a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'dropnull_preprocessing'%}">Removing NULL Values</a>
+                </div>
+            </li>
+            <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4 active">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="{% url 'preprocessing'%}" role="button" aria-haspopup="true" aria-expanded="false">Filling NULL Values</a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'fillingNullMean'%}">Mean</a>
+                    <a class="dropdown-item " href="{% url 'fillingNullMedian'%}">Median</a>
+                    <a class="dropdown-item" href="{% url 'fillingNullMode'%}">Mode</a>
+                </div>
+            </li>
+            <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4 active">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="{% url 'preprocessing'%}" role="button" aria-haspopup="true" aria-expanded="false">Scaling</a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'minmaxScaler'%}">Standard Scaling</a>
+                    <a class="dropdown-item " href="{% url 'minmaxScaler'%}">MinMax Scaling</a>
+                </div>
+            </li>
+            <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4 active">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="{% url 'preprocessing'%}" role="button" aria-haspopup="true" aria-expanded="false">Delete Columns</a>
+                <div class="dropdown-menu">
+                    {% for col in columns %}
+                <a onclick="location.href='{% url 'deleteColumn' %}?name={{col}}'" type="button" class="dropdown-item">
+                    {{col | safe}}
+                  </a>
+              
+                {% endfor %}
+                </div>
+            </li>
+    
+        </ul>
+    </div>
+    
+</nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <div class="row my-3">
     <div class="col" style="background-color: burlywood;">
       
         <div>
@@ -64,6 +128,6 @@
 
 
    
-</div>
+</div> -->
 
 {%endblock%}
