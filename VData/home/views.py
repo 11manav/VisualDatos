@@ -10,20 +10,23 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 
 
-code = ["import pandas as pd"] 
+code = [] 
 data=None
 
 def home(request):
 
     global data
-    
+    global code
+    code = ["import pandas as pd"]
     if request.method == 'POST' and request.FILES['myfile']:
-        global code
+        
         myfile = request.FILES['myfile']
         fs = FileSystemStorage()
         filename = fs.save(myfile.name, myfile)
         code.append("df = pd.read_csv('{}')".format(filename))
         data = pd.read_csv('./media/{}'.format(myfile.name))
+        os.remove(os.path.join(settings.MEDIA_ROOT, myfile.name))
+
         file_name=myfile.name
         # data = data.head(10)
         data_html = data.to_html()
@@ -33,7 +36,7 @@ def home(request):
                     'null_count': nullValues,
                     'backgroundCode': code}
         
-        print(code)
+        # print(code)
         return render(request, './main.html',context)
     return render(request, './index.html')
 
