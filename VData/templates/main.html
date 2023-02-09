@@ -2,12 +2,30 @@
 
 {% block operation %}
 
-<div class="row my-3">
-    <div class="col" style="background-color: burlywood;">
+<nav class="navbar navbar-expand-md navbar-light func">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ">
+            <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4 active">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="{% url 'preprocessing'%}" role="button" aria-haspopup="true" aria-expanded="false">Preprocessing</a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'preprocessing'%}">Removing NULL Values</a>
+                    <a class="dropdown-item " href="{% url 'preprocessing'%}">Filling NULL Values</a>
+                    <a class="dropdown-item" href="{% url 'preprocessing'%}">Scaling (Standard , MinMax)</a>
+                    <a class="dropdown-item" href="{% url 'preprocessing'%}">Delete Columns</a>
+                    <a class="dropdown-item" href="{% url 'preprocessing'%}">Outlier Detection and Removal</a>
+                </div>
+            </li>
+    
+        </ul>
+    </div>
+    
+</nav>	
+<!-- 
+<div class="row my-3 func">
+    <div class="col1" style="background-color: burlywood;">
         <a href="{% url 'preprocessing'%}" class="btn btn-info" role="button">Preprocessing</a>
         <div>
             <ol>
-                <li>Removing Null Values</li>
                 <li>Filling NULL Values</li>
                 <li>Scaling (Standard , MinMax)</li>
                 <li>Delete Columns</li>
@@ -37,6 +55,6 @@
             </ol>
         </div>
     </div>
-</div>
+</div> -->
 
 {% endblock %}
