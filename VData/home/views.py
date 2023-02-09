@@ -7,7 +7,7 @@ import os
 import pandas as pd
 
 # IMPORTANT!!! pip install scikit-learn
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import  MinMaxScaler,StandardScaler
 
 
 code = [] 
@@ -82,9 +82,33 @@ def dropingnull(request):
 
 def minmaxScaler(request):
     global data
+    columns=[]
+    for col in data.columns:
+        datatypes = data.dtypes[col]
+        if datatypes=='float64' or datatypes=='int64':
+            columns.append(col)
+    # scaler=StandardScaler()
+    # model=scaler.fit(data)
+    # data=model.transform(data)
+    min_max_scaler =MinMaxScaler(feature_range =(0, 1))
+    data[columns]= min_max_scaler.fit_transform(data[columns])
+    data_html = data.to_html()
+    data_shape, nullValues, columns = getStatistics(data)
+    
+    context = getContext(data_html,data_shape,nullValues,code,columns)
+    return render(request,'./preprocessing.html',context)
+
+
+def standard_Scaler(request):
+    global data
+    columns=[]
+    for col in data.columns:
+        datatypes = data.dtypes[col]
+        if datatypes=='float64' or datatypes=='int64':
+            columns.append(col)
     scaler=StandardScaler()
-    model=scaler.fit(data)
-    data=model.transform(data)
+    model=scaler.fit(data[columns])
+    data[columns]=model.transform(data[columns])
     data_html = data.to_html()
     data_shape, nullValues, columns = getStatistics(data)
     
