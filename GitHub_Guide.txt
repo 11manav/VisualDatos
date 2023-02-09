@@ -1,0 +1,4 @@
+Git Guide
+1. For Merge Conflict 
+    git reset --hard HEAD
+    git pull
