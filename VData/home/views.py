@@ -87,7 +87,15 @@ def getStatistics(data):
 
 def fillingNullMean(request):
     global data
-    data=data.fillna(data.mean())
+    mean_of_columns = data.mean()
+
+    # replace the data with the mean calculated
+    for col in data.columns:
+        try:
+            data[col].fillna(mean_of_columns[col], inplace=True)
+        except:
+            print(col)
+            continue
     print("MEAN")
     print(data)
     data_html = data.to_html()
@@ -103,7 +111,15 @@ def fillingNullMean(request):
 
 def fillingNullMedian(request):
     global data
-    data=data.fillna(data.median())
+    median_of_columns = data.median()
+
+    # replace the data with the mean calculated
+    for col in data.columns:
+        try:
+            data[col].fillna(median_of_columns[col], inplace=True)
+        except:
+            print(col)
+            continue
     print(data)
     data_html = data.to_html()
     data_shape, nullValues = getStatistics(data)
@@ -117,7 +133,12 @@ def fillingNullMedian(request):
 
 def fillingNullMode(request):
     global data
-    data=data.fillna(data.mean())
+    for col in data.columns:
+        try:
+            data[col].fillna(data.mode()[col][0], inplace=True)
+        except:
+            print(col)
+            continue
     print(data)
     data_html = data.to_html()
     data_shape, nullValues = getStatistics(data)
