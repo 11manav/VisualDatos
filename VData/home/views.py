@@ -172,6 +172,24 @@ def fillingNullMode(request):
     context = getContext(data_html,data_shape,nullValues,code,columns)
     return render(request,'./preprocessing.html',context)
 
+def fillingNullModeNumeric(request):
+    global data
+    for col in data.columns:
+        if data[col].dtypes == object:
+            pass
+        else:
+            try:
+                data[col].fillna(data.mode()[col][0], inplace=True)
+            except:
+                print(col)
+                continue
+    print(data)
+    data_html = data.to_html()
+    data_shape, nullValues, columns = getStatistics(data)
+    context = getContext(data_html,data_shape,nullValues,code,columns)
+    return render(request,'./preprocessing.html',context)
+
+
 
 
 def deleteColumns(request):

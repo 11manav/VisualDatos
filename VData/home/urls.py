@@ -13,5 +13,6 @@ urlpatterns = [
     path('preprocessing/fillna_mean',views.fillingNullMean,name='fillingNullMean'),
     path('preprocessing/fillna_median',views.fillingNullMedian,name='fillingNullMedian'),
     path('preprocessing/fillna_mode',views.fillingNullMode,name='fillingNullMode'),
+    path('preprocessing/fillna_modenumeric',views.fillingNullModeNumeric,name='fillingNullModeNumeric'),
     path('preprocessing/delete',views.deleteColumns,name='deleteColumn'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
