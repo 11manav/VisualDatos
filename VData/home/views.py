@@ -187,7 +187,8 @@ def fillingNullMode(request):
     return render(request,'./preprocessing.html',context)
 
 def fillingNullModeNumeric(request):
-    global data
+    filename = request.session.get('filename', None)
+    data = pd.read_csv('./media/{}'.format(filename))
     for col in data.columns:
         if data[col].dtypes == object:
             pass
@@ -197,7 +198,7 @@ def fillingNullModeNumeric(request):
             except:
                 print(col)
                 continue
-    print(data)
+    data.to_csv('./media/{}'.format(filename),index=False)
     data_html = data.to_html()
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
