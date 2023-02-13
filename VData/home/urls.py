@@ -15,4 +15,7 @@ urlpatterns = [
     path('preprocessing/fillna_mode',views.fillingNullMode,name='fillingNullMode'),
     path('preprocessing/fillna_modenumeric',views.fillingNullModeNumeric,name='fillingNullModeNumeric'),
     path('preprocessing/delete',views.deleteColumns,name='deleteColumn'),
+    path('mlalgorithms/',views.mlalgorithms,name='mlalgorithms'),
+    path('mlalgorithms/logistic_reg',views.logistic_reg,name='logistic_reg'),
+    path('mlalgorithms/linear_reg',views.linear_reg,name='linear_reg')
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

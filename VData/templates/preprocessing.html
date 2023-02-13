@@ -6,7 +6,7 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/base.css' %}" />
 
-<nav class="navbar navbar-expand-md navbar-light func">
+<nav class="navbar navbar-expand-md navbar-light">
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ">
             <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4 active">
@@ -28,14 +28,14 @@
                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="{% url 'preprocessing'%}" role="button" aria-haspopup="true" aria-expanded="false">Scaling</a>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" href="{% url 'minmaxScaler'%}">Standard Scaling</a>
-                    <a class="dropdown-item " href="{% url 'minmaxScaler'%}">MinMax Scaling</a>
+                    <a class="dropdown-item" href="{% url 'minmaxScaler'%}">MinMax Scaling</a>
                 </div>
             </li>
             <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4 active">
                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="{% url 'preprocessing'%}" role="button" aria-haspopup="true" aria-expanded="false">Delete Columns</a>
-                <div class="dropdown-menu">
+                <div class="dropdown-menu" style="max-height: 150px;">
                     {% for col in columns %}
-                <a onclick="location.href='{% url 'deleteColumn' %}?name={{col}}'" type="button" class="dropdown-item">
+                <a class="dropdown-item" onclick="location.href='{% url 'deleteColumn' %}?name={{col}}'" type="button">
                     {{col | safe}}
                   </a>
               
@@ -48,7 +48,14 @@
     
 </nav>
 
+<footer id="footer">
+    <i class="fab fa-twitter ft-socials fa-2x"></i>
+    <i class="fab fa-facebook ft-socials fa-2x"></i>
+    <i class="fab fa-instagram ft-socials fa-2x"></i>
+    <i class="fas fa-envelope ft-socials fa-2x"></i>
+    <p class="copyright">© Copyright 2021 TinDog</p>
 
+  </footer>
 
 
 

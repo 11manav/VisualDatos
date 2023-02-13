@@ -1,0 +1,94 @@
+{% extends "base.html" %} 
+
+{% block operation %}
+{% load static %}
+
+
+<section id="algo-form">
+<div class="container-form">
+    <form>
+      <h2>Linear Regresssion</h2>
+      <div class="row-form">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="form-label" for="value-x">X :</label>
+
+            <!-- <input type="text" class="form-control" placeholder="" id="first"> -->
+            <select class="nav-link dropdown-toggle" data-toggle="dropdown" id="value-x" name="value-x" size="1">
+                <div class="dropdown-menu">
+                {% for col in columns %}
+                <option class="dropdown-item" value="{{col}}">{{col | safe}}</option>
+                {% endfor %}
+                </div>
+              </select>
+          </div>
+        </div>
+        <!--  col-md-6   -->
+  
+        <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label" for="value-y">Y :</label>
+  
+              <!-- <input type="text" class="form-control" placeholder="" id="first"> -->
+              <select class="nav-link dropdown-toggle" data-toggle="dropdown" id="value-y" name="value-y" size="1">
+                  <div class="dropdown-menu">
+                  {% for col in columns %}
+                  <option class="dropdown-item" value="{{col}}">{{col | safe}}</option>
+                  {% endfor %}
+                  </div>
+                </select>
+            </div>
+          </div>
+        <!--  col-md-6   -->
+      </div>
+  
+  
+      <div class="row-form">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="form-label" for="test_size">Test Size</label>
+            <input type="number" class="form-control" placeholder="" id="test_size">
+          </div>
+  
+  
+        </div>
+        <!--  col-md-6   -->
+      </div>
+      <!--  row   -->
+        <div class="nav-item active">
+      <button type="submit" class="nav-link">Apply</button>
+        </div>
+
+    </form>
+  </div>
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{%endblock%}

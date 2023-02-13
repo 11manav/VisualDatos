@@ -219,3 +219,31 @@ def deleteColumns(request):
         data_shape, nullValues, columns = getStatistics(data)
         context = getContext(data_html,data_shape,nullValues,code,columns)
         return render(request,'./preprocessing.html',context)
+    
+
+def mlalgorithms(request):
+    filename = request.session.get('filename', None)
+    data = pd.read_csv('./media/{}'.format(filename))
+    data_html = data.to_html()
+    data_shape, nullValues, columns = getStatistics(data)
+    context = getContext(data_html,data_shape,nullValues,code,columns)
+    return render(request,'./ml.html',context)
+
+def logistic_reg(request):
+    filename = request.session.get('filename', None)
+    data = pd.read_csv('./media/{}'.format(filename))
+    data_html = data.to_html()
+    data_shape, nullValues, columns = getStatistics(data)
+    context = getContext(data_html,data_shape,nullValues,code,columns)
+    return render(request,'./logistic.html',context)
+
+def linear_reg(request):
+    filename = request.session.get('filename', None)
+    data = pd.read_csv('./media/{}'.format(filename))
+    data_html = data.to_html()
+    data_shape, nullValues, columns = getStatistics(data)
+    context = getContext(data_html,data_shape,nullValues,code,columns)
+    return render(request,'./linear.html',context)
+
+
+
