@@ -1,7 +1,7 @@
 
 //cursor
 var cursor = {
-    delay: 8,
+    delay: 5,
     _x: 0,
     _y: 0,
     endX: (window.innerWidth / 2),
@@ -127,3 +127,11 @@ var cursor = {
   }
   
   cursor.init();
+
+//logistic form multiselect 
+
+
+
+
+
+
