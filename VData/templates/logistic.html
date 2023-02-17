@@ -6,17 +6,18 @@
 
 <section id="algo-form">
 <div class="container-form">
-    <form>
+  <form action="" method="POST">
+    {% csrf_token%}
       <h2>Logistic Regresssion</h2>
       <div class="row-form">
         <div class="col-md-6">
           <div class="form-group">
-            <label class="form-label" for="value-x">X :</label>
+            <label class="form-label" for="value-x"  >X :</label>
 
             <!-- <input type="text" class="form-control" placeholder="" id="first"> -->
             <select class="js-select2 nav-link" id="value-x" name="value-x" multiple>
                 {% for col in columns %}
-                <option class="dropdown-item"value="{{col}}">
+                <option class="dropdown-item" value="{{col}}">
                   {{col | safe}}
                 </option>
                 {% endfor %}
@@ -47,7 +48,7 @@
         <div class="col-md-6">
           <div class="form-group">
             <label class="form-label" for="test_size">Test Size</label>
-            <input type="number" class="form-control" placeholder="" id="test_size">
+            <input type="number" class="form-control" placeholder="" id="test_size" name="test_size">
           </div>
   
   

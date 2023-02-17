@@ -6,7 +6,9 @@ from django.templatetags.static import static
 import os
 import pandas as pd
 import uuid
-
+from sklearn.linear_model import LinearRegression,LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score,confusion_matrix,mean_squared_error
 # IMPORTANT!!! pip install scikit-learn
 from sklearn.preprocessing import  MinMaxScaler,StandardScaler
 
@@ -232,6 +234,27 @@ def mlalgorithms(request):
 def logistic_reg(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
+    if request.method=='POST':
+        X1 =request.POST.getlist('value-x')
+        y1 = request.POST['value-y']
+        test_size1=request.POST['test_size']
+        if len(X1)==1:
+            X = data[X1].values.reshape(-1,1)
+        else:
+            X=data[X1]   
+        y = data[y1]
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=int(test_size1)/100, random_state=10)
+        model = LogisticRegression()
+        model.fit(X_train, y_train)
+        y_pred = model.predict(X_test)
+        confusion = confusion_matrix(y_test, y_pred)
+        accuracy = accuracy_score(y_test, y_pred)
+        # print(accuracy)
+        variance_score=model.score(X_test,y_test)
+        context={'accuracy':accuracy,'variance_score':variance_score}
+      
+       
+        return render(request,'./linear_logistic_output.html',context)
     data_html = data.to_html()
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
@@ -240,10 +263,39 @@ def logistic_reg(request):
 def linear_reg(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
+    if request.method=='POST':
+        X1 = request.POST.getlist('value-x')
+        y1 = request.POST['value-y']
+        test_size1=request.POST['test_size']
+        if len(X1)==1:
+          
+            X = data[X1].values.reshape(-1,1)
+        else:
+            X=data[X1] 
+           
+
+        y = data[y1]
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=int(test_size1)/100, random_state=10)
+        model = LinearRegression()
+        model.fit(X_train, y_train)
+        variance_score=model.score(X_test,y_test)
+        # print('Variance score: {}'.format(model.score(X_test, y_test)))
+        #---linear-regression doesnt have confusion matrix nOTE
+        # y_pred = model.predict(X_test)
+        # confusion = confusion_matrix(y_test, y_pred)
+        # accuracy = accuracy_score(y_test, y_pred)
+        accuracy=00 #not avialable so kept zero
+        context={'accuracy':accuracy,'variance_score':variance_score}
+
+        return render(request,'./linear_logistic_output.html',context)
     data_html = data.to_html()
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
     return render(request,'./linear.html',context)
+
+
+
+
 
 
 
