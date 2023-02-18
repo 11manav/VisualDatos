@@ -1,11 +1,12 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.templatetags.static import static
 import os
 import pandas as pd
-import uuid
+import time
+
+
 
 # IMPORTANT!!! pip install scikit-learn
 from sklearn.preprocessing import  MinMaxScaler,StandardScaler
@@ -30,11 +31,30 @@ def getStatistics(data):
 
 # --------------------------------------------------------
 
+# ----------- Session File Handling --------------------
+
+def delete_old_datasets():
+    media_storage = FileSystemStorage(location='media')
+
+    files = media_storage.listdir('')[1]
+
+    for file in files:
+        filename = os.path.join(settings.MEDIA_ROOT, file)
+        age_of_file = time.time() - os.path.getmtime(filename)
+
+        if(age_of_file > 120):
+            media_storage.delete(file)
+# --------------------------------------------------------
+
 
 def home(request):
 
-    request.session['session_key'] = str(uuid.uuid4())
+    delete_old_datasets()
+
+    request.session['session_key'] = request.session._get_session_key()
     session_key = request.session.get('session_key', None)
+    # print(dir(request.session))
+    # print(request.session._get_session_key())
     code = ["import pandas as pd"]
     if request.method == 'POST' and request.FILES['myfile']:
         
@@ -42,17 +62,19 @@ def home(request):
         fs = FileSystemStorage()
         base, ext = os.path.splitext(myfile.name)
         newFileName = base + session_key + ext
-        filename = fs.save(newFileName, myfile)
+        
+        if(fs.exists(newFileName)):
+            fs.delete(newFileName)
+        fs.save(newFileName, myfile)
 
-        request.session['filename'] = filename
+        request.session['filename'] = newFileName
 
         code.append("df = pd.read_csv('{}')".format(myfile.name))
-        data = pd.read_csv('./media/{}'.format(newFileName))
-        # os.remove(os.path.join(settings.MEDIA_ROOT, myfile.name))
 
+        data = pd.read_csv('./media/{}'.format(newFileName))
         
         # data = data.head(10)
-        data_html = data.to_html()
+        data_html = data.head(10).to_html()
         data_shape, nullValues, columns = getStatistics(data)
         
         context = getContext(data_html,data_shape,nullValues,code,columns)
@@ -79,6 +101,7 @@ def dropingnull(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
     data = data.dropna()
+    code.append('data.dropna()')
     data.to_csv('./media/{}'.format(filename),index=False)
     data_html = data.to_html()
     data_shape, nullValues, columns = getStatistics(data)
@@ -244,6 +267,3 @@ def linear_reg(request):
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
     return render(request,'./linear.html',context)
-
-
-

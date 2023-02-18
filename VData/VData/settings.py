@@ -133,3 +133,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Creating Sessions
 SESSION_ENGINE = 'django.contrib.sessions.backends.file'
 SESSION_FILE_PATH = os.path.join(BASE_DIR, 'session')
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
