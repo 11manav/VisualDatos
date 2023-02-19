@@ -1,0 +1,86 @@
+{% extends "base.html" %} 
+
+{% block operation %}
+{% load static %}
+
+
+<section id="algo-form">
+<div class="container-form">
+    <form>
+      <h2>K Means</h2>
+      <div class="row-form">
+        <div class="col-md-3">
+          <div class="form-group">
+            <label class="form-label" for="no_of_clusters">Number of Clusters</label>
+            <input type="number" class="form-control" placeholder="Enter Number of Clusters" id="no_of_clusters">
+          </div>
+        </div>
+        
+  
+        
+        <!--  col-md-6   -->
+      </div>
+  
+  
+      <div class="row-form">
+        <div class="col-md-3">
+          <div class="form-group">
+            <label class="form-label" for="test_size">Test Size</label>
+            <input type="number" class="form-control" placeholder="" id="test_size">
+          </div>
+  
+  
+        </div>
+        <!--  col-md-6   -->
+      </div>
+      <!--  row   -->
+        <div class="nav-item active">
+      <button type="submit" class="nav-link">Apply</button>
+        </div>
+
+    </form>
+  </div>
+
+</section>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
+<script>
+  $(".js-select2").select2({
+    closeOnSelect : false,
+    placeholder : " Select Features",
+    // allowHtml: true,
+    allowClear: true,
+    tags: true 
+  });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{%endblock%}

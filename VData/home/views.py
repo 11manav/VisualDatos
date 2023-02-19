@@ -8,6 +8,7 @@ import time
 
 
 from sklearn.linear_model import LinearRegression,LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score,confusion_matrix,mean_squared_error
 # IMPORTANT!!! pip install scikit-learn
@@ -307,7 +308,7 @@ def linear_reg(request):
         # y_pred = model.predict(X_test)
         # confusion = confusion_matrix(y_test, y_pred)
         # accuracy = accuracy_score(y_test, y_pred)
-        accuracy=00 #not avialable so kept zero
+        accuracy="NA" #not avialable so kept zero
         context={'accuracy':accuracy,'variance_score':variance_score}
 
         return render(request,'./linear_logistic_output.html',context)
@@ -315,6 +316,47 @@ def linear_reg(request):
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
     return render(request,'./linear.html',context)
+
+
+
+
+def knn(request):
+    filename = request.session.get('filename', None)
+    data = pd.read_csv('./media/{}'.format(filename))
+    if request.method=='POST':
+        no_of_neighbours=request.POST['no_of_neighbors']
+        X1 = request.POST.getlist('value-x')
+        y1 = request.POST['value-y']
+        test_size1=request.POST['test_size']
+        if len(X1)==1:
+            X = data[X1].values.reshape(-1,1)
+        else:
+            X=data[X1] 
+           
+
+        y = data[y1]
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=int(test_size1)/100, random_state=10)
+        knn=KNeighborsClassifier(int(no_of_neighbours))
+        knn.fit(X_train,y_train)
+        y_pred=knn.predict(X_test)
+        accuracy = accuracy_score(y_test, y_pred)
+        # print(accuracy)
+        variance_score=knn.score(X_test,y_test)
+        context={'accuracy':accuracy,'variance_score':variance_score}
+        # print("Successfylyyy",y_pred)
+        return render(request,'./linear_logistic_output.html',context)
+    data_html = data.to_html()
+    data_shape, nullValues, columns = getStatistics(data)
+    context = getContext(data_html,data_shape,nullValues,code,columns)
+    return render(request,'./knn.html',context)
+
+def kmeans(request):
+    filename = request.session.get('filename', None)
+    data = pd.read_csv('./media/{}'.format(filename))
+    data_html = data.to_html()
+    data_shape, nullValues, columns = getStatistics(data)
+    context = getContext(data_html,data_shape,nullValues,code,columns)
+    return render(request,'./kmeans.html',context)
 
 
 
