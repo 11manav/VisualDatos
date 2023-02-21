@@ -9,6 +9,7 @@ import time
 
 from sklearn.linear_model import LinearRegression,LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score,confusion_matrix,mean_squared_error
 # IMPORTANT!!! pip install scikit-learn
@@ -290,7 +291,7 @@ def logistic_reg(request):
         accuracy = accuracy_score(y_test, y_pred)
         # print(accuracy)
         variance_score=model.score(X_test,y_test)
-        context={'accuracy':accuracy,'variance_score':variance_score}
+        context={'accuracy':accuracy,'variance_score':variance_score,'y_predict':y_pred}
       
        
         return render(request,'./linear_logistic_output.html',context)
@@ -324,7 +325,8 @@ def linear_reg(request):
         # confusion = confusion_matrix(y_test, y_pred)
         # accuracy = accuracy_score(y_test, y_pred)
         accuracy="NA" #not avialable so kept zero
-        context={'accuracy':accuracy,'variance_score':variance_score}
+        y_pred="NA"
+        context={'accuracy':accuracy,'variance_score':variance_score,'y_predict':y_pred}
 
         return render(request,'./linear_logistic_output.html',context)
     data_html = data.to_html()
@@ -347,8 +349,6 @@ def knn(request):
             X = data[X1].values.reshape(-1,1)
         else:
             X=data[X1] 
-           
-
         y = data[y1]
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=int(test_size1)/100, random_state=10)
         knn=KNeighborsClassifier(int(no_of_neighbours))
@@ -357,7 +357,7 @@ def knn(request):
         accuracy = accuracy_score(y_test, y_pred)
         # print(accuracy)
         variance_score=knn.score(X_test,y_test)
-        context={'accuracy':accuracy,'variance_score':variance_score}
+        context={'accuracy':accuracy,'variance_score':variance_score,'y_predict':y_pred}
         # print("Successfylyyy",y_pred)
         return render(request,'./linear_logistic_output.html',context)
     data_html = data.to_html()
@@ -368,6 +368,24 @@ def knn(request):
 def kmeans(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
+ #-------->We will provide Elbow method to user so that he could figure out number of clusters<-------------------
+ # elbow method is plotting of scatter plot so 2 options we have either in visualization section or in Kmeans section will decide<---- 
+ # After that we will process K means algo ...
+    if request.method=='POST':
+        no_of_clusters=request.POST['no_of_clusters']
+        X1 = request.POST.getlist('value-x')
+        #no test size required in this algo
+        X=data[X1]
+        kmeans = KMeans(n_clusters=int(no_of_clusters), init='k-means++', random_state= 42)  
+        y_pred=kmeans.fit_predict(X)
+        accuracy="NA" #not avialable so kept zero
+        variance_score="NA" #not avialable so kept zero
+        context={'accuracy':accuracy,'variance_score':variance_score,'y_predict':y_pred}
+ 
+    
+        #Need to pass on plots of cluster as output...
+        return render(request,'./linear_logistic_output.html',context) #different template will come need to change kept it temprory
+
     data_html = data.to_html()
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
