@@ -105,6 +105,7 @@ def dropingnull(request):
     data = pd.read_csv('./media/{}'.format(filename))
     data = data.dropna()
     code.append('data.dropna()')
+    print('dropingnull')
     data.to_csv('./media/{}'.format(filename),index=False)
     data_html = data.to_html()
     data_shape, nullValues, columns = getStatistics(data)
@@ -126,6 +127,8 @@ def minmaxScaler(request):
     # data=model.transform(data)
     min_max_scaler =MinMaxScaler(feature_range =(0, 1))
     data[columns]= min_max_scaler.fit_transform(data[columns])
+    code.append("minmax_scaler()")
+    print("minmax_scaler")
     data.to_csv('./media/{}'.format(filename),index=False)
     data_html = data.to_html()
     data_shape, nullValues, columns = getStatistics(data)
@@ -145,6 +148,8 @@ def standard_Scaler(request):
     scaler=StandardScaler()
     model=scaler.fit(data[columns])
     data[columns]=model.transform(data[columns])
+    code.append("standard_scaler()")
+    print("standard_scaler")
     data.to_csv('./media/{}'.format(filename),index=False)
     data_html = data.to_html()
     data_shape, nullValues, columns = getStatistics(data)
@@ -166,6 +171,8 @@ def fillingNullMean(request):
             print(col)
             continue
     print("MEAN")
+    code.append('data.mean()')
+    print("data_mean") 
     data.to_csv('./media/{}'.format(filename),index=False)
     data_html = data.to_html()
     data_shape, nullValues, columns = getStatistics(data)
@@ -188,6 +195,8 @@ def fillingNullMedian(request):
         except:
             print(col)
             continue
+    code.append('data.median()')    
+    print("data_median")
     data.to_csv('./media/{}'.format(filename),index=False)
     data_html = data.to_html()
     data_shape, nullValues, columns = getStatistics(data)
@@ -206,6 +215,8 @@ def fillingNullMode(request):
         except:
             print(col)
             continue
+    code.append('data.mode()')     
+    print("data_mode") 
     data.to_csv('./media/{}'.format(filename),index=False)
     data_html = data.to_html()
     data_shape, nullValues, columns = getStatistics(data)
@@ -224,6 +235,8 @@ def fillingNullModeNumeric(request):
             except:
                 print(col)
                 continue
+    code.append('data.modenumeric()')     
+    print("mode_numeric")    
     data.to_csv('./media/{}'.format(filename),index=False)
     data_html = data.to_html()
     data_shape, nullValues, columns = getStatistics(data)
@@ -240,6 +253,8 @@ def deleteColumns(request):
     print(name)
     if name is not None:
         data=data.drop([name], axis=1)
+        code.append('data.drop{}'.format([name]))
+        print("deletecol")
         data.to_csv('./media/{}'.format(filename),index=False)
         data_html = data.to_html()
         data_shape, nullValues, columns = getStatistics(data)
