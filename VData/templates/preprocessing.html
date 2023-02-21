@@ -4,8 +4,96 @@
 
 {% block operation %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/base.css' %}" />
-<nav class="navbar container navbar-expand-md navbar-light ">
+<div id="op-selection">
+<div class="row clearfix row-deck">
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        
+            <div class="body">
+                <ul class="dropdown-list">
+                    <li class="nav-item pl-md-0 ml-0 active">
+                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="{% url 'preprocessing'%}" role="button" aria-haspopup="true" aria-expanded="false">Removing NULL Values</a>
+                        <div class="dropdown-menu col-xs-12">
+                            <a class="dropdown-item" href="{% url 'dropnull_preprocessing'%}">Removing Values</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        
+            <div class="body">
+                <ul class="dropdown-list">
+                    <li class="nav-item pl-md-0 ml-0 active">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="{% url 'preprocessing'%}" role="button" aria-haspopup="true" aria-expanded="false">Filling NULL Values</a>
+                        <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{% url 'fillingNullMean'%}">Mean</a>
+                        <a class="dropdown-item " href="{% url 'fillingNullMedian'%}">Median</a>
+                        <a class="dropdown-item" href="{% url 'fillingNullMode'%}">Mode</a>
+                        <a class="dropdown-item" href="{% url 'fillingNullModeNumeric'%}">Mode only numeric values</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="body">
+                <ul class="dropdown-list">
+                    <li class="nav-item pl-md-0 ml-0 active">
+                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="{% url 'preprocessing'%}" role="button" aria-haspopup="true" aria-expanded="false">Scaling</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{% url 'standardScaler'%}">Standard Scaling</a>
+                            <a class="dropdown-item" href="{% url 'minmaxScaler'%}">MinMax Scaling</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="body">
+                <ul class="dropdown-list">
+                    <li class="nav-item pl-md-0 ml-0 active">
+                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="{% url 'preprocessing'%}" role="button" aria-haspopup="true" aria-expanded="false">Delete Columns</a>
+                        <div class="dropdown-menu" style="max-height: 150px;">
+                            {% for col in columns %}
+                        <a class="dropdown-item" onclick="location.href='{% url 'deleteColumn' %}?name={{col}}'" type="button">
+                            {{col | safe}}
+                          </a>
+                      
+                        {% endfor %}
+                        </div>
+                    </li>
+                </ul>
+            </div>
+    </div>                
+
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <nav class="navbar container navbar-expand-md navbar-light ">
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ">
             <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4 active">
@@ -45,7 +133,7 @@
         </ul>
     </div>
     
-</nav>
+</nav> -->
 
 <!-- <footer id="footer">
     <i class="fab fa-twitter ft-socials fa-2x"></i>

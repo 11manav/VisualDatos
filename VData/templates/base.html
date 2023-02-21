@@ -24,10 +24,10 @@
   </head>
   <body>
     <!--  Cursor -->
-  <div class="cursor-dot-outline">
+  <!-- <div class="cursor-dot-outline">
   </div>
   <div class="cursor-dot">
-  </div>
+  </div> -->
   <!-- Cursor ends -->
     <header>
       <div class="header1">
@@ -36,57 +36,40 @@
     </header>
 
     {% block content %}
-
-    <!-- <div class="container1 parent">
-      <div class="col1">
-        <div class="codegrid">
-          <h2>Code</h2>
-          <div class="code">{{backgroundCode | safe}}</div>
-        </div>
-
-        <div class="statsgrid">
-          <h2>Statistics</h2>
-          <div class="stats">
-            <h6>Shape :</h6>
-            {{shape_of_data | safe}}
-            <hr />
-            <h6>Null Values :</h6>
-            {{null_count | safe}}
-          </div>
-        </div>
-      </div>
-      <div class="col2">
-        <h2 class="heading1">Dataset</h2>
-        <div class="dataset_frame">
-          <div class="dataset">{{loaded_data | safe}}</div>
-        </div>
-      </div>
-    </div> -->
     <div class="container">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-lg-4 col-md-12">
           <div class="codegrid">
             <h2>Code</h2>
-            <div class="code">{{backgroundCode | safe}}</div>
+            <div class="code">
+              <code>
+                
+                {% for col in backgroundCode %}
+                  <span>{{col | safe}} </span> <br>
+                {% endfor %}
+              </code>
+            </div>
           </div>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-lg-5 col-md-12 col-sm-12">
           <h2 class="heading1">Dataset</h2>
           <div class="dataset_frame">
           <div class="dataset">{{loaded_data | safe}}</div>
         </div>
         </div>
-        <div class="col">
+        <div class="col-lg-3 col-md-12 col-sm-12">
 
           <div class="statsgrid">
             <h2>Statistics</h2>
               <div class="stats">
-                <h6>Shape :</h6>
-                <p>{{shape_of_data | safe}}</p>
-                <hr />
-                <h6>Null Values :</h6>
-                <p>{{null_count | safe}}</p>
+                <code>
+                  <span>Shape : {{shape_of_data | safe}}</span>
+                
+                <br>
+                <span>Null Values : {{null_count | safe}}</span>
+                
+                </code>
               </div>
         </div>
 
