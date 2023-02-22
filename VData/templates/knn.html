@@ -3,9 +3,8 @@
 {% block operation %}
 {% load static %}
 
-
 <section id="algo-form">
-<div class="container-form">
+<div class="row container-form">
   <form action="" method="POST">
       {% csrf_token%}
       <h2>K- Nearest Neighbours</h2>
@@ -40,7 +39,7 @@
               <label class="form-label" for="value-y">Y :</label>
   
               <!-- <input type="text" class="form-control" placeholder="" id="first"> -->
-              <select class="nav-link dropdown-toggle" data-toggle="dropdown" id="value-y" name="value-y" size="1">
+              <select class="nav-link dropdown-toggle" data-toggle="dropdown" id="value-y" name="value-y" size="1" style="color: black;">
                   <div class="dropdown-menu">
                   {% for col in columns %}
                   <option class="dropdown-item" value="{{col}}">{{col | safe}}</option>

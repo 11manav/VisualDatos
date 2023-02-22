@@ -2,10 +2,70 @@
 
 {% block operation %}
 {% load static %}
+<div id="op-selection">
+    <div class="row clearfix row-deck">
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            
+                <div class="body">
+                    <ul class="dropdown-list">
+                        <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4 active">
+                            <a class="nav-link dropdown-toggle" href="{% url 'logistic_reg'%}" role="button" aria-haspopup="true" aria-expanded="false">Logistic Regression</a>
+                        </li>
+                    </ul>
+                </div>
+            
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            
+                <div class="body">
+                    <ul class="dropdown-list">
+                        <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4 active">
+                            <a class="nav-link dropdown-toggle" href="{% url 'linear_reg'%}" role="button" aria-haspopup="true" aria-expanded="false">Linear Regression</a>
+                        </li>
+                    </ul>
+                </div>
+            
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="body">
+                    <ul class="dropdown-list">
+                        <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4 active">
+                            <a class="nav-link dropdown-toggle" href="{% url 'knn'%}" role="button" aria-haspopup="true" aria-expanded="false">KNN</a>
+                        </li>
+                    </ul>
+                </div>
+            
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="body">
+                    <ul class="dropdown-list">
+                        <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4 active">
+                            <a class="nav-link dropdown-toggle" href="{% url 'kmeans'%}" role="button" aria-haspopup="true" aria-expanded="false">K - Means</a>
+                        </li>
+                    </ul>
+                </div>
+        </div>                
+    
+    </div>
+    </div>
 
 
 
-<nav class="navbar navbar-expand-md navbar-light">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <nav class="navbar navbar-expand-md navbar-light">
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ">
             <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4 active">
@@ -24,7 +84,7 @@
         </ul>
     </div>
     
-</nav>
+</nav> -->
 
 
 
