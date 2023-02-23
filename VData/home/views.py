@@ -335,8 +335,15 @@ def logistic_reg(request):
         # print(accuracy)
         variance_score=model.score(X_test,y_test)
         context={'accuracy':accuracy,'variance_score':variance_score,'y_predict':y_pred}
-        code.append(" X-{},y-{},X_train, X_test, y_train, y_test = train_test_split(X, y, test_size={}, random_state=10) , model = LogisticRegression(),model.fit(X_train, y_train)y_pred = model.predict(X_test) ,confusion = confusion_matrix(y_test, y_pred),accuracy = accuracy_score(y_test, y_pred)".format(X1,y1,test1))
-      
+        # code.append(" X-{},y-{},X_train, X_test, y_train, y_test = train_test_split(X, y, test_size={}, random_state=10) , model = LogisticRegression(),model.fit(X_train, y_train)y_pred = model.predict(X_test) ,confusion = confusion_matrix(y_test, y_pred),accuracy = accuracy_score(y_test, y_pred)".format(X1,y1,test1))
+        code1="X-{}".format(X1)
+        code2="y-{}".format(y1)
+        code3="X_train, X_test, y_train, y_test = train_test_split(X, y, test_size={}, random_state=10)".format(test1)
+        code.append(code1)
+        code.append(code2)
+        code.append(code3)
+        code4=[" model = LogisticRegression()","model.fit(X_train, y_train)","y_pred = model.predict(X_test)" ,"confusion = confusion_matrix(y_test, y_pred)","accuracy = accuracy_score(y_test, y_pred)"]
+        code.extend(code4)
        
         return render(request,'./linear_logistic_output.html',context)
     data_html = data.head(10).to_html()
@@ -372,7 +379,15 @@ def linear_reg(request):
         accuracy="NA" #not avialable so kept zero
         y_pred="NA"
         context={'accuracy':accuracy,'variance_score':variance_score,'y_predict':y_pred}
-        code.append(" X-{},y-{},X_train, X_test, y_train, y_test = train_test_split(X, y, test_size={}, random_state=10) , model = LinearRegression(),model.fit(X_train, y_train)y_pred = model.predict(X_test) ,variance_score=model.score(X_test,y_test),accuracy = accuracy_score(y_test, y_pred) , y_pred= ".format(X1,y1,test1))
+        # code.append(" X-{},y-{},X_train, X_test, y_train, y_test = train_test_split(X, y, test_size={}, random_state=10) , model = LinearRegression(),model.fit(X_train, y_train)y_pred = model.predict(X_test) ,variance_score=model.score(X_test,y_test),accuracy = accuracy_score(y_test, y_pred) , y_pred= ".format(X1,y1,test1))
+        code1="X-{}".format(X1)
+        code2="y-{}".format(y1)
+        code3="X_train, X_test, y_train, y_test = train_test_split(X, y, test_size={}, random_state=10)".format(test1)
+        code.append(code1)
+        code.append(code2)
+        code.append(code3)
+        code4=[" model = LinearRegression()","model.fit(X_train, y_train)y_pred = model.predict(X_test)" ,"variance_score=model.score(X_test,y_test)","accuracy = accuracy_score(y_test, y_pred)" ," y_pred= "] 
+        code.extend(code4)
 
         return render(request,'./linear_logistic_output.html',context)
     data_html = data.head(10).to_html()
@@ -406,8 +421,18 @@ def knn(request):
         variance_score=knn.score(X_test,y_test)
         context={'accuracy':accuracy,'variance_score':variance_score,'y_predict':y_pred}
         # print("Successfylyyy",y_pred)
-        code.append(" X-{},y-{},X_train, X_test, y_train, y_test = train_test_split(X, y, test_size={}, random_state=10) ,  knn=KNeighborsClassifier(int({})),knn.fit(X_train,y_train),y_pred=knn.predict(X_test),accuracy = accuracy_score(y_test, y_pred),\nvariance_score=knn.score(X_test,y_test)".format(X1,y1,test1,no_of_neighbours))
-
+        # code.append(" X-{},y-{},X_train, X_test, y_train, y_test = train_test_split(X, y, test_size={}, random_state=10) ,  knn=KNeighborsClassifier(int({})),knn.fit(X_train,y_train),y_pred=knn.predict(X_test),accuracy = accuracy_score(y_test, y_pred),\nvariance_score=knn.score(X_test,y_test)".format(X1,y1,test1,no_of_neighbours))
+        code1="X-{}".format(X1)
+        code2="y-{}".format(y1)
+        code3="X_train, X_test, y_train, y_test = train_test_split(X, y, test_size={}, random_state=10)".format(test1)
+        code4=" knn=KNeighborsClassifier(int({})),knn.fit(X_train,y_train)".format(no_of_neighbours)
+       
+        code.append(code1)
+        code.append(code2)
+        code.append(code3)
+        code.append(code4)
+        code5=["y_pred = knn.predict(X_test)","accuracy = accuracy_score(y_test, y_pred)","variance_score=knn.score(X_test,y_test)"]
+        code.extend(code5)
         return render(request,'./linear_logistic_output.html',context)
     data_html = data.to_html()
     data_shape, nullValues, columns = getStatistics(data)
@@ -430,8 +455,13 @@ def kmeans(request):
         accuracy="NA" #not avialable so kept zero
         variance_score="NA" #not avialable so kept zero
         context={'accuracy':accuracy,'variance_score':variance_score,'y_predict':y_pred}
- 
-        code.append("x={},kmeans = KMeans(n_clusters=int({}), init='k-means++', random_state= 42),y_pred=kmeans.fit_predict(X),accuracy= ,variance_score= ".format(X1,no_of_clusters))
+        code1="x={}".format(X1)
+        code2="kmeans = KMeans(n_clusters=int({}) init='k-means++',random_state= 42)".format(no_of_clusters)
+        code3=["y_pred=kmeans.fit_predict(X)","accuracy= ","variance_score= "]
+        code.append(code1)
+        code.append(code2)
+        code.extend(code3)
+        # code.append("x={},kmeans = KMeans(n_clusters=int({}), init='k-means++', random_state= 42),y_pred=kmeans.fit_predict(X),accuracy= ,variance_score= ".format(X1,no_of_clusters))
         #Need to pass on plots of cluster as output...
         return render(request,'./linear_logistic_output.html',context) #different template will come need to change kept it temprory
 
