@@ -6,6 +6,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.home, name='home'),
+    path('downloadDataset/', views.downloadDataset, name='downloadDataset'),
     path('showFulldataset/',views.showFulldataset,name='showFulldataset'),
     path('preprocessing/',views.preprocessing,name='preprocessing'),
     path('preprocessing/nullvalues',views.dropingnull,name='dropnull_preprocessing'),

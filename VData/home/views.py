@@ -5,6 +5,7 @@ from django.templatetags.static import static
 import os
 import pandas as pd
 import time
+from django.http import HttpResponse
 
 
 from sklearn.linear_model import LinearRegression,LogisticRegression
@@ -49,6 +50,31 @@ def delete_old_datasets():
         if(age_of_file > 120):
             media_storage.delete(file)
 # --------------------------------------------------------
+
+# ------------- Download Dataset --------------------
+
+def downloadDataset(request):
+    fileName = request.session.get('filename', None)
+    file_path = './media/{}'.format(fileName)
+    session_key = request.session.get('session_key', None)
+    
+    # Open the file for reading
+    with open(file_path, 'rb') as f:
+        # Create the HttpResponse object with the file as content
+        response = HttpResponse(f.read())
+        # Set the content type header
+        content_type = 'application/octet-stream'
+        response['Content-Type'] = content_type
+        # Set the Content-Disposition header to force file download
+        filename = os.path.basename(file_path)
+        filename = filename.replace(session_key,'')
+        print(filename)
+        response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+        return response
+
+
+
+# ---------------------------------------------------
 
 
 def home(request):

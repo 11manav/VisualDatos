@@ -1,10 +1,9 @@
-Done 
-1. Create scrollable div for dataset , div sizing - Aryan 
-
-
 Remaining
 3. Remove need to redirect to another page for processing - TBD
 5. All Columns deleted then show no columns available
 6. Alert no null values available if dataset does not have any null values on pressing fill null values by mean median mode 
 
 ML Algorithms buttoon on every page
+Download Dataset - Aryan
+Categorical Values
+
