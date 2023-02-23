@@ -90,10 +90,26 @@ def home(request):
 
 
 
-def preprocessing(request):
+def showFulldataset(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
     data_html = data.to_html()
+    data_shape, nullValues, columns = getStatistics(data)
+
+    context = getContext(data_html,data_shape,nullValues,code,columns)
+
+    return render(request,'./showFulldataset.html',context)
+    
+
+
+
+
+
+
+def preprocessing(request):
+    filename = request.session.get('filename', None)
+    data = pd.read_csv('./media/{}'.format(filename))
+    data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
 
     context = getContext(data_html,data_shape,nullValues,code,columns)
@@ -108,7 +124,7 @@ def dropingnull(request):
     code.append('data.dropna()')
     print('dropingnull')
     data.to_csv('./media/{}'.format(filename),index=False)
-    data_html = data.to_html()
+    data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
 
     context = getContext(data_html,data_shape,nullValues,code,columns)
@@ -131,7 +147,7 @@ def minmaxScaler(request):
     code.append("minmax_scaler()")
     print("minmax_scaler")
     data.to_csv('./media/{}'.format(filename),index=False)
-    data_html = data.to_html()
+    data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
     
     context = getContext(data_html,data_shape,nullValues,code,columns)
@@ -152,7 +168,7 @@ def standard_Scaler(request):
     code.append("standard_scaler()")
     print("standard_scaler")
     data.to_csv('./media/{}'.format(filename),index=False)
-    data_html = data.to_html()
+    data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
     
     context = getContext(data_html,data_shape,nullValues,code,columns)
@@ -175,7 +191,7 @@ def fillingNullMean(request):
     code.append('data.mean()')
     print("data_mean") 
     data.to_csv('./media/{}'.format(filename),index=False)
-    data_html = data.to_html()
+    data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
     return render(request,'./preprocessing.html',context)
@@ -199,7 +215,7 @@ def fillingNullMedian(request):
     code.append('data.median()')    
     print("data_median")
     data.to_csv('./media/{}'.format(filename),index=False)
-    data_html = data.to_html()
+    data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
     return render(request,'./preprocessing.html',context)
@@ -219,7 +235,7 @@ def fillingNullMode(request):
     code.append('data.mode()')     
     print("data_mode") 
     data.to_csv('./media/{}'.format(filename),index=False)
-    data_html = data.to_html()
+    data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
     return render(request,'./preprocessing.html',context)
@@ -239,7 +255,7 @@ def fillingNullModeNumeric(request):
     code.append('data.modenumeric()')     
     print("mode_numeric")    
     data.to_csv('./media/{}'.format(filename),index=False)
-    data_html = data.to_html()
+    data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
     return render(request,'./preprocessing.html',context)
@@ -257,7 +273,7 @@ def deleteColumns(request):
         code.append('data.drop{}'.format([name]))
         print("deletecol")
         data.to_csv('./media/{}'.format(filename),index=False)
-        data_html = data.to_html()
+        data_html = data.head(10).to_html()
         data_shape, nullValues, columns = getStatistics(data)
         context = getContext(data_html,data_shape,nullValues,code,columns)
         return render(request,'./preprocessing.html',context)
@@ -266,7 +282,7 @@ def deleteColumns(request):
 def mlalgorithms(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
-    data_html = data.to_html()
+    data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
     return render(request,'./ml.html',context)
@@ -297,7 +313,7 @@ def logistic_reg(request):
       
        
         return render(request,'./linear_logistic_output.html',context)
-    data_html = data.to_html()
+    data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
     return render(request,'./logistic.html',context)
@@ -333,7 +349,7 @@ def linear_reg(request):
         code.append(" X-{},y-{},X_train, X_test, y_train, y_test = train_test_split(X, y, test_size={}, random_state=10) , model = LinearRegression(),model.fit(X_train, y_train)y_pred = model.predict(X_test) ,variance_score=model.score(X_test,y_test),accuracy = accuracy_score(y_test, y_pred) , y_pred= ".format(X1,y1,test1))
 
         return render(request,'./linear_logistic_output.html',context)
-    data_html = data.to_html()
+    data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
     return render(request,'./linear.html',context)
@@ -393,7 +409,7 @@ def kmeans(request):
         #Need to pass on plots of cluster as output...
         return render(request,'./linear_logistic_output.html',context) #different template will come need to change kept it temprory
 
-    data_html = data.to_html()
+    data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
     return render(request,'./kmeans.html',context)
