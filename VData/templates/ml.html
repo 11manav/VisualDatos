@@ -1,7 +1,47 @@
 {% extends "base.html" %} 
+{% load static %}
+{% block navbarContent %}
+<div class="container-fluid px-5">
+    <nav class="navbar navbar-expand-md navbar-light text-black">
+        <a class="navbar-brand font-weight-bold display-6" href="#">VisualDatos</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link text-black" href="{% url 'preprocessing'%}">Preprocessing</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-black" href="{% url 'mlalgorithms'%}">ML Algorithms</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-black" href="#">Visualization</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 {% block operation %}
-{% load static %}
+
 <div id="op-selection">
     <div class="row clearfix row-deck">
         <div class="col-lg-3 col-md-6 col-sm-6">

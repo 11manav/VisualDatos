@@ -345,7 +345,7 @@ def logistic_reg(request):
         code4=[" model = LogisticRegression()","model.fit(X_train, y_train)","y_pred = model.predict(X_test)" ,"confusion = confusion_matrix(y_test, y_pred)","accuracy = accuracy_score(y_test, y_pred)"]
         code.extend(code4)
        
-        return render(request,'./linear_logistic_output.html',context)
+        return render(request,'./results.html',context)
     data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
@@ -389,7 +389,7 @@ def linear_reg(request):
         code4=["model = LinearRegression()","model.fit(X_train, y_train)","y_pred = model.predict(X_test)" ,"variance_score=model.score(X_test,y_test)","accuracy = accuracy_score(y_test, y_pred)"] 
         code.extend(code4)
 
-        return render(request,'./linear_logistic_output.html',context)
+        return render(request,'./results.html',context)
     data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
@@ -433,7 +433,7 @@ def knn(request):
         code.append(code4)
         code5=["y_pred = knn.predict(X_test)","accuracy = accuracy_score(y_test, y_pred)","variance_score=knn.score(X_test,y_test)"]
         code.extend(code5)
-        return render(request,'./linear_logistic_output.html',context)
+        return render(request,'./results.html',context)
     data_html = data.to_html()
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
@@ -463,7 +463,7 @@ def kmeans(request):
         code.extend(code3)
         # code.append("x={},kmeans = KMeans(n_clusters=int({}), init='k-means++', random_state= 42),y_pred=kmeans.fit_predict(X),accuracy= ,variance_score= ".format(X1,no_of_clusters))
         #Need to pass on plots of cluster as output...
-        return render(request,'./linear_logistic_output.html',context) #different template will come need to change kept it temprory
+        return render(request,'./results.html',context) #different template will come need to change kept it temprory
 
     data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)

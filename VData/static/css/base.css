@@ -22,7 +22,9 @@ body {
 	background: rgb(0, 0, 0);
 }
 
-
+#header .nav-item{
+  border-radius: 25px;
+}
 /* pre {
   background-color: #272822;
   border: 1px solid #3e3d32;
@@ -78,6 +80,9 @@ code {
 	.cursor-dot-outline {
 		display: none;
 	}
+  .navbar-nav{
+    margin: 20px 0;
+  }
 }
 .header1 {
   position: fixed;
@@ -87,7 +92,6 @@ code {
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
   color: #000000;
-  height: 60px;
   top: 20px;
   display: flex;
   justify-content: center;
@@ -200,12 +204,12 @@ h2{
 .container {
     max-width: 90%;
 }
+
 }
 .dataset {
   /* background-color: aqua; */
   overflow: scroll;
-  min-height: 300px;
-  max-height: 300px;
+  height: 300px;
   
   border-top: 1px solid #3e3d32;
   border-left: 1px solid #3e3d32; 
@@ -317,6 +321,11 @@ h2{
 #footer{
     text-align: center;
     padding: 4%;
+    margin-top: 3%;
+}
+
+#footer, p{
+  color:black;
 }
 
 .ft-socials{
@@ -676,4 +685,10 @@ a:not([href]):not([tabindex]):focus, a:not([href]):not([tabindex]):hover {
   border: 1px solid #aaa;
   border-radius: 10px !important;
   cursor: text;
+}
+
+
+/*Form apply button*/
+.text-white:hover{
+  color:black !important;
 }

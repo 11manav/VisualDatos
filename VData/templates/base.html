@@ -29,13 +29,19 @@
   <div class="cursor-dot">
   </div> -->
   <!-- Cursor ends -->
-    <header>
-      <div class="header1">
-        <h1>VisualDatos</h1>
-      </div>
-    </header>
+  {% block navbar %}
 
+  <header>
+    <div class="header1 py-1" id="header">
+      {% block navbarContent %}
+      <h1>VisualDatos</h1>
+        {% endblock %}
+    </div>
+  </header>
+
+{% endblock %}
     {% block content %}
+    {% block main-content %}
     <div class="container">
       <div class="row">
         <div class="col-lg-4 col-md-12">
@@ -80,8 +86,20 @@
         </div>
       </div>
     </div>
-
-    {% block operation %} {% endblock operation %} {% endblock content%}
+    {% endblock main-content %}
+    {% block operation %} {% endblock operation %}
+    {% block footer %} 
+    <footer id="footer">
+      <i class="fab fa-twitter ft-socials fa-2x"></i>
+      <i class="fab fa-facebook ft-socials fa-2x"></i>
+      <i class="fab fa-instagram ft-socials fa-2x"></i>
+      <i class="fas fa-envelope ft-socials fa-2x"></i>
+      <p class="copyright">© Copyright 2023 VisualDatos</p>
+    </footer>
+  
+    
+    {% endblock %} 
+     {% endblock content%}
     <script src="{% static 'js/base.js' %}"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
