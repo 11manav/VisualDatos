@@ -99,7 +99,7 @@ def home(request):
 
         request.session['filename'] = newFileName
 
-        code.append("df = pd.read_csv('{}')".format(myfile.name))
+        code.append("data = pd.read_csv('{}')".format(myfile.name))
 
         data = pd.read_csv('./media/{}'.format(newFileName))
         
@@ -214,7 +214,7 @@ def fillingNullMean(request):
             print(col)
             continue
     print("MEAN")
-    code.append('data.mean()')
+    code.append('data.fillna(mean_of_columns)')
     print("data_mean") 
     data.to_csv('./media/{}'.format(filename),index=False)
     data_html = data.head(10).to_html()
@@ -238,7 +238,7 @@ def fillingNullMedian(request):
         except:
             print(col)
             continue
-    code.append('data.median()')    
+    code.append('data.fillna(median_of_columns)')    
     print("data_median")
     data.to_csv('./media/{}'.format(filename),index=False)
     data_html = data.head(10).to_html()
@@ -258,7 +258,7 @@ def fillingNullMode(request):
         except:
             print(col)
             continue
-    code.append('data.mode()')     
+    code.append('data.fillna(data.mode())')     
     print("data_mode") 
     data.to_csv('./media/{}'.format(filename),index=False)
     data_html = data.head(10).to_html()
@@ -278,7 +278,7 @@ def fillingNullModeNumeric(request):
             except:
                 print(col)
                 continue
-    code.append('data.modenumeric()')     
+    code.append('data.fillna(data.modenumeric())')     
     print("mode_numeric")    
     data.to_csv('./media/{}'.format(filename),index=False)
     data_html = data.head(10).to_html()
@@ -386,7 +386,7 @@ def linear_reg(request):
         code.append(code1)
         code.append(code2)
         code.append(code3)
-        code4=[" model = LinearRegression()","model.fit(X_train, y_train)y_pred = model.predict(X_test)" ,"variance_score=model.score(X_test,y_test)","accuracy = accuracy_score(y_test, y_pred)" ," y_pred= "] 
+        code4=["model = LinearRegression()","model.fit(X_train, y_train)","y_pred = model.predict(X_test)" ,"variance_score=model.score(X_test,y_test)","accuracy = accuracy_score(y_test, y_pred)"] 
         code.extend(code4)
 
         return render(request,'./linear_logistic_output.html',context)
@@ -457,7 +457,7 @@ def kmeans(request):
         context={'accuracy':accuracy,'variance_score':variance_score,'y_predict':y_pred}
         code1="x={}".format(X1)
         code2="kmeans = KMeans(n_clusters=int({}) init='k-means++',random_state= 42)".format(no_of_clusters)
-        code3=["y_pred=kmeans.fit_predict(X)","accuracy= ","variance_score= "]
+        code3=["y_pred=kmeans.fit_predict(X)"]
         code.append(code1)
         code.append(code2)
         code.extend(code3)
