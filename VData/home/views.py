@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
-from django.templatetags.static import static
 import os
 import pandas as pd
 import time
@@ -12,9 +11,10 @@ from sklearn.linear_model import LinearRegression,LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score,confusion_matrix,mean_squared_error
+from sklearn.metrics import accuracy_score,confusion_matrix,mean_squared_error, r2_score
 # IMPORTANT!!! pip install scikit-learn
 from sklearn.preprocessing import  MinMaxScaler,StandardScaler
+import matplotlib.pyplot as plt
 
 # Global Variables
 code = [] 
@@ -165,9 +165,6 @@ def minmaxScaler(request):
         datatypes = data.dtypes[col]
         if datatypes=='float64' or datatypes=='int64':
             columns.append(col)
-    # scaler=StandardScaler()
-    # model=scaler.fit(data)
-    # data=model.transform(data)
     min_max_scaler =MinMaxScaler(feature_range =(0, 1))
     data[columns]= min_max_scaler.fit_transform(data[columns])
     code.append("minmax_scaler()")
@@ -223,9 +220,6 @@ def fillingNullMean(request):
     return render(request,'./preprocessing.html',context)
 
 
-
-
-
 def fillingNullMedian(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
@@ -247,8 +241,6 @@ def fillingNullMedian(request):
     return render(request,'./preprocessing.html',context)
 
 
-
-
 def fillingNullMode(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
@@ -265,6 +257,7 @@ def fillingNullMode(request):
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
     return render(request,'./preprocessing.html',context)
+
 
 def fillingNullModeNumeric(request):
     filename = request.session.get('filename', None)
@@ -285,8 +278,6 @@ def fillingNullModeNumeric(request):
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
     return render(request,'./preprocessing.html',context)
-
-
 
 
 def deleteColumns(request):
@@ -312,6 +303,7 @@ def mlalgorithms(request):
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
     return render(request,'./ml.html',context)
+
 
 def logistic_reg(request):
     filename = request.session.get('filename', None)
@@ -373,12 +365,23 @@ def linear_reg(request):
         variance_score=model.score(X_test,y_test)
         # print('Variance score: {}'.format(model.score(X_test, y_test)))
         #---linear-regression doesnt have confusion matrix nOTE
-        # y_pred = model.predict(X_test)
+        y_pred = model.predict(X_test)
         # confusion = confusion_matrix(y_test, y_pred)
         # accuracy = accuracy_score(y_test, y_pred)
-        accuracy="NA" #not avialable so kept zero
-        y_pred="NA"
-        context={'accuracy':accuracy,'variance_score':variance_score,'y_predict':y_pred}
+        # accuracy="NA" #not avialable so kept zero
+        score = r2_score(y_test, y_pred)
+        
+        plt.switch_backend('Agg')
+        plt.scatter(X_test, y_test, color="black")
+        plt.plot(X_test, y_pred, color="blue", linewidth=3)
+
+        session_key = request.session.get('session_key', None)
+
+        fig_location = './media/linearReg{}.png'.format(session_key)
+        plt.savefig(fig_location)
+
+        image_url = '../media/linearReg{}.png'.format(session_key)
+        
         # code.append(" X-{},y-{},X_train, X_test, y_train, y_test = train_test_split(X, y, test_size={}, random_state=10) , model = LinearRegression(),model.fit(X_train, y_train)y_pred = model.predict(X_test) ,variance_score=model.score(X_test,y_test),accuracy = accuracy_score(y_test, y_pred) , y_pred= ".format(X1,y1,test1))
         code1="X-{}".format(X1)
         code2="y-{}".format(y1)
@@ -388,6 +391,8 @@ def linear_reg(request):
         code.append(code3)
         code4=["model = LinearRegression()","model.fit(X_train, y_train)","y_pred = model.predict(X_test)" ,"variance_score=model.score(X_test,y_test)","accuracy = accuracy_score(y_test, y_pred)"] 
         code.extend(code4)
+
+        context={'r2_score':score,'image_url':image_url,'backgroundCode':code}
 
         return render(request,'./results.html',context)
     data_html = data.head(10).to_html()
