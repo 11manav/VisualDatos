@@ -3,3 +3,4 @@ media
 __pycache__
 *.pyc
 session
+VData/ToDo.txt

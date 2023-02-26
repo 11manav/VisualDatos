@@ -24,6 +24,9 @@ code = []
 # --------Common data required for all pages--------------
 
 def getContext(data_html,data_shape,nullValues,code,columns):
+    if(len(columns)==0):
+        data_html = ""
+
     context = {'loaded_data': data_html,
                     'shape_of_data': data_shape,
                     'null_count': nullValues,
