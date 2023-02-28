@@ -3,6 +3,7 @@ from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 import os
 import pandas as pd
+import numpy as nm
 import time
 from django.http import HttpResponse
 
@@ -15,6 +16,7 @@ from sklearn.metrics import accuracy_score,confusion_matrix,mean_squared_error, 
 # IMPORTANT!!! pip install scikit-learn
 from sklearn.preprocessing import  MinMaxScaler,StandardScaler
 import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap 
 
 # Global Variables
 code = [] 
@@ -161,44 +163,66 @@ def dropingnull(request):
     return render(request,'./preprocessing.html',context)
 
 def minmaxScaler(request):
+    # if request
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
-    columns=[]
+    if request.method=='POST':
+        X1 =request.POST.getlist('value-x')
+        min_range=request.POST.get('start_of_range')
+        max_range=request.POST.get('end_of_range')
+        print(min_range,max_range)
+        columns=[]
+        for col in X1:
+                columns.append(col)
+        min_max_scaler =MinMaxScaler(feature_range =(int(min_range), int(max_range)))
+        data[columns]= min_max_scaler.fit_transform(data[columns])
+        code.append("minmax_scaler()")
+        data.to_csv('./media/{}'.format(filename),index=False)
+        data_html = data.head(10).to_html()
+        data_shape, nullValues, columns = getStatistics(data)
+        context = getContext(data_html,data_shape,nullValues,code,columns)
+        return render(request,'./preprocessing.html',context)
+    #only integer and float type columns will be send
+    data_html = data.head(10).to_html()
+    data_shape, nullValues, columns= getStatistics(data)
+    columns_send=[]
     for col in data.columns:
         datatypes = data.dtypes[col]
         if datatypes=='float64' or datatypes=='int64':
-            columns.append(col)
-    min_max_scaler =MinMaxScaler(feature_range =(0, 1))
-    data[columns]= min_max_scaler.fit_transform(data[columns])
-    code.append("minmax_scaler()")
-    print("minmax_scaler")
-    data.to_csv('./media/{}'.format(filename),index=False)
-    data_html = data.head(10).to_html()
-    data_shape, nullValues, columns = getStatistics(data)
-    
-    context = getContext(data_html,data_shape,nullValues,code,columns)
-    return render(request,'./preprocessing.html',context)
+            columns_send.append(col)
+    context = getContext(data_html,data_shape,nullValues,code,columns_send)
+    return render(request,'./minmaxScale.html',context)
 
 
 def standard_Scaler(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
-    columns=[]
+    if request.method=='POST':
+        X1 =request.POST.getlist('value-x')
+        columns=[]
+        for col in X1:
+            columns.append(col)
+        scaler=StandardScaler()
+        model=scaler.fit(data[columns])
+        data[columns]=model.transform(data[columns])
+        code.append("standard_scaler()")
+        print("standard_scaler")
+        data.to_csv('./media/{}'.format(filename),index=False)
+        data_html = data.head(10).to_html()
+        data_shape, nullValues, columns = getStatistics(data)
+        context = getContext(data_html,data_shape,nullValues,code,columns)
+        return render(request,'./preprocessing.html',context)
+
+    data_html = data.head(10).to_html()
+    data_shape, nullValues, columns= getStatistics(data)
+    #only integer and float type columns will be send
+    columns_send=[]
     for col in data.columns:
         datatypes = data.dtypes[col]
         if datatypes=='float64' or datatypes=='int64':
-            columns.append(col)
-    scaler=StandardScaler()
-    model=scaler.fit(data[columns])
-    data[columns]=model.transform(data[columns])
-    code.append("standard_scaler()")
-    print("standard_scaler")
-    data.to_csv('./media/{}'.format(filename),index=False)
-    data_html = data.head(10).to_html()
-    data_shape, nullValues, columns = getStatistics(data)
-    
-    context = getContext(data_html,data_shape,nullValues,code,columns)
-    return render(request,'./preprocessing.html',context)
+            columns_send.append(col)
+    context = getContext(data_html,data_shape,nullValues,code,columns_send)
+    return render(request,'./standardScale.html',context)
 
 
 def fillingNullMean(request):
@@ -339,6 +363,30 @@ def logistic_reg(request):
         code.append(code3)
         code4=[" model = LogisticRegression()","model.fit(X_train, y_train)","y_pred = model.predict(X_test)" ,"confusion = confusion_matrix(y_test, y_pred)","accuracy = accuracy_score(y_test, y_pred)"]
         code.extend(code4)
+
+        #visulaize
+        plt.switch_backend('Agg')
+
+        x_set, y_set = X_train, y_train  
+        x1, x2 = nm.meshgrid(nm.arange(start = x_set[:, 0].min() - 1, stop = x_set[:, 0].max() + 1, step  =0.01),  
+        nm.arange(start = x_set[:, 1].min() - 1, stop = x_set[:, 1].max() + 1, step = 0.01))  
+        plt.contourf(x1, x2, model.predict(nm.array([x1.ravel(), x2.ravel()]).T).reshape(x1.shape),  
+        alpha = 0.75, cmap = ListedColormap(('purple','green' )))  
+        plt.xlim(x1.min(), x1.max())  
+        plt.ylim(x2.min(), x2.max())  
+        for i, j in enumerate(nm.unique(y_set)):  
+            plt.scatter(x_set[y_set == j, 0], x_set[y_set == j, 1],  
+                c = ListedColormap(('purple', 'green'))(i), label = j)  
+        plt.title('Logistic Regression (Training set)')  
+        plt.xlabel('Age')  
+        plt.ylabel('Estimated Salary')  
+        plt.legend() 
+        session_key = request.session.get('session_key', None)
+
+        fig_location = './media/LOG{}.png'.format(session_key)
+        plt.savefig(fig_location)
+
+        image_url = '../media/LOG{}.png'.format(session_key) 
        
         return render(request,'./results.html',context)
     data_html = data.head(10).to_html()
@@ -469,6 +517,26 @@ def kmeans(request):
         code.append(code1)
         code.append(code2)
         code.extend(code3)
+
+        plt.switch_backend('Agg')
+        u_labels = np.unique(y_pred)
+        print("I am here")
+        print(u_labels)
+      
+        for i in u_labels:
+            pass
+            # plt.switch_backend('Agg')
+          
+        #    plt.scatter(data[y_pred == i , 0] , data[y_pred == i , 1] , label = i)
+        #    plt.legend()
+           
+        session_key = request.session.get('session_key', None)
+
+        fig_location = './media/Kmeans{}.png'.format(session_key)
+        plt.savefig(fig_location)
+
+        image_url = '../media/Kmeans{}.png'.format(session_key)
+            # plt.show()
         # code.append("x={},kmeans = KMeans(n_clusters=int({}), init='k-means++', random_state= 42),y_pred=kmeans.fit_predict(X),accuracy= ,variance_score= ".format(X1,no_of_clusters))
         #Need to pass on plots of cluster as output...
         return render(request,'./results.html',context) #different template will come need to change kept it temprory
