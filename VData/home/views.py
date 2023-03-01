@@ -228,83 +228,87 @@ def standard_Scaler(request):
 def fillingNullMean(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
-    mean_of_columns = data.mean()
+    # handle this in post request refer to minmax scaler for this
+    # mean_of_columns = data.mean()
 
     # replace the data with the mean calculated
-    for col in data.columns:
-        try:
-            data[col].fillna(mean_of_columns[col], inplace=True)
-        except:
-            print(col)
-            continue
-    print("MEAN")
-    code.append('data.fillna(mean_of_columns)')
-    print("data_mean") 
-    data.to_csv('./media/{}'.format(filename),index=False)
+    # for col in data.columns:
+    #     try:
+    #         data[col].fillna(mean_of_columns[col], inplace=True)
+    #     except:
+    #         print(col)
+    #         continue
+    # print("MEAN")
+    # code.append('data.fillna(mean_of_columns)')
+    # print("data_mean") 
+    # data.to_csv('./media/{}'.format(filename),index=False)
     data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
-    return render(request,'./preprocessing.html',context)
+    return render(request,'./meanForm.html',context)
 
 
 def fillingNullMedian(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
-    median_of_columns = data.median()
+    # handle this in post request refer to minmax scaler for this
+    # median_of_columns = data.median()
 
-    # replace the data with the mean calculated
-    for col in data.columns:
-        try:
-            data[col].fillna(median_of_columns[col], inplace=True)
-        except:
-            print(col)
-            continue
-    code.append('data.fillna(median_of_columns)')    
-    print("data_median")
-    data.to_csv('./media/{}'.format(filename),index=False)
+    # # replace the data with the mean calculated
+    # for col in data.columns:
+    #     try:
+    #         data[col].fillna(median_of_columns[col], inplace=True)
+    #     except:
+    #         print(col)
+    #         continue
+    # code.append('data.fillna(median_of_columns)')    
+    # print("data_median")
+    # data.to_csv('./media/{}'.format(filename),index=False)
     data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
-    return render(request,'./preprocessing.html',context)
+    return render(request,'./medianForm.html',context)
 
 
 def fillingNullMode(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
-    for col in data.columns:
-        try:
-            data[col].fillna(data.mode()[col][0], inplace=True)
-        except:
-            print(col)
-            continue
-    code.append('data.fillna(data.mode())')     
-    print("data_mode") 
-    data.to_csv('./media/{}'.format(filename),index=False)
+    # handle this in post request refer to minmax scaler for this
+    # for col in data.columns:
+    #     try:
+    #         data[col].fillna(data.mode()[col][0], inplace=True)
+    #     except:
+    #         print(col)
+    #         continue
+    # code.append('data.fillna(data.mode())')     
+    # print("data_mode") 
+    # data.to_csv('./media/{}'.format(filename),index=False)
     data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
-    return render(request,'./preprocessing.html',context)
+    return render(request,'./modeForm.html',context)
 
 
 def fillingNullModeNumeric(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
-    for col in data.columns:
-        if data[col].dtypes == object:
-            pass
-        else:
-            try:
-                data[col].fillna(data.mode()[col][0], inplace=True)
-            except:
-                print(col)
-                continue
-    code.append('data.fillna(data.modenumeric())')     
-    print("mode_numeric")    
-    data.to_csv('./media/{}'.format(filename),index=False)
+    # handle this in post request refer to minmax scaler for this
+    # for col in data.columns:
+    #     if data[col].dtypes == object:
+    #         pass
+    #     else:
+    #         try:
+    #             data[col].fillna(data.mode()[col][0], inplace=True)
+    #         except:
+    #             print(col)
+    #             continue
+    # code.append('data.fillna(data.modenumeric())')     
+    # print("mode_numeric")    
+    # data.to_csv('./media/{}'.format(filename),index=False)
     data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
-    return render(request,'./preprocessing.html',context)
+    return render(request,'./modeForm.html',context)
 
 
 def deleteColumns(request):
@@ -363,31 +367,6 @@ def logistic_reg(request):
         code.append(code3)
         code4=[" model = LogisticRegression()","model.fit(X_train, y_train)","y_pred = model.predict(X_test)" ,"confusion = confusion_matrix(y_test, y_pred)","accuracy = accuracy_score(y_test, y_pred)"]
         code.extend(code4)
-
-        #visulaize
-        plt.switch_backend('Agg')
-
-        x_set, y_set = X_train, y_train  
-        x1, x2 = nm.meshgrid(nm.arange(start = x_set[:, 0].min() - 1, stop = x_set[:, 0].max() + 1, step  =0.01),  
-        nm.arange(start = x_set[:, 1].min() - 1, stop = x_set[:, 1].max() + 1, step = 0.01))  
-        plt.contourf(x1, x2, model.predict(nm.array([x1.ravel(), x2.ravel()]).T).reshape(x1.shape),  
-        alpha = 0.75, cmap = ListedColormap(('purple','green' )))  
-        plt.xlim(x1.min(), x1.max())  
-        plt.ylim(x2.min(), x2.max())  
-        for i, j in enumerate(nm.unique(y_set)):  
-            plt.scatter(x_set[y_set == j, 0], x_set[y_set == j, 1],  
-                c = ListedColormap(('purple', 'green'))(i), label = j)  
-        plt.title('Logistic Regression (Training set)')  
-        plt.xlabel('Age')  
-        plt.ylabel('Estimated Salary')  
-        plt.legend() 
-        session_key = request.session.get('session_key', None)
-
-        fig_location = './media/LOG{}.png'.format(session_key)
-        plt.savefig(fig_location)
-
-        image_url = '../media/LOG{}.png'.format(session_key) 
-       
         return render(request,'./results.html',context)
     data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
@@ -517,26 +496,6 @@ def kmeans(request):
         code.append(code1)
         code.append(code2)
         code.extend(code3)
-
-        plt.switch_backend('Agg')
-        u_labels = np.unique(y_pred)
-        print("I am here")
-        print(u_labels)
-      
-        for i in u_labels:
-            pass
-            # plt.switch_backend('Agg')
-          
-        #    plt.scatter(data[y_pred == i , 0] , data[y_pred == i , 1] , label = i)
-        #    plt.legend()
-           
-        session_key = request.session.get('session_key', None)
-
-        fig_location = './media/Kmeans{}.png'.format(session_key)
-        plt.savefig(fig_location)
-
-        image_url = '../media/Kmeans{}.png'.format(session_key)
-            # plt.show()
         # code.append("x={},kmeans = KMeans(n_clusters=int({}), init='k-means++', random_state= 42),y_pred=kmeans.fit_predict(X),accuracy= ,variance_score= ".format(X1,no_of_clusters))
         #Need to pass on plots of cluster as output...
         return render(request,'./results.html',context) #different template will come need to change kept it temprory
