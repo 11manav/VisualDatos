@@ -505,7 +505,13 @@ def kmeans(request):
     context = getContext(data_html,data_shape,nullValues,code,columns)
     return render(request,'./kmeans.html',context)
 
-
+def cat_data(request):
+    filename = request.session.get('filename', None)
+    data = pd.read_csv('./media/{}'.format(filename))
+    data_html = data.head(10).to_html()
+    data_shape, nullValues, columns = getStatistics(data)
+    context = getContext(data_html,data_shape,nullValues,code,columns)
+    return render(request,'./categoricalData_form.html',context)
 
 
 

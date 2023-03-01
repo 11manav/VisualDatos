@@ -17,6 +17,7 @@ urlpatterns = [
     path('preprocessing/fillna_mode',views.fillingNullMode,name='fillingNullMode'),
     path('preprocessing/fillna_modenumeric',views.fillingNullModeNumeric,name='fillingNullModeNumeric'),
     path('preprocessing/delete',views.deleteColumns,name='deleteColumn'),
+    path('preprocessing/categorical_data',views.cat_data,name='cat_data_form'),
     path('mlalgorithms/',views.mlalgorithms,name='mlalgorithms'),
     path('mlalgorithms/logistic_reg',views.logistic_reg,name='logistic_reg'),
     path('mlalgorithms/linear_reg',views.linear_reg,name='linear_reg'),
