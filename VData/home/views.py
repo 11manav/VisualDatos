@@ -228,64 +228,96 @@ def standard_Scaler(request):
 def fillingNullMean(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
-    # handle this in post request refer to minmax scaler for this
-    # mean_of_columns = data.mean()
-
-    # replace the data with the mean calculated
-    # for col in data.columns:
-    #     try:
-    #         data[col].fillna(mean_of_columns[col], inplace=True)
-    #     except:
-    #         print(col)
-    #         continue
-    # print("MEAN")
-    # code.append('data.fillna(mean_of_columns)')
-    # print("data_mean") 
-    # data.to_csv('./media/{}'.format(filename),index=False)
+    if request.method=='POST':
+        mean_of_columns = data.mean()
+        columns = request.POST.getlist('value-x')
+        print(len(columns))
+        for col in range(len(columns)):
+            code.append('data.fillna({})'.format(columns[col])) 
+            try:
+                data[columns[col]].fillna(mean_of_columns[columns[col]], inplace=True)
+                print(columns[col],"mean")
+            except:
+                print(columns[col])
+                continue
+        print(data.isnull().sum())    
+        data.to_csv('./media/{}'.format(filename),index=False)
+        data_html = data.head(10).to_html()
+        data_shape, nullValues, columns = getStatistics(data)
+        context = getContext(data_html,data_shape,nullValues,code,columns)
+        return render(request,'./preprocessing.html',context)
     data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
-    context = getContext(data_html,data_shape,nullValues,code,columns)
+    columns_send=[]
+    for col in data.columns:
+        datatypes = data.dtypes[col]
+        if datatypes=='float64' or datatypes=='int64':
+            columns_send.append(col)
+    context = getContext(data_html,data_shape,nullValues,code,columns_send)
     return render(request,'./meanForm.html',context)
 
 
 def fillingNullMedian(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
-    # handle this in post request refer to minmax scaler for this
-    # median_of_columns = data.median()
-
-    # # replace the data with the mean calculated
-    # for col in data.columns:
-    #     try:
-    #         data[col].fillna(median_of_columns[col], inplace=True)
-    #     except:
-    #         print(col)
-    #         continue
-    # code.append('data.fillna(median_of_columns)')    
-    # print("data_median")
-    # data.to_csv('./media/{}'.format(filename),index=False)
+    if request.method=='POST':
+        median_of_columns = data.median()
+        columns = request.POST.getlist('value-x')
+        print(len(columns))
+        for col in range(len(columns)):
+            code.append('data.fillna({})'.format(columns[col]))  
+            try:
+                data[columns[col]].fillna(median_of_columns[columns[col]], inplace=True)
+                print(columns[col],"median")
+            except:
+                print(columns[col])
+                continue
+  
+        print(data.isnull().sum())    
+        data.to_csv('./media/{}'.format(filename),index=False)
+        data_html = data.head(10).to_html()
+        data_shape, nullValues, columns = getStatistics(data)
+        context = getContext(data_html,data_shape,nullValues,code,columns)
+        return render(request,'./preprocessing.html',context)
     data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
-    context = getContext(data_html,data_shape,nullValues,code,columns)
+    columns_send=[]
+    for col in data.columns:
+        datatypes = data.dtypes[col]
+        if datatypes=='float64' or datatypes=='int64':
+            columns_send.append(col)
+    context = getContext(data_html,data_shape,nullValues,code,columns_send)
     return render(request,'./medianForm.html',context)
 
 
 def fillingNullMode(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
-    # handle this in post request refer to minmax scaler for this
-    # for col in data.columns:
-    #     try:
-    #         data[col].fillna(data.mode()[col][0], inplace=True)
-    #     except:
-    #         print(col)
-    #         continue
-    # code.append('data.fillna(data.mode())')     
-    # print("data_mode") 
-    # data.to_csv('./media/{}'.format(filename),index=False)
+    if request.method=='POST':
+        columns = request.POST.getlist('value-x')
+        print(len(columns))
+        for col in range(len(columns)):
+            code.append('data.fillna({})'.format(columns[col]))
+            try:
+                data[columns[col]].fillna(data.mode()[columns[col]][0], inplace=True)
+                print(columns[col],"mode")
+            except:
+                print(columns[col])
+                continue
+        print(data.isnull().sum())    
+        data.to_csv('./media/{}'.format(filename),index=False)
+        data_html = data.head(10).to_html()
+        data_shape, nullValues, columns = getStatistics(data)
+        context = getContext(data_html,data_shape,nullValues,code,columns)
+        return render(request,'./preprocessing.html',context)
     data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
-    context = getContext(data_html,data_shape,nullValues,code,columns)
+    columns_send=[]
+    for col in data.columns:
+        datatypes = data.dtypes[col]
+        if datatypes=='float64' or datatypes=='int64':
+            columns_send.append(col)
+    context = getContext(data_html,data_shape,nullValues,code,columns_send)
     return render(request,'./modeForm.html',context)
 
 
