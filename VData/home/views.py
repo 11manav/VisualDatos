@@ -14,7 +14,7 @@ from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score,confusion_matrix,mean_squared_error, r2_score
 # IMPORTANT!!! pip install scikit-learn
-from sklearn.preprocessing import  MinMaxScaler,StandardScaler
+from sklearn.preprocessing import  MinMaxScaler,StandardScaler,LabelEncoder
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap 
 
@@ -540,9 +540,27 @@ def kmeans(request):
 def cat_data(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
+    if request.method=='POST':
+        columns=request.POST.getlist('value-x')
+        for col in columns:
+            label_encoder =LabelEncoder()
+            data[col]= label_encoder.fit_transform(data[col])
+            data[col].unique()
+            #we can also pass value of each category for user info in statistics
+            # print(label_encoder.fit_transform(data[col]))
+        data.to_csv('./media/{}'.format(filename),index=False)
+        data_html = data.head(10).to_html()
+        data_shape, nullValues, columns = getStatistics(data)
+        context = getContext(data_html,data_shape,nullValues,code,columns)
+        return render(request,'./preprocessing.html',context)
     data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
-    context = getContext(data_html,data_shape,nullValues,code,columns)
+    columns_send=[]
+    for col in data.columns:
+        datatypes = data.dtypes[col]
+        if datatypes!='float64' and datatypes!='int64':
+            columns_send.append(col)
+    context = getContext(data_html,data_shape,nullValues,code,columns_send)
     return render(request,'./categoricalData_form.html',context)
 
 
