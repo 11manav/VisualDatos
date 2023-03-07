@@ -1,106 +1,36 @@
 {% extends "base.html" %} 
-{% block navbarContent %}
-{% load static %}
-<div class="container-fluid px-5">
-    <nav class="navbar navbar-expand-md navbar-light text-black">
-        <a class="navbar-brand font-weight-bold display-6" href="#">VisualDatos</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link text-black" href="{% url 'preprocessing'%}">Preprocessing</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link text-black" href="{% url 'mlalgorithms'%}">ML Algorithms</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link text-black" href="#">Visualization</a>
-            </li>
-          </ul>
-        </div>
-      </nav>
-</div>
-
-{% endblock %}
 {% block operation %}
 
-<section id="algo-form">
-<div class="row container-form">
-  <form action="" method="POST">
-      {% csrf_token%}
-      <h2>Categorical Data</h2>
-      <div class="row-form">
+<div class="col-12">
+  <div class="card">
+      <div class="card-body">
+          <form action="" method="POST">
+              {% csrf_token%}
+              <h2>Categorical Data</h2>
 
+                  <div class="row" data-select2-id="select2-data-8-1vyy">
 
-        <div class="col-md-6">
-          <div class="form-group">
-            <label class="form-label" for="columns">Select Column(s) :</label>
+                      <div class="col-lg-6 mb-3" data-select2-id="columns">
+                          <p class="mb-1 fw-bold text-muted">X :</p>
+                          <!-- Multiple Select -->
+                          <select class="js-select2 form-control select2-multiple" data-toggle="select2" multiple="multiple" data-placeholder="Choose Columns" id="value-x" name="value-x" >
+                              {% for col in columns %}
+                              <option value="{{col}}">
+                                  {{col | safe}}
+                              </option>
+                              {% endfor %}
+                          </select>
 
-            <!-- <input type="text" class="form-control" placeholder="" id="first"> -->
-            <select class="js-select2 nav-link" id="value-x" name="value-x" multiple>
-                {% for col in columns %}
-                <option class="dropdown-item"value="{{col}}">
-                  {{col | safe}}
-                </option>
-                {% endfor %}
-              </select>
-          </div>
-        </div>
-        <!--  col-md-6   -->
-  
-        
-      <!--  row   -->
-        <div class="nav-item active">
-          <button type="submit" class="nav-link"> Apply
-          </button>
-        </div>
+                              
+                      </div> <!-- end col -->
 
-    </form>
-  </div>
+                      
+                  </div> <!-- end row -->
 
-</section>
+                  <button type="submit" class="btn btn-outline-primary mt-2">Apply</button>                   
+          </form>
+      </div> <!-- end card-body-->
+  </div> <!-- end card-->
+</div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
-<script>
-  $(".js-select2").select2({
-    closeOnSelect : false,
-    placeholder : " Select Features",
-    // allowHtml: true,
-    allowClear: true,
-    tags: true 
-  });
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{%endblock%}
+{% endblock operation %}
