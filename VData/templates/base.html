@@ -245,7 +245,16 @@
                                         {% if null_count %}
                                         <a href="{% url 'preprocessing' %}">Remove Null Values</a>
                                         {% else %}
-                                        <a class="disabled text-muted" href="javascript:void(0);">No Null Values available</a>
+                                        
+                                        <a data-bs-toggle="collapse" href="#removeNullValues" aria-expanded="false" aria-controls="removeNullValues">
+                                            <span> Remove Null Values </span>
+                                            <span class="menu-arrow"></span>
+                                        </a>
+                                        <div class="collapse" id="removeNullValues">
+                                            <ul class="side-nav-third-level">
+                                                <a class="disabled text-muted" href="javascript:void(0);">No Null Values available</a>
+                                            </ul>
+                                        </div>
                                         {% endif %}
                                     </li>
 
@@ -335,55 +344,24 @@
                             <div class="collapse" id="sidebarVisualisation">
                                 <ul class="side-nav-second-level">
                                     <li>
-                                        <a href="apps-ecommerce-products.html">TBA</a>
+                                        <a href="#scrollable-modal" data-bs-toggle="modal">Correlation Matrix (Not working)</a>
                                     </li>
                                     <li>
-                                        <a href="apps-ecommerce-products-details.html">TBA</a>
+                                        <a href="{% url 'pie_chart' %}">Pie Chart</a>
                                     </li>
                                     <li>
-                                        <a href="apps-ecommerce-orders.html">TBA</a>
+                                        <a href="{% url 'histogram' %}">Histogram</a>
                                     </li>
                                     <li>
-                                        <a href="apps-ecommerce-orders-details.html">TBA</a>
+                                        <a href="{% url 'box_plot' %}">Box Plot</a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'line_plot' %}">Line Plot</a>
                                     </li>
                                     
                                 </ul>
                             </div>
                         </li>
-
-                        
-
-                        
-
-                        
-
-                        
-
-                        
-
-                        
-
-                        
-
-                        
-
-
-                        
-
-                        
-
-                        
-
-                       
-
-                       
-
-                       
-
-
-                        
-
-
                     </ul>
                     <!--- End Sidemenu -->
 

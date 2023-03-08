@@ -565,3 +565,45 @@ def cat_data(request):
 
 
 
+def visualisation(request):
+    filename = request.session.get('filename', None)
+    data = pd.read_csv('./media/{}'.format(filename))
+    data_html = data.head(10).to_html()
+    data_shape, nullValues, columns = getStatistics(data)
+    context = getContext(data_html,data_shape,nullValues,code,columns)
+    return render(request,'./visualisation.html',context)
+
+
+def pie_chart(request):
+    filename = request.session.get('filename', None)
+    data = pd.read_csv('./media/{}'.format(filename))
+    data_html = data.head(10).to_html()
+    data_shape, nullValues, columns = getStatistics(data)
+    context = getContext(data_html,data_shape,nullValues,code,columns)
+    return render(request,'./pie_chart.html',context)
+
+def histogram(request):
+    filename = request.session.get('filename', None)
+    data = pd.read_csv('./media/{}'.format(filename))
+    data_html = data.head(10).to_html()
+    data_shape, nullValues, columns = getStatistics(data)
+    context = getContext(data_html,data_shape,nullValues,code,columns)
+    return render(request,'./histogram.html',context)
+
+def box_plot(request):
+    filename = request.session.get('filename', None)
+    data = pd.read_csv('./media/{}'.format(filename))
+    data_html = data.head(10).to_html()
+    data_shape, nullValues, columns = getStatistics(data)
+    context = getContext(data_html,data_shape,nullValues,code,columns)
+    return render(request,'./box_plot.html',context)
+
+def line_plot(request):
+    filename = request.session.get('filename', None)
+    data = pd.read_csv('./media/{}'.format(filename))
+    data_html = data.head(10).to_html()
+    data_shape, nullValues, columns = getStatistics(data)
+    context = getContext(data_html,data_shape,nullValues,code,columns)
+    return render(request,'./line_plot.html',context)
+
+
