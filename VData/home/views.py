@@ -434,7 +434,7 @@ def linear_reg(request):
         score = r2_score(y_test, y_pred)
         
         plt.switch_backend('Agg')
-        plt.scatter(X_test, y_test, color="black")
+        plt.scatter(X_test[:,0], y_test, color="black")
         plt.plot(X_test, y_pred, color="blue", linewidth=3)
 
         session_key = request.session.get('session_key', None)
@@ -509,6 +509,7 @@ def knn(request):
 def kmeans(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
+
  #-------->We will provide Elbow method to user so that he could figure out number of clusters<-------------------
  # elbow method is plotting of scatter plot so 2 options we have either in visualization section or in Kmeans section will decide<---- 
  # After that we will process K means algo ...
@@ -521,7 +522,7 @@ def kmeans(request):
         y_pred=kmeans.fit_predict(X)
         accuracy="NA" #not avialable so kept zero
         variance_score="NA" #not avialable so kept zero
-        context={'accuracy':accuracy,'variance_score':variance_score,'y_predict':y_pred}
+        
         code1="x={}".format(X1)
         code2="kmeans = KMeans(n_clusters=int({}) init='k-means++',random_state= 42)".format(no_of_clusters)
         code3=["y_pred=kmeans.fit_predict(X)"]
@@ -530,6 +531,21 @@ def kmeans(request):
         code.extend(code3)
         # code.append("x={},kmeans = KMeans(n_clusters=int({}), init='k-means++', random_state= 42),y_pred=kmeans.fit_predict(X),accuracy= ,variance_score= ".format(X1,no_of_clusters))
         #Need to pass on plots of cluster as output...
+
+        # Visualization
+        plt.switch_backend('Agg')
+        plt.scatter(X.iloc[:, 0], X.iloc[:, 1], c=y_pred, s=50, cmap='viridis')
+        centers = kmeans.cluster_centers_
+        plt.scatter(centers[:, 0], centers[:, 1], c='black', s=200, alpha=0.5)
+
+        session_key = request.session.get('session_key', None)
+
+        fig_location = './media/kmeans{}.png'.format(session_key)
+        plt.savefig(fig_location)   
+        image_url = '../media/kmeans{}.png'.format(session_key) 
+
+        context={'accuracy':accuracy,'variance_score':variance_score,'y_predict':y_pred,'image_url':image_url}
+
         return render(request,'./results.html',context) #different template will come need to change kept it temprory
 
     data_html = data.head(10).to_html()
