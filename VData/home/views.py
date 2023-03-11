@@ -3,7 +3,7 @@ from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 import os
 import pandas as pd
-import numpy as nm
+import numpy as np
 import time
 from django.http import HttpResponse
 
@@ -17,6 +17,8 @@ from sklearn.metrics import accuracy_score,confusion_matrix,mean_squared_error, 
 from sklearn.preprocessing import  MinMaxScaler,StandardScaler,LabelEncoder
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap 
+from mlxtend.plotting import plot_decision_regions
+from scipy.special import expit
 
 # Global Variables
 code = [] 
@@ -399,6 +401,21 @@ def logistic_reg(request):
         code.append(code3)
         code4=[" model = LogisticRegression()","model.fit(X_train, y_train)","y_pred = model.predict(X_test)" ,"confusion = confusion_matrix(y_test, y_pred)","accuracy = accuracy_score(y_test, y_pred)"]
         code.extend(code4)
+
+        plt.switch_backend('Agg')
+        sigmoid = expit(y_test)
+        plt.plot(X_test, sigmoid.ravel(), c="green")
+        plt.yticks([0, 0.2, 0.4, 0.5, 0.6, 0.7, 1])
+        plt.axhline(.5, color="red", label="cutoff")
+
+        session_key = request.session.get('session_key', None)
+
+        fig_location = './media/linearReg{}.png'.format(session_key)
+        plt.savefig(fig_location)
+
+        image_url = '../media/linearReg{}.png'.format(session_key)
+
+
         return render(request,'./results.html',context)
     data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
@@ -473,20 +490,18 @@ def knn(request):
         X1 = request.POST.getlist('value-x')
         y1 = request.POST['value-y']
         test_size1=request.POST['test_size']
-        if len(X1)==1:
-            X = data[X1].values.reshape(-1,1)
-        else:
-            X=data[X1] 
+        X = data[X1]  
         y = data[y1]
+
         test1=int(test_size1)/100
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=int(test_size1)/100, random_state=10)
         knn=KNeighborsClassifier(int(no_of_neighbours))
         knn.fit(X_train,y_train)
         y_pred=knn.predict(X_test)
         accuracy = accuracy_score(y_test, y_pred)
-        # print(accuracy)
+        print("accuracy: ",accuracy)
         variance_score=knn.score(X_test,y_test)
-        context={'accuracy':accuracy,'variance_score':variance_score,'y_predict':y_pred}
+        
         # print("Successfylyyy",y_pred)
         # code.append(" X-{},y-{},X_train, X_test, y_train, y_test = train_test_split(X, y, test_size={}, random_state=10) ,  knn=KNeighborsClassifier(int({})),knn.fit(X_train,y_train),y_pred=knn.predict(X_test),accuracy = accuracy_score(y_test, y_pred),\nvariance_score=knn.score(X_test,y_test)".format(X1,y1,test1,no_of_neighbours))
         code1="X-{}".format(X1)
@@ -500,7 +515,19 @@ def knn(request):
         code.append(code4)
         code5=["y_pred = knn.predict(X_test)","accuracy = accuracy_score(y_test, y_pred)","variance_score=knn.score(X_test,y_test)"]
         code.extend(code5)
-        return render(request,'./results.html',context)
+
+        plt.switch_backend('Agg')
+        plot_decision_regions(X_test.values,y_test.values,knn)
+
+        session_key = request.session.get('session_key', None)
+
+        fig_location = './media/knn{}.png'.format(session_key)
+        plt.savefig(fig_location)
+        image_url = '../media/knn{}.png'.format(session_key)
+
+        context = {'accuracy': accuracy, 'variance_score': variance_score,
+                   'y_predict': y_pred, 'image_url': image_url}
+        return render(request, './results.html', context)
     data_html = data.to_html()
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html,data_shape,nullValues,code,columns)
