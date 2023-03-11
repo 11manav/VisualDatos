@@ -4,3 +4,5 @@ __pycache__
 *.pyc
 session
 VData/ToDo.txt
+Iris.csv
+.DS_Store
