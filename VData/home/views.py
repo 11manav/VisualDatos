@@ -18,7 +18,7 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler, LabelEncoder
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from mlxtend.plotting import plot_decision_regions
-from scipy.special import expit
+import seaborn as sns
 
 # Global Variables
 code = []
@@ -405,11 +405,12 @@ def logistic_reg(request):
         code.extend(code4)
 
         plt.switch_backend('Agg')
-        sigmoid = expit(y_test)
-        plt.plot(X_test, sigmoid.ravel(), c="green")
-        plt.yticks([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
-        plt.axhline(.5, color="red", label="cutoff")
+        # plt.plot(X_test, y_test, c="green")
+        # plt.yticks([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
+        # plt.axhline(.5, color="red", label="cutoff")
 
+        sns.regplot(x=X_test, y=y_test, data=data, logistic=True, ci=None,scatter_kws = {'color': 'black'}, line_kws = {'color': 'red'})
+        
         session_key = request.session.get('session_key', None)
 
         fig_location = './media/logisticReg{}.png'.format(session_key)
