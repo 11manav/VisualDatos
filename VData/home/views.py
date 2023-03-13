@@ -636,6 +636,7 @@ def visualisation(request):
 def pie_chart(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
+    
     data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html, data_shape, nullValues, code, columns)
@@ -645,18 +646,51 @@ def pie_chart(request):
 def histogram(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
+    if request.method == 'POST':
+        column= request.POST.getlist('value-x')
+        plt.switch_backend('Agg')
+        sns.histplot(data[column])
+        session_key = request.session.get('session_key', None)
+        fig_location = './media/histoplot{}.png'.format(session_key)
+        plt.savefig(fig_location)
+
+        image_url = '../media/histoplot{}.png'.format(session_key)
+        context={"image_url":image_url}
+        return render(request, './visualization_output.html', context)
+       
     data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, code, columns)
+    columns_send = []
+    for col in data.columns:
+        datatypes = data.dtypes[col]
+        if datatypes == 'float64' or datatypes == 'int64':
+            columns_send.append(col)
+    context = getContext(data_html, data_shape, nullValues, code, columns_send)
     return render(request, './histogram.html', context)
 
 
 def box_plot(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
+    if request.method == 'POST':
+        columns= request.POST.getlist('value-x')
+        plt.switch_backend('Agg')
+        sns.boxplot(data[columns])
+        session_key = request.session.get('session_key', None)
+        fig_location = './media/boxplot{}.png'.format(session_key)
+        plt.savefig(fig_location)
+
+        image_url = '../media/boxplot{}.png'.format(session_key)
+        context={"image_url":image_url}
+        return render(request, './visualization_output.html', context)
     data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, code, columns)
+    columns_send = []
+    for col in data.columns:
+        datatypes = data.dtypes[col]
+        if datatypes == 'float64' or datatypes == 'int64':
+            columns_send.append(col)
+    context = getContext(data_html, data_shape, nullValues, code, columns_send)
     return render(request, './box_plot.html', context)
 
 
