@@ -1,0 +1,13 @@
+Remaining
+
+4. Figma - Manav
+
+6. Code Session Handling and Making Local Copy - Aryan
+
+Landing Page
+Homepage 
+Different URL for Landing Page , Upload Dataset Page, Dashboard
+
+Correlation matrix
+Pie Chart
+Line Plot
