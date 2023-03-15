@@ -628,17 +628,45 @@ def visualisation(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
     data_html = data.head(10).to_html()
+    plt.switch_backend('Agg')
+    sns.heatmap(data.corr(), cmap="YlGnBu", annot=True)
+    session_key = request.session.get('session_key', None)
+    fig_location = './media/correlational_matrix{}.png'.format(session_key)
+    plt.savefig(fig_location)
+    image_url = '../media/correlational_matrix{}.png'.format(session_key)
     data_shape, nullValues, columns = getStatistics(data)
     context = getContext(data_html, data_shape, nullValues, code, columns)
+    context.update({'image_url':image_url})
     return render(request, './visualisation.html', context)
 
 
 def pie_chart(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
-    
+    # if request.method == 'POST':
+    #     column= request.POST.getlist('value-x')
+    #     print(data[column].value_counts().count())
+    #     grouped=data.groupby(column).groups
+    #     for group in grouped:
+    #         print(group)
+         
+        # print(data[column].categories)
+        # plt.switch_backend('Agg')
+        # sns.histplot(data[column])
+        # session_key = request.session.get('session_key', None)
+        # fig_location = './media/histoplot{}.png'.format(session_key)
+        # plt.savefig(fig_location)
+
+        # image_url = '../media/histoplot{}.png'.format(session_key)
+        # context={"image_url":image_url}
+        # return render(request, './visualization_output.html', context)
     data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
+    # columns_send = []
+    # for col in data.columns:
+    #     # datatypes = data.dtypes[col].name
+    #     if data.dtypes[col].name == 'category':
+    #         columns_send.append(col)
     context = getContext(data_html, data_shape, nullValues, code, columns)
     return render(request, './pie_chart.html', context)
 
@@ -697,7 +725,23 @@ def box_plot(request):
 def line_plot(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
+    if request.method == 'POST':
+        columns= request.POST.getlist('value-x')
+        plt.switch_backend('Agg')
+        sns.lineplot(data[columns])
+        session_key = request.session.get('session_key', None)
+        fig_location = './media/lineplot{}.png'.format(session_key)
+        plt.savefig(fig_location)
+
+        image_url = '../media/lineplot{}.png'.format(session_key)
+        context={"image_url":image_url}
+        return render(request, './visualization_output.html', context)
     data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, code, columns)
+    columns_send = []
+    for col in data.columns:
+        datatypes = data.dtypes[col]
+        if datatypes == 'float64' or datatypes == 'int64':
+            columns_send.append(col)
+    context = getContext(data_html, data_shape, nullValues, code, columns_send)
     return render(request, './line_plot.html', context)
