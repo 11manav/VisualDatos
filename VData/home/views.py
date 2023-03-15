@@ -643,31 +643,33 @@ def visualisation(request):
 def pie_chart(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
-    # if request.method == 'POST':
-    #     column= request.POST.getlist('value-x')
-    #     print(data[column].value_counts().count())
-    #     grouped=data.groupby(column).groups
-    #     for group in grouped:
-    #         print(group)
-         
-        # print(data[column].categories)
-        # plt.switch_backend('Agg')
-        # sns.histplot(data[column])
-        # session_key = request.session.get('session_key', None)
-        # fig_location = './media/histoplot{}.png'.format(session_key)
-        # plt.savefig(fig_location)
-
-        # image_url = '../media/histoplot{}.png'.format(session_key)
-        # context={"image_url":image_url}
-        # return render(request, './visualization_output.html', context)
+    if request.method == 'POST':
+        column= request.POST.getlist('value-x')
+        # print(data[column].value_counts().count())
+        grouped=data.groupby(column).groups
+        categories=[]     #all categories names
+        for group in grouped:
+            categories.append(group)
+        single_column=data[column].value_counts()  #particular column total count
+        cnts=[]  # for storing cnt of individual categories
+        for cnt in categories:
+            cnts.append(single_column[cnt])
+        plt.switch_backend('Agg')
+        plt.pie(cnts,labels=categories,autopct='%.0f%%')
+        session_key = request.session.get('session_key', None)
+        fig_location = './media/pieplot{}.png'.format(session_key)
+        plt.savefig(fig_location)
+        image_url = '../media/pieplot{}.png'.format(session_key)
+        context={"image_url":image_url}
+        return render(request, './visualization_output.html', context)
     data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
-    # columns_send = []
-    # for col in data.columns:
-    #     # datatypes = data.dtypes[col].name
-    #     if data.dtypes[col].name == 'category':
-    #         columns_send.append(col)
-    context = getContext(data_html, data_shape, nullValues, code, columns)
+    columns_send = []
+    for col in data.columns:
+        datatypes = data.dtypes[col].name
+        if datatypes != 'float64' and datatypes != 'int64':
+            columns_send.append(col)
+    context = getContext(data_html, data_shape, nullValues, code, columns_send)
     return render(request, './pie_chart.html', context)
 
 
