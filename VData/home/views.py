@@ -111,12 +111,19 @@ def home(request):
         code.append("data = pd.read_csv('{}')".format(myfile.name))
 
         data = pd.read_csv('./media/{}'.format(newFileName))
-
+        
+        plt.switch_backend('Agg')
+        sns.heatmap(data.corr(), cmap="YlGnBu", annot=True)
+        fig_location = './media/correlational_matrix{}.png'.format(session_key)
+        plt.savefig(fig_location)
+        image_url = '../media/correlational_matrix{}.png'.format(session_key)
         # data = data.head(10)
+        
         data_html = data.head(10).to_html()
         data_shape, nullValues, columns = getStatistics(data)
 
         context = getContext(data_html, data_shape, nullValues, code, columns)
+        context.update({'image_url':image_url})
 
         # print(code)
         return render(request, './main.html', context)
@@ -747,3 +754,16 @@ def line_plot(request):
             columns_send.append(col)
     context = getContext(data_html, data_shape, nullValues, code, columns_send)
     return render(request, './line_plot.html', context)
+
+def elbow_plot(request):
+    filename = request.session.get('filename', None)
+    data = pd.read_csv('./media/{}'.format(filename))
+    data_html = data.head(10).to_html()
+    data_shape, nullValues, columns = getStatistics(data)
+    columns_send = []
+    for col in data.columns:
+        datatypes = data.dtypes[col].name
+        if datatypes != 'float64' and datatypes != 'int64':
+            columns_send.append(col)
+    context = getContext(data_html, data_shape, nullValues, code, columns_send)
+    return render(request, './elbow_plot.html', context)

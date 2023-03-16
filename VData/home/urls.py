@@ -27,5 +27,6 @@ urlpatterns = [
     path('visualisation/pie_chart',views.pie_chart,name='pie_chart'),
     path('visualisation/histogram',views.histogram,name='histogram'),
     path('visualisation/box_plot',views.box_plot,name='box_plot'),
-    path('visualisation/line_plot',views.line_plot,name='line_plot')
+    path('visualisation/line_plot',views.line_plot,name='line_plot'),
+    path('visualisation/elbow_plot',views.elbow_plot,name='elbow_plot')
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
