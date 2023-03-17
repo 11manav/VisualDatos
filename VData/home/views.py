@@ -767,3 +767,16 @@ def elbow_plot(request):
             columns_send.append(col)
     context = getContext(data_html, data_shape, nullValues, code, columns_send)
     return render(request, './elbow_plot.html', context)
+
+def landing(request):
+    filename = request.session.get('filename', None)
+    data = pd.read_csv('./media/{}'.format(filename))
+    data_html = data.head(10).to_html()
+    data_shape, nullValues, columns = getStatistics(data)
+    columns_send = []
+    for col in data.columns:
+        datatypes = data.dtypes[col].name
+        if datatypes != 'float64' and datatypes != 'int64':
+            columns_send.append(col)
+    context = getContext(data_html, data_shape, nullValues, code, columns_send)
+    return render(request, './landing.html', context)
