@@ -8,9 +8,17 @@
         <div class="card-body">
             <form action="" method="POST">
                 {% csrf_token%}
-                <h2>Elbow Plot - Pushpak Parameters Saang</h2>
-            
-                </div> <!-- end tab-content-->
+                <h2>Elbow Plot</h2>
+                <div class="row" data-select2-id="select2-data-8-1vyy">
+                    <div class="col-lg-6 mb-3">
+                        <div>
+                            <label for="no_of_clusters" class="form-label">Test for number of K clusters</label>
+                            <input class="form-control" id="no_of_clusters" type="number" name="test_for_no_of_clusters" placeholder="Enter Test for Number of K Clusters">
+                        </div>  
+                    </div>
+                  </div> <!-- end row -->
+                  <button type="submit" class="btn btn-outline-primary mt-2">Apply</button> 
+                        
             </form>
         </div> <!-- end card-body-->
     </div> <!-- end card-->
