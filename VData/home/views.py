@@ -758,12 +758,38 @@ def line_plot(request):
 def elbow_plot(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
+    if request.method == 'POST':
+        columns= request.POST.getlist('value-x')
+        #loop_cnt cant be more than the record size otherwise it willgive the error # ERROR HANDLING
+        loop_cnt=request.POST.get('test_for_no_of_clusters')
+        print(columns,loop_cnt)
+        wcss_list= []      
+        for i in range(1, int(loop_cnt)+1):
+            kmeans = KMeans(n_clusters=i, init='k-means++', random_state= 42)  
+            kmeans.fit(data[columns])  
+            wcss_list.append(kmeans.inertia_)
+        plt.switch_backend('Agg')  
+        plt.plot(range(1, int(loop_cnt)+1), wcss_list)  
+        plt.title('The Elobw Method Graph')  
+        plt.xlabel('Number of clusters(k)')  
+        plt.ylabel('wcss_list')  
+        session_key = request.session.get('session_key', None)
+        fig_location = './media/elbowplot{}.png'.format(session_key)
+        plt.savefig(fig_location)
+
+        image_url = '../media/elbowplot{}.png'.format(session_key)
+        context={"image_url":image_url}
+        return render(request, './visualization_output.html', context)
+    
+
+
+
     data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
     columns_send = []
     for col in data.columns:
         datatypes = data.dtypes[col].name
-        if datatypes != 'float64' and datatypes != 'int64':
+        if datatypes == 'float64' or datatypes == 'int64':
             columns_send.append(col)
     context = getContext(data_html, data_shape, nullValues, code, columns_send)
     return render(request, './elbow_plot.html', context)
