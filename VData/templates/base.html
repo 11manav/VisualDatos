@@ -324,14 +324,27 @@
                                 <!-- Personal-Information -->
                                 <div class="card">
                                     <div class="card-body">
-                                        <h4 class="header-title mt-0 mb-3">Code</h4>
-                                        <div class="code" data-simplebar style="height: 300px;">
-                                            <code>  
-                                              {% for col in backgroundCode %}
-                                                <span>{{col | safe}} </span> <br>
-                                              {% endfor %}
-                                            </code>
-                                          </div>
+                                        <h4 class="header-title" style="margin-bottom: 26px">
+                                            Code
+                                        </h4>
+    
+                                        <div class="tab-content">
+                                            <div class="tab-pane code active show" id="input-types-code" role="tabpanel">
+                                                <button class="btn-copy-clipboard" data-clipboard-action="copy">
+                                                    Copy
+                                                </button>
+                                                <pre class="mb-0" style="height: 300px">
+<code class="html escape language-python">
+{% for code in backgroundCode %}{{code | safe}}
+{% endfor %}
+</code>
+                                                    </pre>
+    
+                                                <!-- end highlight-->
+                                            </div>
+                                            <!-- end preview code-->
+                                        </div>
+                                        <!-- end tab-content-->
                                     </div>
                                 </div>  
                                 <!-- Personal-Information -->
@@ -1087,12 +1100,16 @@
         <!-- App js -->
         <script src="{% static 'assets/js/app.min.js' %}"></script>
 
+        <!-- Code Highlight js -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+
 
 
         <script>
             $("table").addClass("table table-centered table-nowrap table-hover table-bordered mb-0");
             $("h5").addClass("font-14 my-1 fw-normal");
-            $("table span").addClass("text-muted font-13");            
+            $("table span").addClass("text-muted font-13");
+            hljs.highlightAll();            
         </script>
 
     </body>
