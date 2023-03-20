@@ -323,17 +323,20 @@
                             <div class="col-lg-4">
                                 <!-- Personal-Information -->
                                 <div class="card">
-                                    <div class="card-body">
-                                        <h4 class="header-title" style="margin-bottom: 26px">
-                                            Code
+                                    <div class="d-flex card-header justify-content-between align-items-center">
+                                        <h4 class="text-bold mb-1">
+                                            CODE
                                         </h4>
-    
+                                    </div>
+
+                                    <div class="card-body pt-0">
+                                        
                                         <div class="tab-content">
                                             <div class="tab-pane code active show" id="input-types-code" role="tabpanel">
-                                                <button class="btn-copy-clipboard" data-clipboard-action="copy">
+                                                <!-- <button class="btn-copy-clipboard" data-clipboard-action="copy">
                                                     Copy
-                                                </button>
-                                                <pre class="mb-0" style="height: 300px">
+                                                </button> -->
+                                                <pre class="mb-0" style="height: 304px; border-bottom: 1px solid var(--ct-gray-300); overflow-x:hidden">
 <code class="html escape language-python">
 {% for code in backgroundCode %}{{code | safe}}
 {% endfor %}
@@ -341,6 +344,9 @@
                                                     </pre>
     
                                                 <!-- end highlight-->
+                                                <button class="btn-copy-clipboard" data-clipboard-action="copy" style="position:relative; top:0; right:0; margin:10px; ">
+                                                    Copy
+                                                </button>
                                             </div>
                                             <!-- end preview code-->
                                         </div>
@@ -360,7 +366,9 @@
                         <div class="col-lg-5">
                             <div class="card">
                                 <div class="d-flex card-header justify-content-between align-items-center">
-                                    <h4 class="header-title">Dataset</h4>
+                                    <h4 class="text-bold mb-1">
+                                        DATASET
+                                    </h4>
                                     <div class="dropdown">
                                         <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="mdi mdi-dots-vertical"></i>
@@ -375,7 +383,7 @@
                                 </div>
 
                                 <div class="card-body pt-0">
-                                    <div class="table-responsive" data-simplebar style="height: 300px;">
+                                    <div class="table-responsive" data-simplebar style="height: 357px;">
                                         {% block dataset %}
                                         {{loaded_data | safe | default:"Dataframe is Empty!"}}
                                         {% endblock dataset %}
@@ -387,10 +395,13 @@
 
                         <div class="col-lg-3">
                             <div class="card">
-                                <div class="card-body">
-                                    <h4 class="header-title mb-3">Statistics</h4>
-        
-                                    <div class="table-responsive"  data-simplebar style="height: 300px;">
+                                <div class="d-flex card-header justify-content-between align-items-center">
+                                    <h4 class="text-bold mb-1">
+                                        STATISTICS
+                                    </h4>
+                                </div>
+                                <div class="card-body pt-0">
+                                    <div class="table-responsive"  data-simplebar style="height: 357px;">
                                         <table class="table mb-0">
                                             <thead class="table-light">
                                             <tr>

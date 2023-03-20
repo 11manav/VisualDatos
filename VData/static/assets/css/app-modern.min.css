@@ -5448,8 +5448,8 @@ fieldset:disabled .btn {
 }
 
 .card {
-    --ct-card-spacer-y: 1.5rem;
-    --ct-card-spacer-x: 1.5rem;
+    --ct-card-spacer-y: 1.1rem;
+    --ct-card-spacer-x: 1.1rem;
     --ct-card-title-spacer-y: 0.75rem;
     --ct-card-border-width: var(--ct-theme-card-border-width);
     --ct-card-border-color: var(--ct-gray-300);
