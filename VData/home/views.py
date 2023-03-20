@@ -45,6 +45,8 @@ def getContext(data_html, data_shape, nullValues,datatypes,memory_usage,datafram
 def getStatistics(data):
     return data.shape, data.isna().sum().sum(),data.dtypes,data.memory_usage().sum(),data.size,list(data.columns)
 
+
+
 # --------------------------------------------------------
 
 # ----------- Session File Handling --------------------
@@ -109,7 +111,19 @@ def home(request):
             fs.delete(newFileName)
         fs.save(newFileName, myfile)
 
-        request.session['filename'] = newFileName
+        file_path = os.path.join(settings.MEDIA_ROOT, "code"+session_key+".txt")
+
+        codeFileName = "code"+session_key+".txt"
+        print("Code File Name: ", codeFileName)
+
+        try:
+            open(file_path, 'x')
+        except:
+            print("File Already Exists For Current Session")
+
+        request.session['dataset'] = newFileName
+        request.session['codeFileName'] = codeFileName
+
 
         code.append("data = pd.read_csv('{}')".format(myfile.name))
 
@@ -335,29 +349,6 @@ def fillingNullMode(request):
     data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
     context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
     return render(request, './modeForm.html', context)
-
-
-def fillingNullModeNumeric(request):
-    filename = request.session.get('filename', None)
-    data = pd.read_csv('./media/{}'.format(filename))
-    # handle this in post request refer to minmax scaler for this
-    # for col in data.columns:
-    #     if data[col].dtypes == object:
-    #         pass
-    #     else:
-    #         try:
-    #             data[col].fillna(data.mode()[col][0], inplace=True)
-    #         except:
-    #             print(col)
-    #             continue
-    # code.append('data.fillna(data.modenumeric())')
-    # print("mode_numeric")
-    # data.to_csv('./media/{}'.format(filename),index=False)
-    data_html = data.head(10).to_html()
-    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
-    return render(request, './modeForm.html', context)
-
 
 def deleteColumns(request):
     filename = request.session.get('filename', None)
@@ -787,9 +778,6 @@ def elbow_plot(request):
         image_url = '../media/elbowplot{}.png'.format(session_key)
         context={"image_url":image_url}
         return render(request, './visualization_output.html', context)
-    
-
-
 
     data_html = data.head(10).to_html()
     columns_send = []
@@ -802,14 +790,4 @@ def elbow_plot(request):
     return render(request, './elbow_plot.html', context)
 
 def landing(request):
-    # filename = request.session.get('filename', None)
-    # data = pd.read_csv('./media/{}'.format(filename))
-    # data_html = data.head(10).to_html()
-    # columns_send = []
-    # for col in data.columns:
-    #     datatypes = data.dtypes[col].name
-    #     if datatypes != 'float64' and datatypes != 'int64':
-    #         columns_send.append(col)
-    # data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-    # context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
     return render(request, './landing.html')

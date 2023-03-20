@@ -1,13 +1,8 @@
-Remaining
 
-4. Figma - Manav
+Different URL for Landing Page , Upload Dataset Page, Dashboard -  Pushpak
 
-6. Code Session Handling and Making Local Copy - Aryan
+correlational_matrix issue
 
-Landing Page
-Homepage 
-Different URL for Landing Page , Upload Dataset Page, Dashboard
+Redirect to upload dataset page if no dataset uploaded (protected route)
 
-Correlation matrix
-Pie Chart
-Line Plot
+confusion_matrix statistics

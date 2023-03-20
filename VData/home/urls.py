@@ -15,7 +15,6 @@ urlpatterns = [
     path('preprocessing/fillna_mean',views.fillingNullMean,name='fillingNullMean'),
     path('preprocessing/fillna_median',views.fillingNullMedian,name='fillingNullMedian'),
     path('preprocessing/fillna_mode',views.fillingNullMode,name='fillingNullMode'),
-    path('preprocessing/fillna_modenumeric',views.fillingNullModeNumeric,name='fillingNullModeNumeric'),
     path('preprocessing/delete',views.deleteColumns,name='deleteColumn'),
     path('preprocessing/categorical_data',views.cat_data,name='cat_data_form'),
     path('mlalgorithms/',views.mlalgorithms,name='mlalgorithms'),
