@@ -27,20 +27,23 @@ code = []
 
 # --------Common data required for all pages--------------
 
-def getContext(data_html, data_shape, nullValues, code, columns):
+def getContext(data_html, data_shape, nullValues,datatypes,memory_usage,dataframe_size, code, columns):
     if (len(columns) == 0):
         data_html = ""
 
     context = {'loaded_data': data_html,
                'shape_of_data': data_shape,
                'null_count': nullValues,
+               'datatypes':datatypes,
+               'memory_usage':memory_usage,
+               'dataframe_size':dataframe_size,
                'backgroundCode': code,
                'columns': columns}
     return context
 
 
 def getStatistics(data):
-    return data.shape, data.isna().sum().sum(), list(data.columns)
+    return data.shape, data.isna().sum().sum(),data.dtypes,data.memory_usage().sum(),data.size,list(data.columns)
 
 # --------------------------------------------------------
 
@@ -120,9 +123,10 @@ def home(request):
         # data = data.head(10)
         
         data_html = data.head(10).to_html()
-        data_shape, nullValues, columns = getStatistics(data)
+        data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
 
-        context = getContext(data_html, data_shape, nullValues, code, columns)
+        context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
+       
         context.update({'image_url':image_url})
 
         # print(code)
@@ -134,9 +138,8 @@ def showFulldataset(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
     data_html = data.to_html()
-    data_shape, nullValues, columns = getStatistics(data)
-
-    context = getContext(data_html, data_shape, nullValues, code, columns)
+    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
 
     return render(request, './showFulldataset.html', context)
 
@@ -145,9 +148,8 @@ def preprocessing(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
     data_html = data.head(10).to_html()
-    data_shape, nullValues, columns = getStatistics(data)
-
-    context = getContext(data_html, data_shape, nullValues, code, columns)
+    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
 
     return render(request, './preprocessing.html', context)
 
@@ -160,9 +162,9 @@ def dropingnull(request):
     print('dropingnull')
     data.to_csv('./media/{}'.format(filename), index=False)
     data_html = data.head(10).to_html()
-    data_shape, nullValues, columns = getStatistics(data)
+    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
 
-    context = getContext(data_html, data_shape, nullValues, code, columns)
+    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
 
     return render(request, './preprocessing.html', context)
 
@@ -185,18 +187,20 @@ def minmaxScaler(request):
         code.append("minmax_scaler()")
         data.to_csv('./media/{}'.format(filename), index=False)
         data_html = data.head(10).to_html()
-        data_shape, nullValues, columns = getStatistics(data)
-        context = getContext(data_html, data_shape, nullValues, code, columns)
+        data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+
+        context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
         return render(request, './preprocessing.html', context)
     # only integer and float type columns will be send
     data_html = data.head(10).to_html()
-    data_shape, nullValues, columns = getStatistics(data)
+  
     columns_send = []
     for col in data.columns:
         datatypes = data.dtypes[col]
         if datatypes == 'float64' or datatypes == 'int64':
             columns_send.append(col)
-    context = getContext(data_html, data_shape, nullValues, code, columns_send)
+    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
     return render(request, './minmaxScale.html', context)
 
 
@@ -215,19 +219,19 @@ def standard_Scaler(request):
         print("standard_scaler")
         data.to_csv('./media/{}'.format(filename), index=False)
         data_html = data.head(10).to_html()
-        data_shape, nullValues, columns = getStatistics(data)
-        context = getContext(data_html, data_shape, nullValues, code, columns)
+        data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+        context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
         return render(request, './preprocessing.html', context)
 
     data_html = data.head(10).to_html()
-    data_shape, nullValues, columns = getStatistics(data)
     # only integer and float type columns will be send
     columns_send = []
     for col in data.columns:
         datatypes = data.dtypes[col]
         if datatypes == 'float64' or datatypes == 'int64':
             columns_send.append(col)
-    context = getContext(data_html, data_shape, nullValues, code, columns_send)
+    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
     return render(request, './standardScale.html', context)
 
 
@@ -250,8 +254,9 @@ def fillingNullMean(request):
         print(data.isnull().sum())
         data.to_csv('./media/{}'.format(filename), index=False)
         data_html = data.head(10).to_html()
-        data_shape, nullValues, columns = getStatistics(data)
-        context = getContext(data_html, data_shape, nullValues, code, columns)
+        data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+
+        context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
         return render(request, './preprocessing.html', context)
     data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
@@ -260,7 +265,8 @@ def fillingNullMean(request):
         datatypes = data.dtypes[col]
         if datatypes == 'float64' or datatypes == 'int64':
             columns_send.append(col)
-    context = getContext(data_html, data_shape, nullValues, code, columns_send)
+    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns_send)
     return render(request, './meanForm.html', context)
 
 
@@ -284,17 +290,17 @@ def fillingNullMedian(request):
         print(data.isnull().sum())
         data.to_csv('./media/{}'.format(filename), index=False)
         data_html = data.head(10).to_html()
-        data_shape, nullValues, columns = getStatistics(data)
-        context = getContext(data_html, data_shape, nullValues, code, columns)
+        data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+        context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
         return render(request, './preprocessing.html', context)
     data_html = data.head(10).to_html()
-    data_shape, nullValues, columns = getStatistics(data)
     columns_send = []
     for col in data.columns:
         datatypes = data.dtypes[col]
         if datatypes == 'float64' or datatypes == 'int64':
             columns_send.append(col)
-    context = getContext(data_html, data_shape, nullValues, code, columns_send)
+    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns_send)
     return render(request, './medianForm.html', context)
 
 
@@ -316,8 +322,8 @@ def fillingNullMode(request):
         print(data.isnull().sum())
         data.to_csv('./media/{}'.format(filename), index=False)
         data_html = data.head(10).to_html()
-        data_shape, nullValues, columns = getStatistics(data)
-        context = getContext(data_html, data_shape, nullValues, code, columns)
+        data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+        context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
         return render(request, './preprocessing.html', context)
     data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
@@ -326,7 +332,8 @@ def fillingNullMode(request):
         datatypes = data.dtypes[col]
         if datatypes == 'float64' or datatypes == 'int64':
             columns_send.append(col)
-    context = getContext(data_html, data_shape, nullValues, code, columns_send)
+    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
     return render(request, './modeForm.html', context)
 
 
@@ -347,8 +354,8 @@ def fillingNullModeNumeric(request):
     # print("mode_numeric")
     # data.to_csv('./media/{}'.format(filename),index=False)
     data_html = data.head(10).to_html()
-    data_shape, nullValues, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, code, columns)
+    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
     return render(request, './modeForm.html', context)
 
 
@@ -363,8 +370,8 @@ def deleteColumns(request):
         print("deletecol")
         data.to_csv('./media/{}'.format(filename), index=False)
         data_html = data.head(10).to_html()
-        data_shape, nullValues, columns = getStatistics(data)
-        context = getContext(data_html, data_shape, nullValues, code, columns)
+        data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+        context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
         return render(request, './preprocessing.html', context)
 
 
@@ -372,8 +379,8 @@ def mlalgorithms(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
     data_html = data.head(10).to_html()
-    data_shape, nullValues, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, code, columns)
+    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
     return render(request, './ml.html', context)
 
 
@@ -430,8 +437,8 @@ def logistic_reg(request):
 
         return render(request, './results.html', context)
     data_html = data.head(10).to_html()
-    data_shape, nullValues, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, code, columns)
+    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
     return render(request, './logistic.html', context)
 
 
@@ -491,8 +498,8 @@ def linear_reg(request):
 
         return render(request, './results.html', context)
     data_html = data.head(10).to_html()
-    data_shape, nullValues, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, code, columns)
+    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
     return render(request, './linear.html', context)
 
 
@@ -547,8 +554,8 @@ def knn(request):
                    'y_predict': y_pred, 'image_url': image_url}
         return render(request, './results.html', context)
     data_html = data.to_html()
-    data_shape, nullValues, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, code, columns)
+    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
     return render(request, './knn.html', context)
 
 
@@ -599,8 +606,8 @@ def kmeans(request):
         return render(request, './results.html', context)
 
     data_html = data.head(10).to_html()
-    data_shape, nullValues, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, code, columns)
+    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
     return render(request, './kmeans.html', context)
 
 
@@ -617,17 +624,17 @@ def cat_data(request):
             # print(label_encoder.fit_transform(data[col]))
         data.to_csv('./media/{}'.format(filename), index=False)
         data_html = data.head(10).to_html()
-        data_shape, nullValues, columns = getStatistics(data)
-        context = getContext(data_html, data_shape, nullValues, code, columns)
+        data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+        context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
         return render(request, './preprocessing.html', context)
     data_html = data.head(10).to_html()
-    data_shape, nullValues, columns = getStatistics(data)
     columns_send = []
     for col in data.columns:
         datatypes = data.dtypes[col]
         if datatypes != 'float64' and datatypes != 'int64':
             columns_send.append(col)
-    context = getContext(data_html, data_shape, nullValues, code, columns_send)
+    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
     return render(request, './categoricalData_form.html', context)
 
 
@@ -641,8 +648,8 @@ def visualisation(request):
     fig_location = './media/correlational_matrix{}.png'.format(session_key)
     plt.savefig(fig_location)
     image_url = '../media/correlational_matrix{}.png'.format(session_key)
-    data_shape, nullValues, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, code, columns)
+    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
     context.update({'image_url':image_url})
     return render(request, './visualisation.html', context)
 
@@ -670,13 +677,13 @@ def pie_chart(request):
         context={"image_url":image_url}
         return render(request, './visualization_output.html', context)
     data_html = data.head(10).to_html()
-    data_shape, nullValues, columns = getStatistics(data)
     columns_send = []
     for col in data.columns:
         datatypes = data.dtypes[col].name
         if datatypes != 'float64' and datatypes != 'int64':
             columns_send.append(col)
-    context = getContext(data_html, data_shape, nullValues, code, columns_send)
+    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns_send)
     return render(request, './pie_chart.html', context)
 
 
@@ -696,13 +703,13 @@ def histogram(request):
         return render(request, './visualization_output.html', context)
        
     data_html = data.head(10).to_html()
-    data_shape, nullValues, columns = getStatistics(data)
     columns_send = []
     for col in data.columns:
         datatypes = data.dtypes[col]
         if datatypes == 'float64' or datatypes == 'int64':
             columns_send.append(col)
-    context = getContext(data_html, data_shape, nullValues, code, columns_send)
+    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns_send)
     return render(request, './histogram.html', context)
 
 
@@ -721,13 +728,13 @@ def box_plot(request):
         context={"image_url":image_url}
         return render(request, './visualization_output.html', context)
     data_html = data.head(10).to_html()
-    data_shape, nullValues, columns = getStatistics(data)
     columns_send = []
     for col in data.columns:
         datatypes = data.dtypes[col]
         if datatypes == 'float64' or datatypes == 'int64':
             columns_send.append(col)
-    context = getContext(data_html, data_shape, nullValues, code, columns_send)
+    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns_send)
     return render(request, './box_plot.html', context)
 
 
@@ -746,13 +753,13 @@ def line_plot(request):
         context={"image_url":image_url}
         return render(request, './visualization_output.html', context)
     data_html = data.head(10).to_html()
-    data_shape, nullValues, columns = getStatistics(data)
     columns_send = []
     for col in data.columns:
         datatypes = data.dtypes[col]
         if datatypes == 'float64' or datatypes == 'int64':
             columns_send.append(col)
-    context = getContext(data_html, data_shape, nullValues, code, columns_send)
+    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns_send)
     return render(request, './line_plot.html', context)
 
 def elbow_plot(request):
@@ -785,24 +792,24 @@ def elbow_plot(request):
 
 
     data_html = data.head(10).to_html()
-    data_shape, nullValues, columns = getStatistics(data)
     columns_send = []
     for col in data.columns:
         datatypes = data.dtypes[col].name
         if datatypes == 'float64' or datatypes == 'int64':
             columns_send.append(col)
-    context = getContext(data_html, data_shape, nullValues, code, columns_send)
+    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns_send)
     return render(request, './elbow_plot.html', context)
 
 def landing(request):
-    filename = request.session.get('filename', None)
-    data = pd.read_csv('./media/{}'.format(filename))
-    data_html = data.head(10).to_html()
-    data_shape, nullValues, columns = getStatistics(data)
-    columns_send = []
-    for col in data.columns:
-        datatypes = data.dtypes[col].name
-        if datatypes != 'float64' and datatypes != 'int64':
-            columns_send.append(col)
-    context = getContext(data_html, data_shape, nullValues, code, columns_send)
-    return render(request, './landing.html', context)
+    # filename = request.session.get('filename', None)
+    # data = pd.read_csv('./media/{}'.format(filename))
+    # data_html = data.head(10).to_html()
+    # columns_send = []
+    # for col in data.columns:
+    #     datatypes = data.dtypes[col].name
+    #     if datatypes != 'float64' and datatypes != 'int64':
+    #         columns_send.append(col)
+    # data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+    # context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
+    return render(request, './landing.html')
