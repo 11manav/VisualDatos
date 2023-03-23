@@ -6,8 +6,6 @@ import pandas as pd
 import numpy as np
 import time
 from django.http import HttpResponse
-
-
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.cluster import KMeans
@@ -20,34 +18,33 @@ from matplotlib.colors import ListedColormap
 from mlxtend.plotting import plot_decision_regions
 import seaborn as sns
 
-# Global Variables
-code = []
-# data=None
-
 
 # --------Common data required for all pages--------------
 
-def getContext(data_html, data_shape, nullValues,datatypes,memory_usage,dataframe_size, code, columns):
+def getContext(data_html, data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns):
     if (len(columns) == 0):
         data_html = ""
 
     context = {'loaded_data': data_html,
                'shape_of_data': data_shape,
                'null_count': nullValues,
-               'datatypes':datatypes,
-               'memory_usage':memory_usage,
-               'dataframe_size':dataframe_size,
-               'backgroundCode': code,
+               'datatypes': datatypes,
+               'memory_usage': memory_usage,
+               'dataframe_size': dataframe_size,
                'columns': columns}
     return context
 
 
 def getStatistics(data):
-    return data.shape, data.isna().sum().sum(),data.dtypes,data.memory_usage().sum(),data.size,list(data.columns)
+    return data.shape, data.isna().sum().sum(), data.dtypes, data.memory_usage().sum(), data.size, list(data.columns)
 
 
+def getDataAndCodeFileName(request):
+    filename = request.session.get('dataset', None)
+    data = pd.read_csv('./media/{}'.format(filename))
+    codeFileName = request.session.get('codeFileName', None)
+    return data,filename, codeFileName
 
-# --------------------------------------------------------
 
 # ----------- Session File Handling --------------------
 
@@ -63,13 +60,12 @@ def delete_old_datasets():
 
         if (age_of_file > 120):
             media_storage.delete(file)
-# --------------------------------------------------------
 
 # ------------- Download Dataset --------------------
 
 
 def downloadDataset(request):
-    fileName = request.session.get('filename', None)
+    fileName = request.session.get('dataset', None)
     file_path = './media/{}'.format(fileName)
     session_key = request.session.get('session_key', None)
 
@@ -97,9 +93,6 @@ def home(request):
 
     request.session['session_key'] = request.session._get_session_key()
     session_key = request.session.get('session_key', None)
-    # print(dir(request.session))
-    # print(request.session._get_session_key())
-    # code.append(["import pandas as pd"])
     if request.method == 'POST' and request.FILES['myfile']:
 
         myfile = request.FILES['myfile']
@@ -111,7 +104,8 @@ def home(request):
             fs.delete(newFileName)
         fs.save(newFileName, myfile)
 
-        file_path = os.path.join(settings.MEDIA_ROOT, "code"+session_key+".txt")
+        file_path = os.path.join(
+            settings.MEDIA_ROOT, "code"+session_key+".txt")
 
         codeFileName = "code"+session_key+".txt"
         print("Code File Name: ", codeFileName)
@@ -124,24 +118,23 @@ def home(request):
         request.session['dataset'] = newFileName
         request.session['codeFileName'] = codeFileName
 
-
-        code.append("data = pd.read_csv('{}')".format(myfile.name))
-
         data = pd.read_csv('./media/{}'.format(newFileName))
-        
+
         plt.switch_backend('Agg')
         sns.heatmap(data.corr(), cmap="YlGnBu", annot=True)
         fig_location = './media/correlational_matrix{}.png'.format(session_key)
         plt.savefig(fig_location)
         image_url = '../media/correlational_matrix{}.png'.format(session_key)
         # data = data.head(10)
-        
-        data_html = data.head(10).to_html()
-        data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
 
-        context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
-       
-        context.update({'image_url':image_url})
+        data_html = data.head(10).to_html()
+        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+            data)
+
+        context = getContext(data_html, data_shape, nullValues,
+                             datatypes, memory_usage, dataframe_size, columns)
+
+        context.update({'image_url': image_url})
 
         # print(code)
         return render(request, './main.html', context)
@@ -152,41 +145,44 @@ def showFulldataset(request):
     filename = request.session.get('filename', None)
     data = pd.read_csv('./media/{}'.format(filename))
     data_html = data.to_html()
-    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
+    data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+        data)
+    context = getContext(data_html, data_shape, nullValues,
+                         datatypes, memory_usage, dataframe_size, columns)
 
     return render(request, './showFulldataset.html', context)
 
 
 def preprocessing(request):
-    filename = request.session.get('filename', None)
-    data = pd.read_csv('./media/{}'.format(filename))
+    data,filename, codeFileName = getDataAndCodeFileName(request)
     data_html = data.head(10).to_html()
-    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
+    data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+        data)
+    context = getContext(data_html, data_shape, nullValues,
+                         datatypes, memory_usage, dataframe_size, columns)
 
     return render(request, './preprocessing.html', context)
 
 
 def dropingnull(request):
-    filename = request.session.get('filename', None)
-    data = pd.read_csv('./media/{}'.format(filename))
+    data,filename, codeFileName = getDataAndCodeFileName(request)
     data = data.dropna()
-    code.append('data.dropna()')
+    # code.append('data.dropna()')
     print('dropingnull')
     data.to_csv('./media/{}'.format(filename), index=False)
     data_html = data.head(10).to_html()
-    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+    data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+        data)
 
-    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
+    context = getContext(data_html, data_shape, nullValues,
+                         datatypes, memory_usage, dataframe_size, columns)
 
     return render(request, './preprocessing.html', context)
 
 
 def minmaxScaler(request):
     # if request
-    filename = request.session.get('filename', None)
-    data = pd.read_csv('./media/{}'.format(filename))
+    data,filename, codeFileName = getDataAndCodeFileName(request)
     if request.method == 'POST':
         X1 = request.POST.getlist('value-x')
         min_range = request.POST.get('start_of_range')
@@ -198,29 +194,32 @@ def minmaxScaler(request):
         min_max_scaler = MinMaxScaler(
             feature_range=(int(min_range), int(max_range)))
         data[columns] = min_max_scaler.fit_transform(data[columns])
-        code.append("minmax_scaler()")
+        # code.append("minmax_scaler()")
         data.to_csv('./media/{}'.format(filename), index=False)
         data_html = data.head(10).to_html()
-        data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+            data)
 
-        context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
+        context = getContext(data_html, data_shape, nullValues,
+                             datatypes, memory_usage, dataframe_size, columns)
         return render(request, './preprocessing.html', context)
     # only integer and float type columns will be send
     data_html = data.head(10).to_html()
-  
+
     columns_send = []
     for col in data.columns:
         datatypes = data.dtypes[col]
         if datatypes == 'float64' or datatypes == 'int64':
             columns_send.append(col)
-    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
+    data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+        data)
+    context = getContext(data_html, data_shape, nullValues,
+                         datatypes, memory_usage, dataframe_size, columns)
     return render(request, './minmaxScale.html', context)
 
 
 def standard_Scaler(request):
-    filename = request.session.get('filename', None)
-    data = pd.read_csv('./media/{}'.format(filename))
+    data,filename, codeFileName = getDataAndCodeFileName(request)
     if request.method == 'POST':
         X1 = request.POST.getlist('value-x')
         columns = []
@@ -229,12 +228,14 @@ def standard_Scaler(request):
         scaler = StandardScaler()
         model = scaler.fit(data[columns])
         data[columns] = model.transform(data[columns])
-        code.append("standard_scaler()")
+        # code.append("standard_scaler()")
         print("standard_scaler")
         data.to_csv('./media/{}'.format(filename), index=False)
         data_html = data.head(10).to_html()
-        data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-        context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
+        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+            data)
+        context = getContext(data_html, data_shape, nullValues,
+                             datatypes, memory_usage, dataframe_size, columns)
         return render(request, './preprocessing.html', context)
 
     data_html = data.head(10).to_html()
@@ -244,20 +245,21 @@ def standard_Scaler(request):
         datatypes = data.dtypes[col]
         if datatypes == 'float64' or datatypes == 'int64':
             columns_send.append(col)
-    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
+    data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+        data)
+    context = getContext(data_html, data_shape, nullValues,
+                         datatypes, memory_usage, dataframe_size, columns)
     return render(request, './standardScale.html', context)
 
 
 def fillingNullMean(request):
-    filename = request.session.get('filename', None)
-    data = pd.read_csv('./media/{}'.format(filename))
+    data,filename, codeFileName = getDataAndCodeFileName(request)
     if request.method == 'POST':
         mean_of_columns = data.mean()
         columns = request.POST.getlist('value-x')
         print(len(columns))
         for col in range(len(columns)):
-            code.append('data.fillna({})'.format(columns[col]))
+            # code.append('data.fillna({})'.format(columns[col]))
             try:
                 data[columns[col]].fillna(
                     mean_of_columns[columns[col]], inplace=True)
@@ -268,9 +270,11 @@ def fillingNullMean(request):
         print(data.isnull().sum())
         data.to_csv('./media/{}'.format(filename), index=False)
         data_html = data.head(10).to_html()
-        data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
+        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+            data)
 
-        context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
+        context = getContext(data_html, data_shape, nullValues,
+                             datatypes, memory_usage, dataframe_size, columns)
         return render(request, './preprocessing.html', context)
     data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
@@ -279,20 +283,21 @@ def fillingNullMean(request):
         datatypes = data.dtypes[col]
         if datatypes == 'float64' or datatypes == 'int64':
             columns_send.append(col)
-    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns_send)
+    data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+        data)
+    context = getContext(data_html, data_shape, nullValues,
+                         datatypes, memory_usage, dataframe_size, columns_send)
     return render(request, './meanForm.html', context)
 
 
 def fillingNullMedian(request):
-    filename = request.session.get('filename', None)
-    data = pd.read_csv('./media/{}'.format(filename))
+    data,filename, codeFileName = getDataAndCodeFileName(request)
     if request.method == 'POST':
         median_of_columns = data.median()
         columns = request.POST.getlist('value-x')
         print(len(columns))
         for col in range(len(columns)):
-            code.append('data.fillna({})'.format(columns[col]))
+            # code.append('data.fillna({})'.format(columns[col]))
             try:
                 data[columns[col]].fillna(
                     median_of_columns[columns[col]], inplace=True)
@@ -304,8 +309,10 @@ def fillingNullMedian(request):
         print(data.isnull().sum())
         data.to_csv('./media/{}'.format(filename), index=False)
         data_html = data.head(10).to_html()
-        data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-        context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
+        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+            data)
+        context = getContext(data_html, data_shape, nullValues,
+                             datatypes, memory_usage, dataframe_size, columns)
         return render(request, './preprocessing.html', context)
     data_html = data.head(10).to_html()
     columns_send = []
@@ -313,19 +320,20 @@ def fillingNullMedian(request):
         datatypes = data.dtypes[col]
         if datatypes == 'float64' or datatypes == 'int64':
             columns_send.append(col)
-    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns_send)
+    data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+        data)
+    context = getContext(data_html, data_shape, nullValues,
+                         datatypes, memory_usage, dataframe_size, columns_send)
     return render(request, './medianForm.html', context)
 
 
 def fillingNullMode(request):
-    filename = request.session.get('filename', None)
-    data = pd.read_csv('./media/{}'.format(filename))
+    data,filename, codeFileName = getDataAndCodeFileName(request)
     if request.method == 'POST':
         columns = request.POST.getlist('value-x')
         print(len(columns))
         for col in range(len(columns)):
-            code.append('data.fillna({})'.format(columns[col]))
+            # code.append('data.fillna({})'.format(columns[col]))
             try:
                 data[columns[col]].fillna(
                     data.mode()[columns[col]][0], inplace=True)
@@ -336,8 +344,10 @@ def fillingNullMode(request):
         print(data.isnull().sum())
         data.to_csv('./media/{}'.format(filename), index=False)
         data_html = data.head(10).to_html()
-        data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-        context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
+        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+            data)
+        context = getContext(data_html, data_shape, nullValues,
+                             datatypes, memory_usage, dataframe_size, columns)
         return render(request, './preprocessing.html', context)
     data_html = data.head(10).to_html()
     data_shape, nullValues, columns = getStatistics(data)
@@ -346,38 +356,42 @@ def fillingNullMode(request):
         datatypes = data.dtypes[col]
         if datatypes == 'float64' or datatypes == 'int64':
             columns_send.append(col)
-    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
+    data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+        data)
+    context = getContext(data_html, data_shape, nullValues,
+                         datatypes, memory_usage, dataframe_size, columns)
     return render(request, './modeForm.html', context)
 
+
 def deleteColumns(request):
-    filename = request.session.get('filename', None)
-    data = pd.read_csv('./media/{}'.format(filename))
+    data,filename, codeFileName = getDataAndCodeFileName(request)
     name = request.GET.get('name')
     print(name)
     if name is not None:
         data = data.drop([name], axis=1)
-        code.append('data.drop{}'.format([name]))
+        # code.append('data.drop{}'.format([name]))
         print("deletecol")
         data.to_csv('./media/{}'.format(filename), index=False)
         data_html = data.head(10).to_html()
-        data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-        context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
+        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+            data)
+        context = getContext(data_html, data_shape, nullValues,
+                             datatypes, memory_usage, dataframe_size, columns)
         return render(request, './preprocessing.html', context)
 
 
 def mlalgorithms(request):
-    filename = request.session.get('filename', None)
-    data = pd.read_csv('./media/{}'.format(filename))
+    data,filename, codeFileName = getDataAndCodeFileName(request)
     data_html = data.head(10).to_html()
-    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
+    data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+        data)
+    context = getContext(data_html, data_shape, nullValues,
+                         datatypes, memory_usage, dataframe_size, columns)
     return render(request, './ml.html', context)
 
 
 def logistic_reg(request):
-    filename = request.session.get('filename', None)
-    data = pd.read_csv('./media/{}'.format(filename))
+    data,filename, codeFileName = getDataAndCodeFileName(request)
     if request.method == 'POST':
         X1 = request.POST.getlist('value-x')
         y1 = request.POST['value-y']
@@ -402,20 +416,21 @@ def logistic_reg(request):
         code2 = "y-{}".format(y1)
         code3 = "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size={}, random_state=10)".format(
             test1)
-        code.append(code1)
-        code.append(code2)
-        code.append(code3)
+        # code.append(code1)
+        # code.append(code2)
+        # code.append(code3)
         code4 = [" model = LogisticRegression()", "model.fit(X_train, y_train)", "y_pred = model.predict(X_test)",
                  "confusion = confusion_matrix(y_test, y_pred)", "accuracy = accuracy_score(y_test, y_pred)"]
-        code.extend(code4)
+        # code.extend(code4)
 
         plt.switch_backend('Agg')
         # plt.plot(X_test, y_test, c="green")
         # plt.yticks([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
         # plt.axhline(.5, color="red", label="cutoff")
 
-        sns.regplot(x=X_test, y=y_test, data=data, logistic=True, ci=None,scatter_kws = {'color': 'black'}, line_kws = {'color': 'red'})
-        
+        sns.regplot(x=X_test, y=y_test, data=data, logistic=True, ci=None, scatter_kws={
+                    'color': 'black'}, line_kws={'color': 'red'})
+
         session_key = request.session.get('session_key', None)
 
         fig_location = './media/logisticReg{}.png'.format(session_key)
@@ -428,14 +443,15 @@ def logistic_reg(request):
 
         return render(request, './results.html', context)
     data_html = data.head(10).to_html()
-    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
+    data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+        data)
+    context = getContext(data_html, data_shape, nullValues,
+                         datatypes, memory_usage, dataframe_size, columns)
     return render(request, './logistic.html', context)
 
 
 def linear_reg(request):
-    filename = request.session.get('filename', None)
-    data = pd.read_csv('./media/{}'.format(filename))
+    data,filename, codeFileName = getDataAndCodeFileName(request)
     if request.method == 'POST':
         X1 = request.POST.getlist('value-x')
         y1 = request.POST['value-y']
@@ -477,26 +493,27 @@ def linear_reg(request):
         code2 = "y-{}".format(y1)
         code3 = "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size={}, random_state=10)".format(
             test1)
-        code.append(code1)
-        code.append(code2)
-        code.append(code3)
+        # code.append(code1)
+        # code.append(code2)
+        # code.append(code3)
         code4 = ["model = LinearRegression()", "model.fit(X_train, y_train)", "y_pred = model.predict(X_test)",
                  "variance_score=model.score(X_test,y_test)", "accuracy = accuracy_score(y_test, y_pred)"]
-        code.extend(code4)
+        # code.extend(code4)
 
         context = {'r2_score': score,
-                   'image_url': image_url, 'backgroundCode': code}
+                   'image_url': image_url}
 
         return render(request, './results.html', context)
     data_html = data.head(10).to_html()
-    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
+    data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+        data)
+    context = getContext(data_html, data_shape, nullValues,
+                         datatypes, memory_usage, dataframe_size, columns)
     return render(request, './linear.html', context)
 
 
 def knn(request):
-    filename = request.session.get('filename', None)
-    data = pd.read_csv('./media/{}'.format(filename))
+    data,filename, codeFileName = getDataAndCodeFileName(request)
     if request.method == 'POST':
         no_of_neighbours = request.POST['no_of_neighbors']
         X1 = request.POST.getlist('value-x')
@@ -524,13 +541,13 @@ def knn(request):
         code4 = " knn=KNeighborsClassifier(int({})),knn.fit(X_train,y_train)".format(
             no_of_neighbours)
 
-        code.append(code1)
-        code.append(code2)
-        code.append(code3)
-        code.append(code4)
+        # code.append(code1)
+        # code.append(code2)
+        # code.append(code3)
+        # code.append(code4)
         code5 = ["y_pred = knn.predict(X_test)", "accuracy = accuracy_score(y_test, y_pred)",
                  "variance_score=knn.score(X_test,y_test)"]
-        code.extend(code5)
+        # code.extend(code5)
 
         plt.switch_backend('Agg')
         plot_decision_regions(X_test.values, y_test.values, knn)
@@ -545,14 +562,15 @@ def knn(request):
                    'y_predict': y_pred, 'image_url': image_url}
         return render(request, './results.html', context)
     data_html = data.to_html()
-    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
+    data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+        data)
+    context = getContext(data_html, data_shape, nullValues,
+                         datatypes, memory_usage, dataframe_size, columns)
     return render(request, './knn.html', context)
 
 
 def kmeans(request):
-    filename = request.session.get('filename', None)
-    data = pd.read_csv('./media/{}'.format(filename))
+    data,filename, codeFileName = getDataAndCodeFileName(request)
 
  # -------->We will provide Elbow method to user so that he could figure out number of clusters<-------------------
  # elbow method is plotting of scatter plot so 2 options we have either in visualization section or in Kmeans section will decide<----
@@ -572,9 +590,9 @@ def kmeans(request):
         code2 = "kmeans = KMeans(n_clusters=int({}) init='k-means++',random_state= 42)".format(
             no_of_clusters)
         code3 = ["y_pred=kmeans.fit_predict(X)"]
-        code.append(code1)
-        code.append(code2)
-        code.extend(code3)
+        # code.append(code1)
+        # code.append(code2)
+        # code.extend(code3)
         # code.append("x={},kmeans = KMeans(n_clusters=int({}), init='k-means++', random_state= 42),y_pred=kmeans.fit_predict(X),accuracy= ,variance_score= ".format(X1,no_of_clusters))
         # Need to pass on plots of cluster as output...
 
@@ -597,14 +615,15 @@ def kmeans(request):
         return render(request, './results.html', context)
 
     data_html = data.head(10).to_html()
-    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
+    data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+        data)
+    context = getContext(data_html, data_shape, nullValues,
+                         datatypes, memory_usage, dataframe_size, columns)
     return render(request, './kmeans.html', context)
 
 
 def cat_data(request):
-    filename = request.session.get('filename', None)
-    data = pd.read_csv('./media/{}'.format(filename))
+    data,filename, codeFileName = getDataAndCodeFileName(request)
     if request.method == 'POST':
         columns = request.POST.getlist('value-x')
         for col in columns:
@@ -615,8 +634,10 @@ def cat_data(request):
             # print(label_encoder.fit_transform(data[col]))
         data.to_csv('./media/{}'.format(filename), index=False)
         data_html = data.head(10).to_html()
-        data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-        context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
+        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+            data)
+        context = getContext(data_html, data_shape, nullValues,
+                             datatypes, memory_usage, dataframe_size, columns)
         return render(request, './preprocessing.html', context)
     data_html = data.head(10).to_html()
     columns_send = []
@@ -624,14 +645,15 @@ def cat_data(request):
         datatypes = data.dtypes[col]
         if datatypes != 'float64' and datatypes != 'int64':
             columns_send.append(col)
-    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
+    data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+        data)
+    context = getContext(data_html, data_shape, nullValues,
+                         datatypes, memory_usage, dataframe_size, columns)
     return render(request, './categoricalData_form.html', context)
 
 
 def visualisation(request):
-    filename = request.session.get('filename', None)
-    data = pd.read_csv('./media/{}'.format(filename))
+    data,filename, codeFileName = getDataAndCodeFileName(request)
     data_html = data.head(10).to_html()
     plt.switch_backend('Agg')
     sns.heatmap(data.corr(), cmap="YlGnBu", annot=True)
@@ -639,33 +661,35 @@ def visualisation(request):
     fig_location = './media/correlational_matrix{}.png'.format(session_key)
     plt.savefig(fig_location)
     image_url = '../media/correlational_matrix{}.png'.format(session_key)
-    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns)
-    context.update({'image_url':image_url})
+    data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+        data)
+    context = getContext(data_html, data_shape, nullValues,
+                         datatypes, memory_usage, dataframe_size, columns)
+    context.update({'image_url': image_url})
     return render(request, './visualisation.html', context)
 
 
 def pie_chart(request):
-    filename = request.session.get('filename', None)
-    data = pd.read_csv('./media/{}'.format(filename))
+    data,filename, codeFileName = getDataAndCodeFileName(request)
     if request.method == 'POST':
-        column= request.POST.getlist('value-x')
+        column = request.POST.getlist('value-x')
         # print(data[column].value_counts().count())
-        grouped=data.groupby(column).groups
-        categories=[]     #all categories names
+        grouped = data.groupby(column).groups
+        categories = []  # all categories names
         for group in grouped:
             categories.append(group)
-        single_column=data[column].value_counts()  #particular column total count
-        cnts=[]  # for storing cnt of individual categories
+        # particular column total count
+        single_column = data[column].value_counts()
+        cnts = []  # for storing cnt of individual categories
         for cnt in categories:
             cnts.append(single_column[cnt])
         plt.switch_backend('Agg')
-        plt.pie(cnts,labels=categories,autopct='%.0f%%')
+        plt.pie(cnts, labels=categories, autopct='%.0f%%')
         session_key = request.session.get('session_key', None)
         fig_location = './media/pieplot{}.png'.format(session_key)
         plt.savefig(fig_location)
         image_url = '../media/pieplot{}.png'.format(session_key)
-        context={"image_url":image_url}
+        context = {"image_url": image_url}
         return render(request, './visualization_output.html', context)
     data_html = data.head(10).to_html()
     columns_send = []
@@ -673,16 +697,17 @@ def pie_chart(request):
         datatypes = data.dtypes[col].name
         if datatypes != 'float64' and datatypes != 'int64':
             columns_send.append(col)
-    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns_send)
+    data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+        data)
+    context = getContext(data_html, data_shape, nullValues,
+                         datatypes, memory_usage, dataframe_size, columns_send)
     return render(request, './pie_chart.html', context)
 
 
 def histogram(request):
-    filename = request.session.get('filename', None)
-    data = pd.read_csv('./media/{}'.format(filename))
+    data,filename, codeFileName = getDataAndCodeFileName(request)
     if request.method == 'POST':
-        column= request.POST.getlist('value-x')
+        column = request.POST.getlist('value-x')
         plt.switch_backend('Agg')
         sns.histplot(data[column])
         session_key = request.session.get('session_key', None)
@@ -690,25 +715,26 @@ def histogram(request):
         plt.savefig(fig_location)
 
         image_url = '../media/histoplot{}.png'.format(session_key)
-        context={"image_url":image_url}
+        context = {"image_url": image_url}
         return render(request, './visualization_output.html', context)
-       
+
     data_html = data.head(10).to_html()
     columns_send = []
     for col in data.columns:
         datatypes = data.dtypes[col]
         if datatypes == 'float64' or datatypes == 'int64':
             columns_send.append(col)
-    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns_send)
+    data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+        data)
+    context = getContext(data_html, data_shape, nullValues,
+                         datatypes, memory_usage, dataframe_size, columns_send)
     return render(request, './histogram.html', context)
 
 
 def box_plot(request):
-    filename = request.session.get('filename', None)
-    data = pd.read_csv('./media/{}'.format(filename))
+    data,filename, codeFileName = getDataAndCodeFileName(request)
     if request.method == 'POST':
-        columns= request.POST.getlist('value-x')
+        columns = request.POST.getlist('value-x')
         plt.switch_backend('Agg')
         sns.boxplot(data[columns])
         session_key = request.session.get('session_key', None)
@@ -716,7 +742,7 @@ def box_plot(request):
         plt.savefig(fig_location)
 
         image_url = '../media/boxplot{}.png'.format(session_key)
-        context={"image_url":image_url}
+        context = {"image_url": image_url}
         return render(request, './visualization_output.html', context)
     data_html = data.head(10).to_html()
     columns_send = []
@@ -724,16 +750,17 @@ def box_plot(request):
         datatypes = data.dtypes[col]
         if datatypes == 'float64' or datatypes == 'int64':
             columns_send.append(col)
-    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns_send)
+    data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+        data)
+    context = getContext(data_html, data_shape, nullValues,
+                         datatypes, memory_usage, dataframe_size, columns_send)
     return render(request, './box_plot.html', context)
 
 
 def line_plot(request):
-    filename = request.session.get('filename', None)
-    data = pd.read_csv('./media/{}'.format(filename))
+    data,filename, codeFileName = getDataAndCodeFileName(request)
     if request.method == 'POST':
-        columns= request.POST.getlist('value-x')
+        columns = request.POST.getlist('value-x')
         plt.switch_backend('Agg')
         sns.lineplot(data[columns])
         session_key = request.session.get('session_key', None)
@@ -741,7 +768,7 @@ def line_plot(request):
         plt.savefig(fig_location)
 
         image_url = '../media/lineplot{}.png'.format(session_key)
-        context={"image_url":image_url}
+        context = {"image_url": image_url}
         return render(request, './visualization_output.html', context)
     data_html = data.head(10).to_html()
     columns_send = []
@@ -749,34 +776,36 @@ def line_plot(request):
         datatypes = data.dtypes[col]
         if datatypes == 'float64' or datatypes == 'int64':
             columns_send.append(col)
-    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns_send)
+    data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+        data)
+    context = getContext(data_html, data_shape, nullValues,
+                         datatypes, memory_usage, dataframe_size, columns_send)
     return render(request, './line_plot.html', context)
 
+
 def elbow_plot(request):
-    filename = request.session.get('filename', None)
-    data = pd.read_csv('./media/{}'.format(filename))
+    data,filename, codeFileName = getDataAndCodeFileName(request)
     if request.method == 'POST':
-        columns= request.POST.getlist('value-x')
-        #loop_cnt cant be more than the record size otherwise it willgive the error # ERROR HANDLING
-        loop_cnt=request.POST.get('test_for_no_of_clusters')
-        print(columns,loop_cnt)
-        wcss_list= []      
+        columns = request.POST.getlist('value-x')
+        # loop_cnt cant be more than the record size otherwise it willgive the error # ERROR HANDLING
+        loop_cnt = request.POST.get('test_for_no_of_clusters')
+        print(columns, loop_cnt)
+        wcss_list = []
         for i in range(1, int(loop_cnt)+1):
-            kmeans = KMeans(n_clusters=i, init='k-means++', random_state= 42)  
-            kmeans.fit(data[columns])  
+            kmeans = KMeans(n_clusters=i, init='k-means++', random_state=42)
+            kmeans.fit(data[columns])
             wcss_list.append(kmeans.inertia_)
-        plt.switch_backend('Agg')  
-        plt.plot(range(1, int(loop_cnt)+1), wcss_list)  
-        plt.title('The Elobw Method Graph')  
-        plt.xlabel('Number of clusters(k)')  
-        plt.ylabel('wcss_list')  
+        plt.switch_backend('Agg')
+        plt.plot(range(1, int(loop_cnt)+1), wcss_list)
+        plt.title('The Elobw Method Graph')
+        plt.xlabel('Number of clusters(k)')
+        plt.ylabel('wcss_list')
         session_key = request.session.get('session_key', None)
         fig_location = './media/elbowplot{}.png'.format(session_key)
         plt.savefig(fig_location)
 
         image_url = '../media/elbowplot{}.png'.format(session_key)
-        context={"image_url":image_url}
+        context = {"image_url": image_url}
         return render(request, './visualization_output.html', context)
 
     data_html = data.head(10).to_html()
@@ -785,9 +814,12 @@ def elbow_plot(request):
         datatypes = data.dtypes[col].name
         if datatypes == 'float64' or datatypes == 'int64':
             columns_send.append(col)
-    data_shape, nullValues, datatypes,memory_usage,dataframe_size, columns = getStatistics(data)
-    context = getContext(data_html, data_shape, nullValues, datatypes ,memory_usage , dataframe_size,code, columns_send)
+    data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+        data)
+    context = getContext(data_html, data_shape, nullValues,
+                         datatypes, memory_usage, dataframe_size, columns_send)
     return render(request, './elbow_plot.html', context)
+
 
 def landing(request):
     return render(request, './landing.html')
