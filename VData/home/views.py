@@ -111,7 +111,7 @@ def home(request):
         print("Code File Name: ", codeFileName)
 
         try:
-            open(file_path, 'x')
+            open(file_path, 'w')
         except:
             print("File Already Exists For Current Session")
 
@@ -119,6 +119,8 @@ def home(request):
         request.session['codeFileName'] = codeFileName
 
         data = pd.read_csv('./media/{}'.format(newFileName))
+        with open('./media/{}'.format(codeFileName),'a') as f:
+            f.write('import pandas as pd\ndata = pd.read_csv("{}")\n'.format(myfile.name))
 
         plt.switch_backend('Agg')
         sns.heatmap(data.corr(), cmap="YlGnBu", annot=True)
@@ -167,8 +169,8 @@ def preprocessing(request):
 def dropingnull(request):
     data,filename, codeFileName = getDataAndCodeFileName(request)
     data = data.dropna()
-    # code.append('data.dropna()')
-    print('dropingnull')
+    with open('./media/{}'.format(codeFileName), 'a') as f:
+        f.write('data.dropna()\n')
     data.to_csv('./media/{}'.format(filename), index=False)
     data_html = data.head(10).to_html()
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
@@ -181,7 +183,6 @@ def dropingnull(request):
 
 
 def minmaxScaler(request):
-    # if request
     data,filename, codeFileName = getDataAndCodeFileName(request)
     if request.method == 'POST':
         X1 = request.POST.getlist('value-x')
@@ -194,7 +195,8 @@ def minmaxScaler(request):
         min_max_scaler = MinMaxScaler(
             feature_range=(int(min_range), int(max_range)))
         data[columns] = min_max_scaler.fit_transform(data[columns])
-        # code.append("minmax_scaler()")
+        with open('./media/{}'.format(codeFileName), 'a') as f:
+            f.write('min_max_scaler = MinMaxScaler(feature_range=({},{}))\ndata[{}] = min_max_scaler.fit_transform(data[{}])\n'.format(min_range,max_range,columns,columns))
         data.to_csv('./media/{}'.format(filename), index=False)
         data_html = data.head(10).to_html()
         data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
@@ -228,8 +230,8 @@ def standard_Scaler(request):
         scaler = StandardScaler()
         model = scaler.fit(data[columns])
         data[columns] = model.transform(data[columns])
-        # code.append("standard_scaler()")
-        print("standard_scaler")
+        with open('./media/{}'.format(codeFileName), 'a') as f:
+            f.write('standard_scaler = StandardScaler()\ndata[{}] = standard_scaler.fit_transform(data[{}])\n'.format(columns, columns))
         data.to_csv('./media/{}'.format(filename), index=False)
         data_html = data.head(10).to_html()
         data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
@@ -369,8 +371,8 @@ def deleteColumns(request):
     print(name)
     if name is not None:
         data = data.drop([name], axis=1)
-        # code.append('data.drop{}'.format([name]))
-        print("deletecol")
+        with open('./media/{}'.format(codeFileName), 'a') as f:
+            f.write('data.drop(["{}"], axis = 1)\n'.format(name))
         data.to_csv('./media/{}'.format(filename), index=False)
         data_html = data.head(10).to_html()
         data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
@@ -409,19 +411,9 @@ def logistic_reg(request):
         y_pred = model.predict(X_test)
         confusion = confusion_matrix(y_test, y_pred)
         accuracy = accuracy_score(y_test, y_pred)
-        # print(accuracy)
         variance_score = model.score(X_test, y_test)
-        # code.append(" X-{},y-{},X_train, X_test, y_train, y_test = train_test_split(X, y, test_size={}, random_state=10) , model = LogisticRegression(),model.fit(X_train, y_train)y_pred = model.predict(X_test) ,confusion = confusion_matrix(y_test, y_pred),accuracy = accuracy_score(y_test, y_pred)".format(X1,y1,test1))
-        code1 = "X-{}".format(X1)
-        code2 = "y-{}".format(y1)
-        code3 = "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size={}, random_state=10)".format(
-            test1)
-        # code.append(code1)
-        # code.append(code2)
-        # code.append(code3)
-        code4 = [" model = LogisticRegression()", "model.fit(X_train, y_train)", "y_pred = model.predict(X_test)",
-                 "confusion = confusion_matrix(y_test, y_pred)", "accuracy = accuracy_score(y_test, y_pred)"]
-        # code.extend(code4)
+        with open('./media/{}'.format(codeFileName), 'a') as f:
+            f.write("X_train, X_test, y_train, y_test = train_test_split({}, {}, test_size={}, random_state=10)\nlinear_model = LogisticRegression()\nlinear_model.fit(X_train, y_train)\ny_pred = model.predict(X_test)".format(X1, y1, test1))
 
         plt.switch_backend('Agg')
         # plt.plot(X_test, y_test, c="green")

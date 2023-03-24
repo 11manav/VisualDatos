@@ -6,3 +6,7 @@ correlational_matrix issue
 Redirect to upload dataset page if no dataset uploaded (protected route)
 
 confusion_matrix statistics
+
+To Add In Code:
+1. Mean,Median,Mode
+2.
