@@ -160,8 +160,14 @@ def preprocessing(request):
     data_html = data.head(10).to_html()
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
+    f = open('./media/{}'.format(codeFileName), 'r')
+    file_content = f.read()
+    f.close()
     context = getContext(data_html, data_shape, nullValues,
                          datatypes, memory_usage, dataframe_size, columns)
+    
+    
+    context.update({'file_content': file_content})
 
     return render(request, './preprocessing.html', context)
 
@@ -215,8 +221,10 @@ def minmaxScaler(request):
             columns_send.append(col)
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
+   
     context = getContext(data_html, data_shape, nullValues,
                          datatypes, memory_usage, dataframe_size, columns)
+    
     return render(request, './minmaxScale.html', context)
 
 
