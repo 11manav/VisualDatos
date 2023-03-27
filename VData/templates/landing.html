@@ -14,17 +14,9 @@
 		<!-- Custom styles for this template -->
 		<link href="{% static 'assets_landing/css/stylec302.css' %}" rel="stylesheet">
 		<link href="{% static 'assets_landing/css/theme-blue.css' %}" rel="stylesheet" id="layoutstyle">
-		<script>
-		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		})(window,document,'script','../../www.google-analytics.com/analytics.js','ga');
-
-		ga('create', 'UA-91615293-2', 'auto');
-		ga('send', 'pageview');
-		</script>
 	</head>
 	<body class="overflow-scroll">
+		<div class="my-class" id="blur">
 		
 		<!-- Start .header-section -->
 		<div id="home" class="header-section half-header section gradiant-background header-curbed header-software">
@@ -71,7 +63,10 @@
 								<h2 class="wow fadeInUp" data-wow-duration=".5s">Upload your Dataset Today</h2>
 								<p class="lead wow fadeInUp" data-wow-duration=".5s" data-wow-delay=".3s">Data Science made easy with VisualDatos!</p>
 								<ul class="buttons">
-									<li><a href="{% url 'home' %}" class="button wow fadeInUp" data-wow-duration=".5s" data-wow-delay=".6s">Upload</a></li>
+									<li><a href="#" class="button wow fadeInUp" data-wow-duration=".5s" data-wow-delay=".6s" onclick="toggle()">Upload</a></li>
+
+									
+
 									<li><a href="#" class="button button-border button-transparent wow fadeInUp" data-wow-duration=".5s" data-wow-delay=".9s">Learn More</a></li>
 								</ul>
 							</div>
@@ -373,7 +368,7 @@
 										<div class="col-md-6">
 											<div class="team-profile-info">
 												<h3 class="name">Manav Bhangale</h3>
-												<p class="sub-title">Fornt-End Developer</p>
+												<p class="sub-title">Front-End Developer</p>
 												<ul class="social">
 													<li><a href="#"><em class="fa fa-facebook"></em></a></li>
 													<li><a href="#"><em class="fa fa-twitter"></em></a></li>
@@ -660,7 +655,18 @@
 				</div><!-- .row  -->
 			</div><!-- .container  -->
 		</div><!-- .footer-section  -->
+	</div>
+	<div id="popup" style="padding-top: 40px; line-height:1;">
+		<div class="close-toggle"><a href="#" onclick="toggle()"><em class="ti ti-close"></em></a></div>
 		
+		<h2>Upload your dataset here</h2>
+		<form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="file" accept=".csv" name="myfile" style="width: 80%;">
+          <button class="btn1" type="submit">Upload</button>
+          </form>
+		
+	</div>
 		<!-- Preloader !remove please if you do not want -->
 		<div id="preloader"><div id="status">&nbsp;</div></div> 
 		<!-- Preloader End -->
@@ -675,6 +681,15 @@
 		
 		<script src="{% static 'assets_landing/js/jquery.bundlec302.js' %}"></script>
 		<script src="{% static 'assets_landing/js/scriptc302.js' %}"></script>
+		<script>
+			function toggle() {
+				var blur= document.getElementById('blur');
+				blur.classList.toggle('active')
+				var popup= document.getElementById('popup');
+				popup.classList.toggle('active')
+				}
+		</script>
 		
 	</body>
+	
 </html>

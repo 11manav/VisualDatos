@@ -7,8 +7,7 @@
         <meta charset="utf-8" />
         <title>VisualDatos</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
-        <meta content="Coderthemes" name="author" />
+        <meta content="VisualDatos" name="APMJ" />
 
         <!-- App favicon -->
         <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico' %}">
@@ -336,7 +335,7 @@
                                                 <!-- <button class="btn-copy-clipboard" data-clipboard-action="copy">
                                                     Copy
                                                 </button> -->
-                                                <pre class="mb-0" style="height: 304px; border-bottom: 1px solid var(--ct-gray-300); overflow-x:hidden">
+                                                <pre class="mb-0" style="height: 304px; border-bottom: 1px solid var(--ct-gray-300);">
 <code class="html escape language-python">
 {{file_content | safe}}
 </code>
@@ -382,12 +381,16 @@
                                 </div>
 
                                 <div class="card-body pt-0">
-                                    <div class="table-responsive" data-simplebar style="height: 357px;">
+                                    <div class="table-responsive" data-simplebar style="height: 300px;">
                                         {% block dataset %}
                                         {{loaded_data | safe | default:"Dataframe is Empty!"}}
                                         {% endblock dataset %}
 
                                     </div> <!-- end table-responsive-->
+                                    <div id="#datasetButtonGroup" style="border: 1px solid var(--ct-gray-300);" class="p-2"> 
+                                    <button class="btn-copy-clipboard" onclick="location.href='{% url 'downloadDataset' %}'" style="font-size: 0.875rem;">Download Dataset</button>
+                                    <button class="btn-copy-clipboard" onclick="location.href='{% url 'showFulldataset' %}'" style="font-size: 0.875rem;">Show Full Dataset</button>
+                                    </div>
                                 </div> <!-- end card-body-->
                             </div> <!-- end card-->
                         </div>

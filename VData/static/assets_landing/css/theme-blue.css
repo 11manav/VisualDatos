@@ -148,3 +148,61 @@ Updated	 :	10.22.2018
 	}
 
 }
+
+
+.my-class#blur.active{
+	filter: blur(20px);
+	pointer-events: none;
+	user-select: none;
+}
+
+#popup
+{
+position: fixed;
+top: 40%;
+Left: 50%;
+transform: translate(-50%, -50%);
+width: 600px;
+padding: 50px;
+box-shadow:0 5px 30px rgba(0,0,0,.30);
+background: #fff;
+visibility: visible;
+opacity: 0;
+transition: 0.5s;
+}
+#popup.active
+{	
+visibility: visible;
+opacity: 1;
+transition: 0.5s;
+filter: none;
+}
+
+.btn1,
+input::file-selector-button {
+  text-decoration: none;
+  background-color: #303841;
+  color: #eeeeee;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8%;
+  outline: none;
+  transition: 0.3s;
+}
+
+.btn1:hover,
+input::file-selector-button:hover {
+  text-decoration: none;
+  background-color: #3695fa;
+  color: #ffffff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25%;
+}
+input[type="file"] {
+    display: inline;
+}
+.close-toggle{
+    display: flex;
+    justify-content: end;
+}
