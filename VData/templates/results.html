@@ -14,12 +14,23 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="header-title mt-0 mb-3">Code</h4>
-                            <div class="code" data-simplebar style="height: 300px;">
-                                <code>
-                                    {% for col in backgroundCode %}
-                                    <span>{{col | safe}} </span> <br>
-                                    {% endfor %}
-                                </code>
+                            <div class="tab-content" data-simplebar style="height: 300px;">
+                                    <div class="tab-pane code active show" id="input-types-code" role="tabpanel">
+                                        <!-- <button class="btn-copy-clipboard" data-clipboard-action="copy">
+                                            Copy
+                                        </button> -->
+                                        <pre class="mb-0" style="height: 247px; border-bottom: 1px solid var(--ct-gray-300);">
+<code class="html escape language-python">
+{{file_content | safe}}
+</code>
+                                            </pre>
+
+                                        <!-- end highlight-->
+                                        <button class="btn-copy-clipboard" data-clipboard-action="copy" style="position:relative; top:0; right:0; margin:10px; ">
+                                            Copy
+                                        </button>
+                                    </div>
+                                    <!-- end preview code-->
                             </div>
                         </div>
                     </div>
@@ -77,7 +88,7 @@
                     </div>
 
                     <div class="card-body pt-0">
-                        <div data-simplebar style="height: 600px;">
+                        <div data-simplebar style="height: 480px;">
                             <img src= {{ image_url }} alt="">
                         </div> <!-- end table-responsive-->
                     </div> <!-- end card-body-->
