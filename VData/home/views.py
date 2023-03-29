@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 import os
@@ -141,11 +141,25 @@ def home(request):
         context.update({'image_url': image_url})
 
         # print(code)
-        return render(request, './main.html', context)
-    return render(request, './index.html')
+        return redirect('dashboard')
+    return render(request, './landing.html')
+
+
+def dashboard(request):
+      ## handle error of not having file in media section if user is directly acessing url
+    data,filename, codeFileName = getDataAndCodeFileName(request)
+    data_html = data.head(10).to_html()
+    data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+        data)
+
+    context = getContext(data_html, data_shape, nullValues,
+                         datatypes, memory_usage, dataframe_size, columns,codeFileName)
+
+    return render(request, './main.html', context)
 
 
 def showFulldataset(request):
+  
     data, filename, codeFileName = getDataAndCodeFileName(request)
     data_html = data.to_html()
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
@@ -389,6 +403,7 @@ def deleteColumns(request):
         context = getContext(data_html, data_shape, nullValues,
                              datatypes, memory_usage, dataframe_size, columns,codeFileName)
         return render(request, './preprocessing.html', context)
+        # return redirect('dashboard')    ###one page redirection instead of same html page can be done
 
 
 def mlalgorithms(request):
@@ -822,5 +837,8 @@ def elbow_plot(request):
     return render(request, './elbow_plot.html', context)
 
 
-def landing(request):
-    return render(request, './landing.html')
+
+
+
+
+

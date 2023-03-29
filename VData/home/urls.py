@@ -6,6 +6,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.home, name='home'),
+    path('dashboard/', views.dashboard, name='dashboard'),
     path('downloadDataset/', views.downloadDataset, name='downloadDataset'),
     path('showFulldataset/',views.showFulldataset,name='showFulldataset'),
     path('preprocessing/',views.preprocessing,name='preprocessing'),
@@ -28,5 +29,4 @@ urlpatterns = [
     path('visualisation/box_plot',views.box_plot,name='box_plot'),
     path('visualisation/line_plot',views.line_plot,name='line_plot'),
     path('visualisation/elbow_plot',views.elbow_plot,name='elbow_plot'),
-    path('landing',views.landing,name='landing')
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
