@@ -146,8 +146,10 @@ def home(request):
 
 
 def dashboard(request):
-      ## handle error of not having file in media section if user is directly acessing url
-    data,filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(request)
+    try:
+        data,filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(request)
+    except:
+        return redirect('home')
     data_html = data.head(10).to_html()
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
