@@ -440,15 +440,13 @@ def linear_reg(request):
         y1 = request.POST['value-y']
         test_size = request.POST['test_size']
         if len(X1) == 1:
-
             X = data[X1].values.reshape(-1, 1)
         else:
             X = data[X1]
 
         y = data[y1]
         test_size = int(test_size)/100
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size, random_state=10)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=10)
         model = LinearRegression()
         model.fit(X_train, y_train)
         variance_score = model.score(X_test, y_test)
@@ -456,7 +454,7 @@ def linear_reg(request):
         score = r2_score(y_test, y_pred)
 
         with open('./media/{}'.format(codeFileName), 'a') as f:
-            f.write("X=data['{}']\ny=data['{}']\nX_train, X_test, y_train, y_test=train_test_split(X, y, {}, random_state=10)\nmodel=LinearRegression()\nmodel.fit(X_train, y_train)\ny_pred=model.predict(X_test)\nscore=r2_score(y_test, y_pred)".format(
+            f.write("X=data'{}'\ny=data['{}']\nX_train, X_test, y_train, y_test=train_test_split(X, y, {}, random_state=10)\nmodel=LinearRegression()\nmodel.fit(X_train, y_train)\ny_pred=model.predict(X_test)\nscore=r2_score(y_test, y_pred)\n".format(
                 X1, y1, test_size))
 
         plt.switch_backend('Agg')
@@ -560,17 +558,9 @@ def knn(request):
         print("accuracy: ", accuracy)
         variance_score = knn.score(X_test, y_test)
 
-        # print("Successfylyyy",y_pred)
-        # code.append(" X-{},y-{},X_train, X_test, y_train, y_test = train_test_split(X, y, test_size={}, random_state=10) ,  knn=KNeighborsClassifier(int({})),knn.fit(X_train,y_train),y_pred=knn.predict(X_test),accuracy = accuracy_score(y_test, y_pred),\nvariance_score=knn.score(X_test,y_test)".format(X1,y1,test1,no_of_neighbours))
-        code1 = "X-{}".format(X1)
-        code2 = "y-{}".format(y1)
-        code3 = "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size={}, random_state=10)".format(
-            test1)
-        code4 = " knn=KNeighborsClassifier(int({})),knn.fit(X_train,y_train)".format(
-            no_of_neighbours)
+        with open('./media/{}'.format(codeFileName), 'a') as f:
+            f.write("X_train, X_test, y_train, y_test = train_test_split({}, {}, test_size={}, random_state=10)\nlinear_model = LogisticRegression()\nlinear_model.fit(X_train, y_train)\ny_pred = model.predict(X_test)".format(X1, y1, test1))
 
-        code5 = ["y_pred = knn.predict(X_test)", "accuracy = accuracy_score(y_test, y_pred)",
-                 "variance_score=knn.score(X_test,y_test)"]
 
         plt.switch_backend('Agg')
         plot_decision_regions(X_test.values, y_test.values, knn)
@@ -666,6 +656,8 @@ def cat_data(request):
             # we can also pass value of each category for user info in statistics
             # print(label_encoder.fit_transform(data[col]))
         data.to_csv('./media/{}'.format(filename), index=False)
+        with open('./media/{}'.format(codeFileName), 'a') as f:
+            f.write("data['{}'] = label_encoder.fit_transform(data['{}'])\n".format(col,col))
         data_html = data.head(10).to_html()
         data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
             data)
