@@ -523,7 +523,6 @@ def linear_reg(request):
         model = LinearRegression()
         model.fit(X_train, y_train)
         variance_score = model.score(X_test, y_test)
-        # print('Variance score: {}'.format(model.score(X_test, y_test)))
         # ---linear-regression doesnt have confusion matrix nOTE
         y_pred = model.predict(X_test)
         # confusion = confusion_matrix(y_test, y_pred)
@@ -547,12 +546,9 @@ def linear_reg(request):
         code2 = "y-{}".format(y1)
         code3 = "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size={}, random_state=10)".format(
             test1)
-        # code.append(code1)
-        # code.append(code2)
-        # code.append(code3)
+
         code4 = ["model = LinearRegression()", "model.fit(X_train, y_train)", "y_pred = model.predict(X_test)",
                  "variance_score=model.score(X_test,y_test)", "accuracy = accuracy_score(y_test, y_pred)"]
-        # code.extend(code4)
 
         data_html = data.to_html()
         data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
@@ -600,13 +596,8 @@ def knn(request):
         code4 = " knn=KNeighborsClassifier(int({})),knn.fit(X_train,y_train)".format(
             no_of_neighbours)
 
-        # code.append(code1)
-        # code.append(code2)
-        # code.append(code3)
-        # code.append(code4)
         code5 = ["y_pred = knn.predict(X_test)", "accuracy = accuracy_score(y_test, y_pred)",
                  "variance_score=knn.score(X_test,y_test)"]
-        # code.extend(code5)
 
         plt.switch_backend('Agg')
         plot_decision_regions(X_test.values, y_test.values, knn)
@@ -655,9 +646,7 @@ def kmeans(request):
         code2 = "kmeans = KMeans(n_clusters=int({}) init='k-means++',random_state= 42)".format(
             no_of_clusters)
         code3 = ["y_pred=kmeans.fit_predict(X)"]
-        # code.append(code1)
-        # code.append(code2)
-        # code.extend(code3)
+
         # code.append("x={},kmeans = KMeans(n_clusters=int({}), init='k-means++', random_state= 42),y_pred=kmeans.fit_predict(X),accuracy= ,variance_score= ".format(X1,no_of_clusters))
         # Need to pass on plots of cluster as output...
 
