@@ -446,7 +446,8 @@ def linear_reg(request):
 
         y = data[y1]
         test_size = int(test_size)/100
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=10)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=test_size, random_state=10)
         model = LinearRegression()
         model.fit(X_train, y_train)
         variance_score = model.score(X_test, y_test)
@@ -559,8 +560,8 @@ def knn(request):
         variance_score = knn.score(X_test, y_test)
 
         with open('./media/{}'.format(codeFileName), 'a') as f:
-            f.write("X_train, X_test, y_train, y_test = train_test_split({}, {}, test_size={}, random_state=10)\nlinear_model = LogisticRegression()\nlinear_model.fit(X_train, y_train)\ny_pred = model.predict(X_test)".format(X1, y1, test1))
-
+            f.write("X_train, X_test, y_train, y_test = train_test_split({}, {}, test_size={}, random_state=10)\nknn = KNeighborsClassifier({})\nknn.fit(X_train, y_train)\ny_pred = knn.predict(X_test)".format(
+                X1, y1, test1, no_of_neighbours))
 
         plt.switch_backend('Agg')
         plot_decision_regions(X_test.values, y_test.values, knn)
@@ -657,7 +658,8 @@ def cat_data(request):
             # print(label_encoder.fit_transform(data[col]))
         data.to_csv('./media/{}'.format(filename), index=False)
         with open('./media/{}'.format(codeFileName), 'a') as f:
-            f.write("data['{}'] = label_encoder.fit_transform(data['{}'])\n".format(col,col))
+            f.write(
+                "data['{}'] = label_encoder.fit_transform(data['{}'])\n".format(col, col))
         data_html = data.head(10).to_html()
         data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
             data)
