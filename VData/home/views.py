@@ -3,18 +3,16 @@ from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 import os
 import pandas as pd
-import numpy as np
 import time
 from django.http import HttpResponse
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, confusion_matrix, mean_squared_error, r2_score
+from sklearn.metrics import accuracy_score, confusion_matrix, r2_score
 # IMPORTANT!!! pip install scikit-learn
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, LabelEncoder
 import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap
 from mlxtend.plotting import plot_decision_regions
 import seaborn as sns
 
@@ -133,18 +131,6 @@ def home(request):
         sns.heatmap(data.corr(), cmap="YlGnBu", annot=True)
         fig_location = './media/correlational_matrix{}.png'.format(session_key)
         plt.savefig(fig_location)
-        image_url_correlation_matrix = '../media/correlational_matrix{}.png'.format(
-            session_key)
-        # data = data.head(10)
-
-        data_html = data.head(10).to_html()
-        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
-            data)
-
-        context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
-                             dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-
-        # print(code)
         return redirect('dashboard')
     return render(request, './landing.html')
 
@@ -159,8 +145,8 @@ def dashboard(request):
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
 
-    context = getContext(data_html, data_shape, nullValues,
-                         datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+    context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
+                         dataframe_size, columns, codeFileName, image_url_correlation_matrix)
 
     return render(request, './main.html', context)
 
@@ -384,7 +370,6 @@ def fillingNullMode(request):
         columns = request.POST.getlist('value-x')
         print(len(columns))
         for col in range(len(columns)):
-            # code.append('data.fillna({})'.format(columns[col]))
             try:
                 data[columns[col]].fillna(
                     data.mode()[columns[col]][0], inplace=True)
@@ -447,6 +432,60 @@ def mlalgorithms(request):
     return render(request, './ml.html', context)
 
 
+def linear_reg(request):
+    data, filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(
+        request)
+    if request.method == 'POST':
+        X1 = request.POST.getlist('value-x')
+        y1 = request.POST['value-y']
+        test_size = request.POST['test_size']
+        if len(X1) == 1:
+
+            X = data[X1].values.reshape(-1, 1)
+        else:
+            X = data[X1]
+
+        y = data[y1]
+        test_size = int(test_size)/100
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size, random_state=10)
+        model = LinearRegression()
+        model.fit(X_train, y_train)
+        variance_score = model.score(X_test, y_test)
+        y_pred = model.predict(X_test)
+        score = r2_score(y_test, y_pred)
+
+        with open('./media/{}'.format(codeFileName), 'a') as f:
+            f.write("X=data['{}']\ny=data['{}']\nX_train, X_test, y_train, y_test=train_test_split(X, y, {}, random_state=10)\nmodel=LinearRegression()\nmodel.fit(X_train, y_train)\ny_pred=model.predict(X_test)\nscore=r2_score(y_test, y_pred)".format(
+                X1, y1, test_size))
+
+        plt.switch_backend('Agg')
+        plt.scatter(X_test[:, 0], y_test, color="black")
+        plt.plot(X_test, y_pred, color="blue", linewidth=3)
+
+        session_key = request.session.get('session_key', None)
+
+        fig_location = './media/linearReg{}.png'.format(session_key)
+        plt.savefig(fig_location)
+
+        image_url = '../media/linearReg{}.png'.format(session_key)
+
+        data_html = data.to_html()
+        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+            data)
+        context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
+                             dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+        context.update({'image_url': image_url, 'r2_score': score})
+
+        return render(request, './results.html', context)
+    data_html = data.head(10).to_html()
+    data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+        data)
+    context = getContext(data_html, data_shape, nullValues,
+                         datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+    return render(request, './linear.html', context)
+
+
 def logistic_reg(request):
     data, filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(
         request)
@@ -472,9 +511,6 @@ def logistic_reg(request):
             f.write("X_train, X_test, y_train, y_test = train_test_split({}, {}, test_size={}, random_state=10)\nlinear_model = LogisticRegression()\nlinear_model.fit(X_train, y_train)\ny_pred = model.predict(X_test)".format(X1, y1, test1))
 
         plt.switch_backend('Agg')
-        # plt.plot(X_test, y_test, c="green")
-        # plt.yticks([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
-        # plt.axhline(.5, color="red", label="cutoff")
 
         sns.regplot(x=X_test, y=y_test, data=data, logistic=True, ci=None, scatter_kws={
                     'color': 'black'}, line_kws={'color': 'red'})
@@ -501,69 +537,6 @@ def logistic_reg(request):
     context = getContext(data_html, data_shape, nullValues,
                          datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
     return render(request, './logistic.html', context)
-
-
-def linear_reg(request):
-    data, filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(
-        request)
-    if request.method == 'POST':
-        X1 = request.POST.getlist('value-x')
-        y1 = request.POST['value-y']
-        test_size1 = request.POST['test_size']
-        if len(X1) == 1:
-
-            X = data[X1].values.reshape(-1, 1)
-        else:
-            X = data[X1]
-
-        y = data[y1]
-        test1 = int(test_size1)/100
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=int(test_size1)/100, random_state=10)
-        model = LinearRegression()
-        model.fit(X_train, y_train)
-        variance_score = model.score(X_test, y_test)
-        # ---linear-regression doesnt have confusion matrix nOTE
-        y_pred = model.predict(X_test)
-        # confusion = confusion_matrix(y_test, y_pred)
-        # accuracy = accuracy_score(y_test, y_pred)
-        # accuracy="NA" #not avialable so kept zero
-        score = r2_score(y_test, y_pred)
-
-        plt.switch_backend('Agg')
-        plt.scatter(X_test[:, 0], y_test, color="black")
-        plt.plot(X_test, y_pred, color="blue", linewidth=3)
-
-        session_key = request.session.get('session_key', None)
-
-        fig_location = './media/linearReg{}.png'.format(session_key)
-        plt.savefig(fig_location)
-
-        image_url = '../media/linearReg{}.png'.format(session_key)
-
-        # code.append(" X-{},y-{},X_train, X_test, y_train, y_test = train_test_split(X, y, test_size={}, random_state=10) , model = LinearRegression(),model.fit(X_train, y_train)y_pred = model.predict(X_test) ,variance_score=model.score(X_test,y_test),accuracy = accuracy_score(y_test, y_pred) , y_pred= ".format(X1,y1,test1))
-        code1 = "X-{}".format(X1)
-        code2 = "y-{}".format(y1)
-        code3 = "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size={}, random_state=10)".format(
-            test1)
-
-        code4 = ["model = LinearRegression()", "model.fit(X_train, y_train)", "y_pred = model.predict(X_test)",
-                 "variance_score=model.score(X_test,y_test)", "accuracy = accuracy_score(y_test, y_pred)"]
-
-        data_html = data.to_html()
-        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
-            data)
-        context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
-                             dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-        context.update({'image_url': image_url, 'r2_score': score})
-
-        return render(request, './results.html', context)
-    data_html = data.head(10).to_html()
-    data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
-        data)
-    context = getContext(data_html, data_shape, nullValues,
-                         datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-    return render(request, './linear.html', context)
 
 
 def knn(request):
