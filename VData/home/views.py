@@ -49,7 +49,6 @@ def getDataAndCodeFileName(request):
         session_key)
     return data, filename, codeFileName, image_url_correlation_matrix
 
-
 # ----------- Session File Handling --------------------
 
 
@@ -73,20 +72,14 @@ def downloadDataset(request):
     file_path = './media/{}'.format(fileName)
     session_key = request.session.get('session_key', None)
 
-    # Open the file for reading
     with open(file_path, 'rb') as f:
-        # Create the HttpResponse object with the file as content
         response = HttpResponse(f.read())
-        # Set the content type header
         content_type = 'application/octet-stream'
         response['Content-Type'] = content_type
-        # Set the Content-Disposition header to force file download
         filename = os.path.basename(file_path)
         filename = filename.replace(session_key, '')
-        print(filename)
         response['Content-Disposition'] = 'attachment; filename="%s"' % filename
         return response
-
 
 # ---------------------------------------------------
 
@@ -592,9 +585,6 @@ def kmeans(request):
     data, filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(
         request)
 
- # -------->We will provide Elbow method to user so that he could figure out number of clusters<-------------------
- # elbow method is plotting of scatter plot so 2 options we have either in visualization section or in Kmeans section will decide<----
- # After that we will process K means algo ...
     if request.method == 'POST':
         no_of_clusters = request.POST['no_of_clusters']
         X1 = request.POST.getlist('value-x')
@@ -606,13 +596,8 @@ def kmeans(request):
         accuracy = "NA"  # not avialable so kept zero
         variance_score = "NA"  # not avialable so kept zero
 
-        code1 = "x={}".format(X1)
-        code2 = "kmeans = KMeans(n_clusters=int({}) init='k-means++',random_state= 42)".format(
-            no_of_clusters)
-        code3 = ["y_pred=kmeans.fit_predict(X)"]
-
-        # code.append("x={},kmeans = KMeans(n_clusters=int({}), init='k-means++', random_state= 42),y_pred=kmeans.fit_predict(X),accuracy= ,variance_score= ".format(X1,no_of_clusters))
-        # Need to pass on plots of cluster as output...
+        with open('./media/{}'.format(codeFileName), 'a') as f:
+            f.write("kmeans = KMeans(n_clusters={},init='k-means++', random_state=42)\ny_pred=kmeans.fit_predict(data{})".format(int(no_of_clusters), X1))
 
         # Visualization
         plt.switch_backend('Agg')
