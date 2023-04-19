@@ -49,8 +49,63 @@
                                 <table class="table mb-0">
                                     <thead class="table-light">
                                         <tr>
+
+                                            {% if r2_score is not None%}
                                             <th>R2 Score</th>
                                             <th>{{ r2_score | safe}}</th>
+                                            {% endif%}
+
+                                            {% if accuracy is not None%}
+                                            <th>Accuracy</th>
+                                            <th>{{ accuracy | safe}}</th>
+                                            {% endif%}
+
+                                            {% if error is not None%}
+                                            <th>Error</th>
+                                            <th>{{ error | safe}}</th>
+                                            {% endif%}
+
+                                            {% if recall_score is not None%}
+                                            <th>Recall_score</th>
+                                            <th>{{ recall_score | safe}}</th>
+                                            {% endif%}
+
+                                            {% if precision_score is not None%}
+                                            <th>Precision_score</th>
+                                            <th>{{ precision_score | safe}}</th>
+                                            {% endif%}
+
+                                            {% if sensitivity is not None%}
+                                            <th>Sensitivity</th>
+                                            <th>{{ sensitivity | safe}}</th>
+                                            {% endif%}
+
+                                            {% if specificity is not None%}
+                                            <th>Specificity</th>
+                                            <th>{{ specificity | safe}}</th>
+                                            {% endif%}
+
+                                            {% if mean_absolute_error is not None%}
+                                            <th>Mean Absolute Error</th>
+                                            <th>{{ mean_absolute_error | safe}}</th>
+                                            {% endif%}
+
+                                            {% if mean_squared_error is not None%}
+                                            <th>Mean Squared Error</th>
+                                            <th>{{ mean_squared_error | safe}}</th>
+                                            {% endif%}
+
+                                            {% if root_mean_squared_error is not None%}
+                                            <th>Root Mean Squared Error</th>
+                                            <th>{{ root_mean_squared_error | safe}}</th>
+                                            {% endif%}
+
+                                            {% if class_report is not None%}
+                                            <th>Classification Report</th>
+                                            <th>{{ class_report | safe}}</th>
+                                            {% endif%}
+
+
                                         </tr>
                                     </thead>
                                 </table>

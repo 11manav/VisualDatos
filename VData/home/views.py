@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 import os
+import math
 import pandas as pd
 import time
 from django.http import HttpResponse
@@ -9,7 +10,7 @@ from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, confusion_matrix, r2_score
+from sklearn.metrics import accuracy_score, confusion_matrix, r2_score, precision_score, recall_score, f1_score, mean_squared_error,mean_absolute_error, classification_report
 # IMPORTANT!!! pip install scikit-learn
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, LabelEncoder
 import matplotlib.pyplot as plt
@@ -443,9 +444,13 @@ def linear_reg(request):
             X, y, test_size=test_size, random_state=10)
         model = LinearRegression()
         model.fit(X_train, y_train)
-        variance_score = model.score(X_test, y_test)
+       
         y_pred = model.predict(X_test)
         score = r2_score(y_test, y_pred)
+        variance_score = model.score(X_test, y_test)
+        mean_abs_error = round(mean_absolute_error(y_test, y_pred), 4)
+        mean_sqr_error= round(mean_squared_error(y_test, y_pred), 4)
+        root_mean_squared_error=math.sqrt(mean_sqr_error)
 
         with open('./media/{}'.format(codeFileName), 'a') as f:
             f.write("X=data'{}'\ny=data['{}']\nX_train, X_test, y_train, y_test=train_test_split(X, y, {}, random_state=10)\nmodel=LinearRegression()\nmodel.fit(X_train, y_train)\ny_pred=model.predict(X_test)\nscore=r2_score(y_test, y_pred)\n".format(
@@ -467,7 +472,9 @@ def linear_reg(request):
             data)
         context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
                              dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-        context.update({'image_url': image_url, 'r2_score': score})
+    
+        context.update({ 'variance_score': variance_score,'r2_score': score,
+                       'y_predict': y_pred, 'image_url': image_url, 'mean_absolute_error':mean_abs_error, 'mean_squared_error':mean_sqr_error, 'root_mean_squared_error':root_mean_squared_error })
 
         return render(request, './results.html', context)
     data_html = data.head(10).to_html()
@@ -496,8 +503,23 @@ def logistic_reg(request):
         model = LogisticRegression()
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
-        confusion = confusion_matrix(y_test, y_pred)
+        #statistics
         accuracy = accuracy_score(y_test, y_pred)
+        precision=precision_score(y_test,y_pred)
+        recall=recall_score(y_test,y_pred)
+        tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
+        specificity=tn/fp+tn
+        f1_scr=f1_score(y_test,y_pred)
+        sensitivity=tp/tp+fn
+        mean_abs_error = round(mean_absolute_error(y_test, y_pred), 4)
+        mean_sqr_error= round(mean_squared_error(y_test, y_pred), 4)
+        root_mean_squared_error=math.sqrt(mean_sqr_error)
+        error=1-accuracy
+        #todo
+        confusion = confusion_matrix(y_test, y_pred)
+        #AUC
+        #ROC
+        #CM
         variance_score = model.score(X_test, y_test)
         with open('./media/{}'.format(codeFileName), 'a') as f:
             f.write("X_train, X_test, y_train, y_test = train_test_split({}, {}, test_size={}, random_state=10)\nlinear_model = LogisticRegression()\nlinear_model.fit(X_train, y_train)\ny_pred = model.predict(X_test)".format(X1, y1, test1))
@@ -520,7 +542,7 @@ def logistic_reg(request):
         context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
                              dataframe_size, columns, codeFileName, image_url_correlation_matrix)
         context.update({'accuracy': accuracy, 'variance_score': variance_score,
-                       'y_predict': y_pred, 'image_url': image_url})
+                       'y_predict': y_pred, 'image_url': image_url, 'accuracy':accuracy, 'error':error, 'recall_score':recall, 'precision_score':precision, 'F1_score':f1_scr, 'sensitivity':sensitivity, 'specificity':specificity, 'mean_absolute_error':mean_abs_error, 'mean_squared_error':mean_sqr_error, 'root_mean_squared_error':root_mean_squared_error })
 
         return render(request, './results.html', context)
     data_html = data.head(10).to_html()
@@ -548,8 +570,28 @@ def knn(request):
         knn = KNeighborsClassifier(int(no_of_neighbours))
         knn.fit(X_train, y_train)
         y_pred = knn.predict(X_test)
-        accuracy = accuracy_score(y_test, y_pred)
-        print("accuracy: ", accuracy)
+
+        #checking
+        class_report=classification_report(y_test, y_pred, digits=3)
+        #statistics
+        # This statistics cannot be calculated due to multiclass
+        # accuracy = accuracy_score(y_test, y_pred, average='macro')
+        # precision=precision_score(y_test,y_pred,average='macro')
+        # recall=recall_score(y_test,y_pred,average='macro')
+        # tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
+        # specificity=tn/fp+tn
+        # f1_scr=f1_score(y_test,y_pred)
+        # sensitivity=tp/tp+fn
+        # mean_abs_error = round(mean_absolute_error(y_test, y_pred), 4)
+        # mean_sqr_error= round(mean_squared_error(y_test, y_pred), 4)
+        # root_mean_squared_error=math.sqrt(mean_sqr_error)
+        # error=1-accuracy
+        #todo
+        confusion = confusion_matrix(y_test, y_pred)
+        #AUC
+        #ROC
+        #CM
+    
         variance_score = knn.score(X_test, y_test)
 
         with open('./media/{}'.format(codeFileName), 'a') as f:
@@ -570,8 +612,9 @@ def knn(request):
             data)
         context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
                              dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-        context.update({'accuracy': accuracy, 'variance_score': variance_score,
-                       'y_predict': y_pred, 'image_url': image_url})
+        context.update({'variance_score': variance_score,
+                       'y_predict': y_pred, 'image_url': image_url, 'class_report':class_report })
+
         return render(request, './results.html', context)
     data_html = data.to_html()
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
