@@ -48,65 +48,82 @@
                             <div class="table-responsive" data-simplebar style="max-height: 300px;">
                                 <table class="table mb-0">
                                     <thead class="table-light">
+                                        {% if r2_score is not None%}
                                         <tr>
-
-                                            {% if r2_score is not None%}
-                                            <th>R2 Score</th>
-                                            <th>{{ r2_score | safe}}</th>
-                                            {% endif%}
-
-                                            {% if accuracy is not None%}
-                                            <th>Accuracy</th>
-                                            <th>{{ accuracy | safe}}</th>
-                                            {% endif%}
-
-                                            {% if error is not None%}
-                                            <th>Error</th>
-                                            <th>{{ error | safe}}</th>
-                                            {% endif%}
-
-                                            {% if recall_score is not None%}
-                                            <th>Recall_score</th>
-                                            <th>{{ recall_score | safe}}</th>
-                                            {% endif%}
-
-                                            {% if precision_score is not None%}
-                                            <th>Precision_score</th>
-                                            <th>{{ precision_score | safe}}</th>
-                                            {% endif%}
-
-                                            {% if sensitivity is not None%}
-                                            <th>Sensitivity</th>
-                                            <th>{{ sensitivity | safe}}</th>
-                                            {% endif%}
-
-                                            {% if specificity is not None%}
-                                            <th>Specificity</th>
-                                            <th>{{ specificity | safe}}</th>
-                                            {% endif%}
-
-                                            {% if mean_absolute_error is not None%}
-                                            <th>Mean Absolute Error</th>
-                                            <th>{{ mean_absolute_error | safe}}</th>
-                                            {% endif%}
-
-                                            {% if mean_squared_error is not None%}
-                                            <th>Mean Squared Error</th>
-                                            <th>{{ mean_squared_error | safe}}</th>
-                                            {% endif%}
-
-                                            {% if root_mean_squared_error is not None%}
-                                            <th>Root Mean Squared Error</th>
-                                            <th>{{ root_mean_squared_error | safe}}</th>
-                                            {% endif%}
-
-                                            {% if class_report is not None%}
-                                            <th>Classification Report</th>
-                                            <th>{{ class_report | safe}}</th>
-                                            {% endif%}
-
-
+                                        <th>R2 Score</th>
+                                        <th>{{ r2_score | safe}}</th>
                                         </tr>
+                                        {% endif%}
+
+                                        {% if accuracy is not None%}
+                                        <tr>
+                                        <th>Accuracy</th>
+                                        <th>{{ accuracy | safe}}</th>
+                                        </tr>
+                                        {% endif%}
+
+                                        {% if error is not None%}
+                                        <tr>
+                                        <th>Error</th>
+                                        <th>{{ error | safe}}</th>
+                                        </tr>
+                                        {% endif%}
+
+                                        {% if recall_score is not None%}
+                                        <tr>
+                                        <th>Recall_score</th>
+                                        <th>{{ recall_score | safe}}</th>
+                                        </tr>
+                                        {% endif%}
+
+                                        {% if precision_score is not None%}
+                                        <tr>
+                                        <th>Precision_score</th>
+                                        <th>{{ precision_score | safe}}</th>
+                                        </tr>
+                                        {% endif%}
+
+                                        {% if sensitivity is not None%}
+                                        <tr>
+                                        <th>Sensitivity</th>
+                                        <th>{{ sensitivity | safe}}</th>
+                                        </tr>
+                                        {% endif%}
+
+                                        {% if specificity is not None%}
+                                        <tr>
+                                        <th>Specificity</th>
+                                        <th>{{ specificity | safe}}</th>
+                                        </tr>
+                                        {% endif%}
+                                        
+                                        {% if mean_absolute_error is not None%}
+                                        <tr>
+                                        <th>Mean Absolute Error</th>
+                                        <th>{{ mean_absolute_error | safe}}</th>
+                                        </tr>
+                                        {% endif%}
+
+                                        {% if mean_squared_error is not None%}
+                                        <tr>
+                                        <th>Mean Squared Error</th>
+                                        <th>{{ mean_squared_error | safe}}</th>
+                                        </tr>
+                                        {% endif%}
+
+                                        {% if root_mean_squared_error is not None%}
+                                        <tr>
+                                        <th>Root Mean Squared Error</th>
+                                        <th>{{ root_mean_squared_error | safe}}</th>
+                                        </tr>
+                                        {% endif%}
+
+                                        {% if class_report is not None%}
+                                        <tr>
+                                        <th>Classification Report</th>
+                                        <th>{{ class_report | safe}}</th>
+                                        </tr>
+                                        {% endif%}
                                     </thead>
                                 </table>
                             </div>
@@ -149,7 +166,24 @@
                     </div> <!-- end card-body-->
                 </div> <!-- end card-->
             </div>
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="header-title mb-3">Confusion Matrix</h4>
 
+                        <div class="table-responsive" data-simplebar style="max-height: 300px;">
+                            
+
+                            
+                            <!-- insert confusion matrix image here inside img tag -->
+
+
+                        </div>
+                        <!-- end table-responsive -->
+
+                    </div>
+                </div>
+            </div>
             {% block operation %} {% endblock operation %}
         </div> <!-- container -->
 

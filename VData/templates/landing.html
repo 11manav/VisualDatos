@@ -32,7 +32,7 @@
 								<span class="icon-bar"></span>
 								<span class="icon-bar"></span>
 							</button>
-							<a class="navbar-brand" href="index.html">
+							<a class="navbar-brand" href="{% url 'home'%}">
 								<img class="logo logo-light" src="{% static 'images/logo-white2.png' %}" alt="logo" />
 								<img class="logo logo-color" src="{% static 'images/logo2.png' %}" alt="logo" />
 							</a>
@@ -64,10 +64,7 @@
 								<p class="lead wow fadeInUp" data-wow-duration=".5s" data-wow-delay=".3s">Data Science made easy with VisualDatos!</p>
 								<ul class="buttons">
 									<li><a href="#" class="button wow fadeInUp" data-wow-duration=".5s" data-wow-delay=".6s" onclick="toggle()">Upload</a></li>
-
-									
-
-									<li><a href="#" class="button button-border button-transparent wow fadeInUp" data-wow-duration=".5s" data-wow-delay=".9s">Learn More</a></li>
+									<li><a href="#about" class="button button-border button-transparent wow fadeInUp" data-wow-duration=".5s" data-wow-delay=".9s">Learn More</a></li>
 								</ul>
 							</div>
 						</div><!-- .col -->
@@ -98,7 +95,7 @@
 						<div class="video wow fadeInLeft" data-wow-duration=".5s">
 							<img src="{% static 'images/about-video1.png' %}" alt="about-video" />
 							<div class="video-overlay gradiant-background"></div>
-							<a href="https://www.youtube.com/embed/dQw4w9WgXcQ?controls=0" class="video-play" data-effect="mfp-3d-unfold"><i class="fa fa-play"></i></a>
+							<a href="https://youtu.be/Vq4JDmQ3eN4" class="video-play" data-effect="mfp-3d-unfold"><i class="fa fa-play"></i></a>
 						</div>
 					</div><!-- .col -->
 					<div class="col-md-6">
@@ -107,7 +104,6 @@
 							<p> With its user-friendly interface and versatile features, VisualDatos enables users to pre-process, visualize, code, and train machine learning models from scientific datasets in a simplified way.</p>
 							<p>It is an integrated software platform that offers a comprehensive solution for teachers, students, and data analysts to teach, learn, and perform data science effectively.</p>
 							<p>Get started by uploading your Dataset Today!!</p>
-							<a href="{% url 'home' %}" class="button">Upload</a>
 						</div>
 					</div><!-- .col -->
 				</div><!-- .row -->
@@ -670,11 +666,6 @@
 		<!-- Preloader !remove please if you do not want -->
 		<div id="preloader"><div id="status">&nbsp;</div></div> 
 		<!-- Preloader End -->
-		
-		<!-- Google Map Script -->
-		<script src="https://maps.google.com/maps/api/js?key=AIzaSyD6cxB4idvB67_Mz1ScQn-_nBJmltUaS-g"></script> 
-		<script src="assets_landing/js/googleMapc302.js?ver=130"></script>
-
 		<!-- JavaScript
 		================================================== -->
 		<!-- Placed at the end of the document so the pages load faster -->

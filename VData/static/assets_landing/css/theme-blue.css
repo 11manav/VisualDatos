@@ -169,6 +169,7 @@ background: #fff;
 visibility: visible;
 opacity: 0;
 transition: 0.5s;
+display: none;
 }
 #popup.active
 {	
@@ -176,6 +177,7 @@ visibility: visible;
 opacity: 1;
 transition: 0.5s;
 filter: none;
+display: block;
 }
 
 .btn1,
