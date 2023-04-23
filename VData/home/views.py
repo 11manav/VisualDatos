@@ -10,7 +10,7 @@ from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, confusion_matrix, r2_score, precision_score, recall_score, f1_score, mean_squared_error,mean_absolute_error, classification_report
+from sklearn.metrics import accuracy_score, confusion_matrix, r2_score, precision_score, recall_score, f1_score, mean_squared_error,mean_absolute_error, classification_report, adjusted_rand_score,rand_score,silhouette_score,davies_bouldin_score,mutual_info_score
 # IMPORTANT!!! pip install scikit-learn
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, LabelEncoder
 import matplotlib.pyplot as plt
@@ -535,6 +535,16 @@ def logistic_reg(request):
         plt.savefig(fig_location)
 
         image_url = '../media/logisticReg{}.png'.format(session_key)
+        #cm_image
+        f, ax =plt.subplots(figsize = (5,5))
+        cm= confusion_matrix(y_test, y_pred)
+        sns.heatmap(cm,annot = True, linewidths= 0.5, linecolor="red", fmt=".0f", ax=ax)
+        plt.xlabel("y_pred")
+        plt.ylabel("y_true")
+        fig_location = './media/logistic_CM{}.png'.format(session_key)
+        plt.savefig(fig_location)
+        confusion_mtx_imgurl = '../media/logistic_CM{}.png'.format(session_key)
+
 
         data_html = data.to_html()
         data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
@@ -607,13 +617,23 @@ def knn(request):
         plt.savefig(fig_location)
         image_url = '../media/knn{}.png'.format(session_key)
 
+        #cm_image
+        f, ax =plt.subplots(figsize = (5,5))
+        cm= confusion_matrix(y_test, y_pred)
+        sns.heatmap(cm,annot = True, linewidths= 0.5, linecolor="red", fmt=".0f", ax=ax)
+        plt.xlabel("y_pred")
+        plt.ylabel("y_true")
+        fig_location = './media/knn_CM{}.png'.format(session_key)
+        plt.savefig(fig_location)
+        confusion_mtx_imgurl = '../media/knn_CM{}.png'.format(session_key)
+
         data_html = data.to_html()
         data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
             data)
         context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
                              dataframe_size, columns, codeFileName, image_url_correlation_matrix)
         context.update({'variance_score': variance_score,
-                       'y_predict': y_pred, 'image_url': image_url, 'class_report':class_report })
+                       'y_predict': y_pred, 'image_url': image_url, 'class_report':class_report, 'confusion_mtx_imgurl':confusion_mtx_imgurl })
 
         return render(request, './results.html', context)
     data_html = data.to_html()
@@ -636,8 +656,16 @@ def kmeans(request):
         kmeans = KMeans(n_clusters=int(no_of_clusters),
                         init='k-means++', random_state=42)
         y_pred = kmeans.fit_predict(X)
-        accuracy = "NA"  # not avialable so kept zero
-        variance_score = "NA"  # not avialable so kept zero
+        
+        #stats
+        # accuracy = "NA"  # not avialable so kept zero
+        # variance_score = "NA"  # not avialable so kept zero
+        # ari= adjusted_rand_score(X, kmeans.labels_)
+        # ris = rand_score(X, kmeans.labels_)
+        # ss = silhouette_score(X, kmeans.labels_)
+        # dbs = davies_bouldin_score(X, kmeans.labels_)
+        # mis = mutual_info_score(X, kmeans.labels_)
+
 
         with open('./media/{}'.format(codeFileName), 'a') as f:
             f.write("kmeans = KMeans(n_clusters={},init='k-means++', random_state=42)\ny_pred=kmeans.fit_predict(data{})".format(int(no_of_clusters), X1))
@@ -659,8 +687,7 @@ def kmeans(request):
             data)
         context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
                              dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-        context.update({'accuracy': accuracy, 'variance_score': variance_score,
-                       'y_predict': y_pred, 'image_url': image_url})
+        context.update({'y_predict': y_pred, 'image_url': image_url})
 
         # different template will come need to change kept it temprory
         return render(request, './results.html', context)

@@ -124,6 +124,50 @@
                                         <th>{{ class_report | safe}}</th>
                                         </tr>
                                         {% endif%}
+
+
+                                        {% if ari is not None%}
+                                        <tr>
+                                        <th>Adjusted Rand Index</th>
+                                        <th>{{ ari | safe}}</th>
+                                        </tr>
+                                        {% endif%}
+
+
+                                        {% if ris is not None%}
+                                        <tr>
+                                        <th>Rand Score</th>
+                                        <th>{{ ris | safe}}</th>
+                                        </tr>
+                                        {% endif%}
+
+
+
+                                        {% if  ss is not None%}
+                                        <tr>
+                                        <th> Silhouette Score</th>
+                                        <th>{{ ss | safe}}</th>
+                                        </tr>
+                                        {% endif%}
+
+
+
+
+                                        {% if dbs is not None%}
+                                        <tr>
+                                        <th>Davies Bouldin Score</th>
+                                        <th>{{ dbs | safe}}</th>
+                                        </tr>
+                                        {% endif%}
+
+
+                                        {% if mis is not None%}
+                                        <tr>
+                                        <th>Mutual info Score</th>
+                                        <th>{{ mis | safe}}</th>
+                                        </tr>
+                                        {% endif%}
+
                                     </thead>
                                 </table>
                             </div>
@@ -165,6 +209,7 @@
                         </div> <!-- end table-responsive-->
                     </div> <!-- end card-body-->
                 </div> <!-- end card-->
+                {% if confusion_mtx_imgurl is not None%}
             </div>
             <div class="col-lg-12">
                 <div class="card">
@@ -172,18 +217,15 @@
                         <h4 class="header-title mb-3">Confusion Matrix</h4>
 
                         <div class="table-responsive" data-simplebar style="max-height: 300px;">
-                            
-
-                            
-                            <!-- insert confusion matrix image here inside img tag -->
-
-
+                          
+                            <img src= {{ confusion_mtx_imgurl }} alt="">
+                      
                         </div>
-                        <!-- end table-responsive -->
 
                     </div>
                 </div>
             </div>
+            {% endif%}
             {% block operation %} {% endblock operation %}
         </div> <!-- container -->
 
