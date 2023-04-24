@@ -33,6 +33,12 @@
 
         <!-- Icons css -->
         <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
+
+
+        <!-- code highlight css -->
+        <link href="{% static 'css/prism.css' %}" rel="stylesheet" type="text/css" />
+        <script src="{% static 'js/prism.js' %}"></script>
+        
     </head>
 
     <body>
@@ -335,10 +341,8 @@
                                                 <!-- <button class="btn-copy-clipboard" data-clipboard-action="copy">
                                                     Copy
                                                 </button> -->
-                                                <pre class="mb-0" style="height: 304px; border-bottom: 1px solid var(--ct-gray-300);">
-<code class="html escape language-python">
-{{file_content | safe}}
-</code>
+                                                <pre class="mb-0 html escape" style="height: 304px; border-bottom: 1px solid var(--ct-gray-300);">
+<code class="language-python">{{file_content | safe}}</code>
                                                     </pre>
     
                                                 <!-- end highlight-->
@@ -387,7 +391,7 @@
                                         {% endblock dataset %}
 
                                     </div> <!-- end table-responsive-->
-                                    <div id="#datasetButtonGroup" style="border: 1px solid var(--ct-gray-300);" class="p-2"> 
+                                    <div id="#datasetButtonGroup" style="border: 1px solid var(--ct-gray-300); display: flex; justify-content: space-evenly;" class="p-2"> 
                                     <button class="btn-copy-clipboard" onclick="location.href='{% url 'downloadDataset' %}'" style="font-size: 0.875rem;">Download Dataset</button>
                                     <button class="btn-copy-clipboard" onclick="location.href='{% url 'showFulldataset' %}'" style="font-size: 0.875rem;">Show Full Dataset</button>
                                     </div>
@@ -1140,8 +1144,13 @@
             $("table").addClass("table table-centered table-nowrap table-hover table-bordered mb-0");
             $("h5").addClass("font-14 my-1 fw-normal");
             $("table span").addClass("text-muted font-13");
-            hljs.highlightAll();            
+            Prism.highlightAll();
+            /*
+            {% comment %} hljs.highlightAll(); {% endcomment %}
+            monaco.editor.colorizeElement(document.getElementById('CodeBlock'));   */         
         </script>
+
+
 
     </body>
 

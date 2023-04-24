@@ -180,7 +180,7 @@ filter: none;
 display: block;
 }
 
-.btn1,
+/* .btn1,
 input::file-selector-button {
   text-decoration: none;
   background-color: #303841;
@@ -190,16 +190,37 @@ input::file-selector-button {
   border-radius: 8%;
   outline: none;
   transition: 0.3s;
+} */
+
+.btn1,
+input::file-selector-button {
+	font-size: 1em;
+    font-weight: 700;
+    line-height: 3.125;
+    border: none;
+    border-radius: 25px;
+    padding: 0 40px;
+    display: inline-block;
+    color: #fff;
+    text-align: center;
+    background: #F88D5E;
+    -webkit-transition: all .5s ease;
+    -moz-transition: all .5s ease;
+    transition: all .5s ease;
+
+	visibility: visible;
+    animation-duration: 0.5s;
+    animation-delay: 0.6s;
+    animation-name: fadeInUp;
+	border: 1px solid transparent;
 }
 
 .btn1:hover,
 input::file-selector-button:hover {
   text-decoration: none;
-  background-color: #3695fa;
-  color: #ffffff;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 25%;
+  background-color: #fff;
+  color: #F88D5E;
+  border: 1px solid #F88D5E;
 }
 input[type="file"] {
     display: inline;
