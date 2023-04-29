@@ -658,7 +658,7 @@
 		<h2>Upload your dataset here</h2>
 		<form method="post" enctype="multipart/form-data" style="display: flex; justify-content: space-between;">
           {% csrf_token %}
-          <input type="file" accept=".csv" name="myfile" style="width: 80%;">
+          <input type="file" accept=".csv" name="myfile" style="width: 80%;" required>
           <button class="btn1" type="submit">Upload</button>
           </form>
 		
