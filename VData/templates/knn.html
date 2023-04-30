@@ -7,7 +7,7 @@
           <form action="" method="POST">
               {% csrf_token%}
               <h2>KNN</h2>
-                  <div class="row" data-select2-id="select2-data-8-1vyy">
+                  <div class="row">
                     <div class="col-lg-6 mb-3">
                         <div>
                             <label for="no_of_neighbors" class="form-label">No. of Neighbours</label>
@@ -16,12 +16,12 @@
                     </div>
                   </div> <!-- end row -->
 
-                  <div class="row" data-select2-id="select2-data-8-1vyy">
+                  <div class="row">
 
-                      <div class="col-lg-6 mb-3" data-select2-id="columns">
+                      <div class="col-lg-6 mb-3">
                           <p class="mb-1 fw-bold text-muted">X :</p>
                           <!-- Multiple Select -->
-                          <select class="js-select2 form-control select2-multiple" data-toggle="select2" multiple="multiple" data-placeholder="Choose Columns" id="value-x" name="value-x" >
+                          <select class="js-select2 form-control select2-multiple" data-toggle="select2" multiple="multiple" data-placeholder="Choose Columns" id="my-select" name="value-x" >
                               {% for col in columns %}
                               <option value="{{col}}">
                                   {{col | safe}}
@@ -34,10 +34,19 @@
 
                       
                   </div> <!-- end row -->
-                  <div class="row" data-select2-id="select2-data-8-1vyy">
-                    <div class="col-lg-6 mb-3" data-select2-id="select2-data-73-kdnc">
+                  <div class="row">
+                    <div class="col-lg-6 mb-3">
                         <p class="mb-1 fw-bold text-muted">Y :</p>
-                        <select class="form-control select2 select2-hidden-accessible" data-toggle="select2" data-select2-id="select2-data-1-6xhr" tabindex="-1" aria-hidden="true" name="value-y">
+                        {% comment %} <div class="mb-3">
+                            <select class="form-control select2" id="example-select" name="value-y">
+                                {% for col in columns %}
+                              <option value="{{col}}">
+                                  {{col | safe}}
+                              </option>
+                              {% endfor %}
+                            </select>
+                        </div> {% endcomment %}
+                        <select class="form-control select2" data-toggle="select2" aria-hidden="true" name="value-y" id="my-select2">
                             {% for col in columns %}
                               <option value="{{col}}">
                                   {{col | safe}}
@@ -49,7 +58,7 @@
                       
                   </div> <!-- end row -->
 
-                  <div class="row" data-select2-id="select2-data-8-1vyy">
+                  <div class="row">
                     <div class="col-lg-6 mb-3">
                         <div>
                             <label for="test_size" class="form-label">Enter Test Size</label>

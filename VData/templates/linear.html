@@ -12,7 +12,7 @@
                       <div class="col-lg-6 mb-3" data-select2-id="columns">
                           <p class="mb-1 fw-bold text-muted">X :</p>
                           <!-- Multiple Select -->
-                          <select class="js-select2 form-control select2-multiple" data-toggle="select2" multiple="multiple" data-placeholder="Choose Columns" id="value-x" name="value-x" >
+                          <select class="js-select2 form-control select2-multiple" data-toggle="select2" multiple="multiple" data-placeholder="Choose Columns"  id="my-select" name="value-x" >
                               {% for col in columns %}
                               <option value="{{col}}">
                                   {{col | safe}}
@@ -28,7 +28,7 @@
                   <div class="row" data-select2-id="select2-data-8-1vyy">
                     <div class="col-lg-6 mb-3" data-select2-id="select2-data-73-kdnc">
                         <p class="mb-1 fw-bold text-muted">Y :</p>
-                        <select class="form-control select2 select2-hidden-accessible" data-toggle="select2" data-select2-id="select2-data-1-6xhr" tabindex="-1" aria-hidden="true" name="value-y">
+                        <select class="form-control select2 select2-hidden-accessible" data-toggle="select2" data-select2-id="select2-data-1-6xhr" tabindex="-1" aria-hidden="true" name="value-y" id="my-select2">
                             {% for col in columns %}
                               <option value="{{col}}">
                                   {{col | safe}}

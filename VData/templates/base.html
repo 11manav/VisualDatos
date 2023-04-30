@@ -1150,6 +1150,49 @@
             $("h5").addClass("font-14 my-1 fw-normal");
             $("table span").addClass("text-muted font-13");
             Prism.highlightAll();
+            $(document).ready(function() {
+                // Initialize select2 control
+                $('#my-select').select2();
+              
+                // Listen for changes to the selection and update session storage
+                $('#my-select').on('change', function() {
+                  var pageUrl = window.location.href;
+                  var key = 'selectedValues_' + pageUrl;
+                  sessionStorage.setItem(key, JSON.stringify($(this).val()));
+                });
+
+                // Initialize select2 control
+                $('#my-select2').select2();
+              
+                // Listen for changes to the selection and update session storage
+                $('#my-select2').on('change', function() {
+                    var pageUrl = window.location.href;
+                    var key2 = 'selectedValues2_' + pageUrl;
+                    sessionStorage.setItem(key2, JSON.stringify($(this).val()));
+                });
+              });
+              window.onload = function() {
+                // Retrieve previously selected values from session storage
+                var pageUrl = window.location.href;
+                var key = 'selectedValues_' + pageUrl;
+                var selectedValues = sessionStorage.getItem(key);
+                var key2 = 'selectedValues2_' + pageUrl;
+                var selectedValues2 = sessionStorage.getItem(key2);
+                if (selectedValues) {
+                  selectedValues = JSON.parse(selectedValues);
+              
+                  // Set the select2 control's value to the previously selected values
+                  $('#my-select').val(selectedValues).trigger('change');
+                }
+                if (selectedValues2) {
+                  selectedValues2 = JSON.parse(selectedValues2);
+              
+                  // Set the select2 control's value to the previously selected values
+                  $('#my-select2').val(selectedValues2).trigger('change');
+                }
+              };
+              
+              
             /*
             {% comment %} hljs.highlightAll(); {% endcomment %}
             monaco.editor.colorizeElement(document.getElementById('CodeBlock'));   */         
