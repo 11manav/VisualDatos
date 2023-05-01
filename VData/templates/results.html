@@ -119,8 +119,12 @@
                                         {% if class_report is not None%}
                                         <tr>
                                         <th>Classification Report</th>
-                                        <th>{{ class_report | safe}}</th>
-                                        </tr>
+                                        <div class="table-responsive" data-simplebar style="max-height: 300px;">
+                          
+                                            <img src= {{ class_report }} alt="">
+                                      
+                                        </div>
+                                    </tr>
                                         {% endif%}
 
 

@@ -16,6 +16,7 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler, LabelEncoder
 import matplotlib.pyplot as plt
 from mlxtend.plotting import plot_decision_regions
 import seaborn as sns
+import numpy as np
 
 
 # --------Common data required for all pages--------------
@@ -582,7 +583,18 @@ def knn(request):
         y_pred = knn.predict(X_test)
 
         #checking
-        class_report=classification_report(y_test, y_pred, digits=3)
+        target_names=np.array(pd.Categorical(data[y1]).categories)
+        class_report = classification_report(y_test,
+                                   y_pred,
+                                   target_names=target_names,
+                                   output_dict=True)
+        # print(class_report)
+        # print(target_names)
+        # class_report=classification_report(y_test, y_pred, digits=3)
+        # print(class_report)
+        # for i in class_report:
+        #     print(i)
+        # class_report=class_report.split(",")
         #statistics
         # This statistics cannot be calculated due to multiclass
         # accuracy = accuracy_score(y_test, y_pred, average='macro')
@@ -626,6 +638,12 @@ def knn(request):
         fig_location = './media/knn_CM{}.png'.format(session_key)
         plt.savefig(fig_location)
         confusion_mtx_imgurl = '../media/knn_CM{}.png'.format(session_key)
+        #cr
+        sns.heatmap(pd.DataFrame(class_report).iloc[:-1, :].T, annot=True)
+        fig_location = './media/knn_CR{}.png'.format(session_key)
+        plt.savefig(fig_location)
+        class_report_url = '../media/knn_CR{}.png'.format(session_key)
+
 
         data_html = data.to_html()
         data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
@@ -633,7 +651,7 @@ def knn(request):
         context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
                              dataframe_size, columns, codeFileName, image_url_correlation_matrix)
         context.update({'variance_score': variance_score,
-                       'y_predict': y_pred, 'image_url': image_url, 'class_report':class_report, 'confusion_mtx_imgurl':confusion_mtx_imgurl })
+                       'y_predict': y_pred, 'image_url': image_url, 'class_report':class_report_url, 'confusion_mtx_imgurl':confusion_mtx_imgurl })
 
         return render(request, './results.html', context)
     data_html = data.to_html()
@@ -932,3 +950,9 @@ def elbow_plot(request):
     context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
                          dataframe_size, columns_send, codeFileName, image_url_correlation_matrix)
     return render(request, './elbow_plot.html', context)
+
+
+
+
+
+
