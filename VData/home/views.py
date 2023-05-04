@@ -230,7 +230,7 @@ def minmaxScaler(request):
         data)
 
     context = getContext(data_html, data_shape, nullValues,
-                         datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+                         datatypes, memory_usage, dataframe_size, columns_send, codeFileName, image_url_correlation_matrix)
 
     return render(request, './minmaxScale.html', context)
 
@@ -267,7 +267,7 @@ def standard_Scaler(request):
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
     context = getContext(data_html, data_shape, nullValues,
-                         datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+                         datatypes, memory_usage, dataframe_size, columns_send, codeFileName, image_url_correlation_matrix)
     return render(request, './standardScale.html', context)
 
 
@@ -393,7 +393,7 @@ def fillingNullMode(request):
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
     context = getContext(data_html, data_shape, nullValues,
-                         datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+                         datatypes, memory_usage, dataframe_size, columns_send, codeFileName, image_url_correlation_matrix)
     return render(request, './modeForm.html', context)
 
 
@@ -678,10 +678,14 @@ def kmeans(request):
         #stats
         # accuracy = "NA"  # not avialable so kept zero
         # variance_score = "NA"  # not avialable so kept zero
+        # X=data[X1].values.reshape(-1,1)
         # ari= adjusted_rand_score(X, kmeans.labels_)
         # ris = rand_score(X, kmeans.labels_)
-        # ss = silhouette_score(X, kmeans.labels_)
-        # dbs = davies_bouldin_score(X, kmeans.labels_)
+        ss = silhouette_score(X, kmeans.labels_)
+        # print(ss)
+        # print(ris)
+        dbs = davies_bouldin_score(X, kmeans.labels_)
+        # print(dbs)
         # mis = mutual_info_score(X, kmeans.labels_)
 
 
@@ -705,7 +709,7 @@ def kmeans(request):
             data)
         context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
                              dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-        context.update({'y_predict': y_pred, 'image_url': image_url})
+        context.update({'y_predict': y_pred, 'image_url': image_url,'ss':ss, 'dbs':dbs })
 
         # different template will come need to change kept it temprory
         return render(request, './results.html', context)
@@ -748,7 +752,7 @@ def cat_data(request):
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
     context = getContext(data_html, data_shape, nullValues,
-                         datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+                         datatypes, memory_usage, dataframe_size, columns_send, codeFileName, image_url_correlation_matrix)
     return render(request, './categoricalData_form.html', context)
 
 
