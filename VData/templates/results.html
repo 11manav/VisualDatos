@@ -163,6 +163,14 @@
                                         {% endif%}
 
 
+                                        {% if chs is not None%}
+                                        <tr>
+                                        <th>Calinski Harabasz Score</th>
+                                        <th>{{ chs | safe}}</th>
+                                        </tr>
+                                        {% endif%}
+
+
                                         {% if mis is not None%}
                                         <tr>
                                         <th>Mutual info Score</th>

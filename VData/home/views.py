@@ -10,7 +10,7 @@ from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, confusion_matrix, r2_score, precision_score, recall_score, f1_score, mean_squared_error,mean_absolute_error, classification_report, adjusted_rand_score,rand_score,silhouette_score,davies_bouldin_score,mutual_info_score
+from sklearn.metrics import accuracy_score, confusion_matrix, r2_score, precision_score, recall_score, f1_score, mean_squared_error,mean_absolute_error, classification_report, adjusted_rand_score,rand_score,silhouette_score,davies_bouldin_score,mutual_info_score,calinski_harabasz_score
 # IMPORTANT!!! pip install scikit-learn
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, LabelEncoder
 import matplotlib.pyplot as plt
@@ -685,6 +685,7 @@ def kmeans(request):
         # print(ss)
         # print(ris)
         dbs = davies_bouldin_score(X, kmeans.labels_)
+        chs=calinski_harabasz_score(X,kmeans.labels_)
         # print(dbs)
         # mis = mutual_info_score(X, kmeans.labels_)
 
@@ -709,7 +710,7 @@ def kmeans(request):
             data)
         context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
                              dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-        context.update({'y_predict': y_pred, 'image_url': image_url,'ss':ss, 'dbs':dbs })
+        context.update({'y_predict': y_pred, 'image_url': image_url,'ss':ss, 'dbs':dbs, 'chs':chs })
 
         # different template will come need to change kept it temprory
         return render(request, './results.html', context)
