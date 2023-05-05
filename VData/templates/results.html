@@ -12,21 +12,41 @@
                 <div class="col-lg-12">
                     <!-- Personal-Information -->
                     <div class="card">
+                        <div class="d-flex card-header justify-content-between align-items-center" style="background-color: #536de6;
+                        color: white;
+                    ">
+                            <h4 class="text-bold">
+                                CODE
+                            </h4>
+                        </div>
                         <div class="card-body">
-                            <h4 class="header-title mt-0 mb-3">Code</h4>
-                            <div class="tab-content" data-simplebar style="height: 300px;">
+                            <div class="tab-content" data-simplebar>
                                     <div class="tab-pane code active show" id="input-types-code" role="tabpanel">
                                         <!-- <button class="btn-copy-clipboard" data-clipboard-action="copy">
                                             Copy
                                         </button> -->
-                                        <pre class="mb-0" style="height: 247px; border-bottom: 1px solid var(--ct-gray-300);">
+                                        <pre class="mb-0" style="height: 437px; border-bottom: 1px solid var(--ct-gray-300);">
 <code class="html escape language-python">{{file_content | safe}}</code>
                                             </pre>
 
                                         <!-- end highlight-->
+                                        <div id="#codeOptions" style="display: flex; 
+                                        justify-content: space-evenly; ">
+                                        <div class="">
+                                            <button type="button" class="btn-copy-clipboard1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="theme-btn" style="margin:10px;">Change Theme</button>
+                                            <div class="dropdown-menu dropdown-menu-animated" style="">
+                                                <a class="dropdown-item" onclick="setTheme('light')">Light</a>
+                                                <a class="dropdown-item" onclick="setTheme('dark')">Dark</a>
+                                                <a class="dropdown-item" onclick="setTheme('twilight')">Twilight</a>
+                                                <a class="dropdown-item" onclick="setTheme('solarized')">Solarized</a>
+                                                <a class="dropdown-item" onclick="setTheme('tomorrow')">Tomorrow</a>
+                                            </div>
+                                        </div>
                                         <button class="btn-copy-clipboard" data-clipboard-action="copy" style="position:relative; top:0; right:0; margin:10px; ">
                                             Copy
                                         </button>
+                                        
+                                            </div>
                                     </div>
                                     <!-- end preview code-->
                             </div>
@@ -38,154 +58,7 @@
 
 
                 </div>
-                <div class="col-lg-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="header-title mb-3">Statistics</h4>
-
-                            <div class="table-responsive" data-simplebar style="max-height: 300px;">
-                                <table class="table mb-0">
-                                    <thead class="table-light">
-                                        {% if r2_score is not None%}
-                                        <tr>
-                                        <th>R2 Score</th>
-                                        <th>{{ r2_score | safe}}</th>
-                                        </tr>
-                                        {% endif%}
-
-                                        {% if accuracy is not None%}
-                                        <tr>
-                                        <th>Accuracy</th>
-                                        <th>{{ accuracy | safe}}</th>
-                                        </tr>
-                                        {% endif%}
-
-                                        {% if error is not None%}
-                                        <tr>
-                                        <th>Error</th>
-                                        <th>{{ error | safe}}</th>
-                                        </tr>
-                                        {% endif%}
-
-                                        {% if recall_score is not None%}
-                                        <tr>
-                                        <th>Recall_score</th>
-                                        <th>{{ recall_score | safe}}</th>
-                                        </tr>
-                                        {% endif%}
-
-                                        {% if precision_score is not None%}
-                                        <tr>
-                                        <th>Precision_score</th>
-                                        <th>{{ precision_score | safe}}</th>
-                                        </tr>
-                                        {% endif%}
-
-                                        {% if sensitivity is not None%}
-                                        <tr>
-                                        <th>Sensitivity</th>
-                                        <th>{{ sensitivity | safe}}</th>
-                                        </tr>
-                                        {% endif%}
-
-                                        {% if specificity is not None%}
-                                        <tr>
-                                        <th>Specificity</th>
-                                        <th>{{ specificity | safe}}</th>
-                                        </tr>
-                                        {% endif%}
-                                        
-                                        {% if mean_absolute_error is not None%}
-                                        <tr>
-                                        <th>Mean Absolute Error</th>
-                                        <th>{{ mean_absolute_error | safe}}</th>
-                                        </tr>
-                                        {% endif%}
-
-                                        {% if mean_squared_error is not None%}
-                                        <tr>
-                                        <th>Mean Squared Error</th>
-                                        <th>{{ mean_squared_error | safe}}</th>
-                                        </tr>
-                                        {% endif%}
-
-                                        {% if root_mean_squared_error is not None%}
-                                        <tr>
-                                        <th>Root Mean Squared Error</th>
-                                        <th>{{ root_mean_squared_error | safe}}</th>
-                                        </tr>
-                                        {% endif%}
-
-                                        {% if class_report is not None%}
-                                        <tr>
-                                        <th>Classification Report</th>
-                                        <div class="table-responsive" data-simplebar style="max-height: 300px;">
-                          
-                                            <img src= {{ class_report }} alt="">
-                                      
-                                        </div>
-                                    </tr>
-                                        {% endif%}
-
-
-                                        {% if ari is not None%}
-                                        <tr>
-                                        <th>Adjusted Rand Index</th>
-                                        <th>{{ ari | safe}}</th>
-                                        </tr>
-                                        {% endif%}
-
-
-                                        {% if ris is not None%}
-                                        <tr>
-                                        <th>Rand Score</th>
-                                        <th>{{ ris | safe}}</th>
-                                        </tr>
-                                        {% endif%}
-
-
-
-                                        {% if  ss is not None%}
-                                        <tr>
-                                        <th> Silhouette Score</th>
-                                        <th>{{ ss | safe}}</th>
-                                        </tr>
-                                        {% endif%}
-
-
-
-
-                                        {% if dbs is not None%}
-                                        <tr>
-                                        <th>Davies Bouldin Score</th>
-                                        <th>{{ dbs | safe}}</th>
-                                        </tr>
-                                        {% endif%}
-
-
-                                        {% if chs is not None%}
-                                        <tr>
-                                        <th>Calinski Harabasz Score</th>
-                                        <th>{{ chs | safe}}</th>
-                                        </tr>
-                                        {% endif%}
-
-
-                                        {% if mis is not None%}
-                                        <tr>
-                                        <th>Mutual info Score</th>
-                                        <th>{{ mis | safe}}</th>
-                                        </tr>
-                                        {% endif%}
-
-                                    </thead>
-                                </table>
-                            </div>
-                            <!-- end table-responsive -->
-
-                        </div>
-                    </div>
-                </div>
+                
 
 
 
@@ -197,20 +70,10 @@
 
             <div class="col-lg-7 col-md-12 col-sm-12">
                 <div class="card">
-                    <div class="d-flex card-header justify-content-between align-items-center">
-                        <h4 class="header-title">Visualisation plots</h4>
-                        <div class="dropdown">
-                            <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                <i class="mdi mdi-dots-vertical"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <!-- item-->
-                                <a href="{% url 'downloadDataset'%}" class="dropdown-item">Download Image</a>
-                                <!-- item-->
-                                <a href="{% url 'showFulldataset'%}" class="dropdown-item">Show Full Image</a>
-                            </div>
-                        </div>
+                    <div class="d-flex card-header justify-content-between align-items-center mb-2" style="background-color: #536de6;
+                    color: white;
+                ">
+                        <h4 class="text-bold">VISUALISATION PLOTS</h4>
                     </div>
 
                     <div class="card-body pt-0">
@@ -219,14 +82,21 @@
                         </div> <!-- end table-responsive-->
                     </div> <!-- end card-body-->
                 </div> <!-- end card-->
-                {% if confusion_mtx_imgurl is not None%}
+                
             </div>
-            <div class="col-lg-12">
+
+            {% if confusion_mtx_imgurl is not None%}
+            <div class="col-lg-6">
                 <div class="card">
+                    <div class="d-flex card-header justify-content-between align-items-center" style="background-color: #536de6;
+                    color: white;
+                ">
+                        <h4 class="text-bold">STATISTICS</h4>
+                    </div>
                     <div class="card-body">
                         <h4 class="header-title mb-3">Confusion Matrix</h4>
 
-                        <div class="table-responsive" data-simplebar style="max-height: 300px;">
+                        <div class="table-responsive" data-simplebar>
                           
                             <img src= {{ confusion_mtx_imgurl }} alt="">
                       
@@ -236,6 +106,154 @@
                 </div>
             </div>
             {% endif%}
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="d-flex card-header justify-content-between align-items-center" style="background-color: #536de6;
+                    color: white;
+                ">
+                        <h4 class="text-bold">STATISTICS</h4>
+                    </div>
+                    <div class="card-body">
+
+                        <div class="table-responsive" data-simplebar>
+                            <table class="table mb-0">
+                                <thead class="table-light">
+                                    {% if r2_score is not None%}
+                                    <tr>
+                                    <th>R2 Score</th>
+                                    <th>{{ r2_score | safe}}</th>
+                                    </tr>
+                                    {% endif%}
+
+                                    {% if accuracy is not None%}
+                                    <tr>
+                                    <th>Accuracy</th>
+                                    <th>{{ accuracy | safe}}</th>
+                                    </tr>
+                                    {% endif%}
+
+                                    {% if error is not None%}
+                                    <tr>
+                                    <th>Error</th>
+                                    <th>{{ error | safe}}</th>
+                                    </tr>
+                                    {% endif%}
+
+                                    {% if recall_score is not None%}
+                                    <tr>
+                                    <th>Recall_score</th>
+                                    <th>{{ recall_score | safe}}</th>
+                                    </tr>
+                                    {% endif%}
+
+                                    {% if precision_score is not None%}
+                                    <tr>
+                                    <th>Precision_score</th>
+                                    <th>{{ precision_score | safe}}</th>
+                                    </tr>
+                                    {% endif%}
+
+                                    {% if sensitivity is not None%}
+                                    <tr>
+                                    <th>Sensitivity</th>
+                                    <th>{{ sensitivity | safe}}</th>
+                                    </tr>
+                                    {% endif%}
+
+                                    {% if specificity is not None%}
+                                    <tr>
+                                    <th>Specificity</th>
+                                    <th>{{ specificity | safe}}</th>
+                                    </tr>
+                                    {% endif%}
+                                    
+                                    {% if mean_absolute_error is not None%}
+                                    <tr>
+                                    <th>Mean Absolute Error</th>
+                                    <th>{{ mean_absolute_error | safe}}</th>
+                                    </tr>
+                                    {% endif%}
+
+                                    {% if mean_squared_error is not None%}
+                                    <tr>
+                                    <th>Mean Squared Error</th>
+                                    <th>{{ mean_squared_error | safe}}</th>
+                                    </tr>
+                                    {% endif%}
+
+                                    {% if root_mean_squared_error is not None%}
+                                    <tr>
+                                    <th>Root Mean Squared Error</th>
+                                    <th>{{ root_mean_squared_error | safe}}</th>
+                                    </tr>
+                                    {% endif%}
+
+                                    {% if class_report is not None%}
+                                    <h4>Classification Report</h4>
+                                    <div class="table-responsive" data-simplebar style="max-height: 499px;">
+                                        <img src= {{ class_report }} alt="">
+                                    </div>
+                                    {% endif%}
+
+
+                                    {% if ari is not None%}
+                                    <tr>
+                                    <th>Adjusted Rand Index</th>
+                                    <th>{{ ari | safe}}</th>
+                                    </tr>
+                                    {% endif%}
+
+
+                                    {% if ris is not None%}
+                                    <tr>
+                                    <th>Rand Score</th>
+                                    <th>{{ ris | safe}}</th>
+                                    </tr>
+                                    {% endif%}
+
+
+
+                                    {% if  ss is not None%}
+                                    <tr>
+                                    <th> Silhouette Score</th>
+                                    <th>{{ ss | safe}}</th>
+                                    </tr>
+                                    {% endif%}
+
+
+
+
+                                    {% if dbs is not None%}
+                                    <tr>
+                                    <th>Davies Bouldin Score</th>
+                                    <th>{{ dbs | safe}}</th>
+                                    </tr>
+                                    {% endif%}
+
+
+                                    {% if chs is not None%}
+                                    <tr>
+                                    <th>Calinski Harabasz Score</th>
+                                    <th>{{ chs | safe}}</th>
+                                    </tr>
+                                    {% endif%}
+
+
+                                    {% if mis is not None%}
+                                    <tr>
+                                    <th>Mutual info Score</th>
+                                    <th>{{ mis | safe}}</th>
+                                    </tr>
+                                    {% endif%}
+
+                                </thead>
+                            </table>
+                        </div>
+                        <!-- end table-responsive -->
+
+                    </div>
+                </div>
+            </div>
             {% block operation %} {% endblock operation %}
         </div> <!-- container -->
 

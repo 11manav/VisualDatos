@@ -8,8 +8,10 @@
         <div class="row">
             <div class="col-lg-8">
                 <div class="card">
-                    <div class="d-flex card-header justify-content-between align-items-center">
-                        <h4 class="header-title mt-1">Visualisation Plot</h4>
+                    <div class="d-flex card-header justify-content-between align-items-center" style="background-color: #536de6;
+                    color: white;
+                ">
+                        <h4 class="text-bold">VISUALISATION PLOTS</h4>
                     </div>
                     <div class="card-body pt-0">
                         <div data-simplebar style="height: 450px;">
@@ -21,8 +23,10 @@
 
             <div class="col-lg-4">
                 <div class="card">
-                    <div class="d-flex card-header justify-content-between align-items-center">
-                        <h4 class="header-title mt-1">Code</h4>
+                    <div class="d-flex card-header justify-content-between align-items-center mb-2" style="background-color: #536de6;
+                    color: white;
+                ">
+                        <h4 class="text-bold">CODE</h4>
                     </div>
                     <div class="card-body pt-0">
                         <div class="tab-content">
@@ -30,16 +34,29 @@
                                 <!-- <button class="btn-copy-clipboard" data-clipboard-action="copy">
                                     Copy
                                 </button> -->
-                                <pre class="mb-0" style="height: 415px; border-bottom: 1px solid var(--ct-gray-300);">
-<code class="html escape language-python">
+                                <pre class="mb-0" style="height: 385px; border-bottom: 1px solid var(--ct-gray-300);"><code class="html escape language-python">
 {{file_content | safe}}
 </code>
                                     </pre>
 
                                 <!-- end highlight-->
+                                <div id="#codeOptions" style="display: flex; 
+                                justify-content: space-evenly; ">
+                                <div class="">
+                                    <button type="button" class="btn-copy-clipboard1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="theme-btn" style="margin:10px;">Change Theme</button>
+                                    <div class="dropdown-menu dropdown-menu-animated" style="">
+                                        <a class="dropdown-item" onclick="setTheme('light')">Light</a>
+                                        <a class="dropdown-item" onclick="setTheme('dark')">Dark</a>
+                                        <a class="dropdown-item" onclick="setTheme('twilight')">Twilight</a>
+                                        <a class="dropdown-item" onclick="setTheme('solarized')">Solarized</a>
+                                        <a class="dropdown-item" onclick="setTheme('tomorrow')">Tomorrow</a>
+                                    </div>
+                                </div>
                                 <button class="btn-copy-clipboard" data-clipboard-action="copy" style="position:relative; top:0; right:0; margin:10px; ">
                                     Copy
                                 </button>
+                                
+                                    </div>
                             </div>
                             <!-- end preview code-->
                     </div>
