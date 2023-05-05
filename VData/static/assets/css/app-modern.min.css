@@ -22453,3 +22453,23 @@ span.flatpickr-weekday {
     background-color: #10c469;
     color: #fff
 }
+
+#codeOptions, .btn-copy-clipboard1{
+    background-color: var(--ct-card-bg-custom);
+    border: 1px solid #10c469;
+    color: #10c469;
+    padding: .28rem .8rem;
+    font-size: .875rem;
+    border-radius: .15rem;
+    font-weight: 400;
+    line-height: 1.5;
+    -webkit-transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out;
+    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out
+}
+
+#codeOptions, .btn-copy-clipboard1:active,
+#codeOptions, .btn-copy-clipboard1:focus,
+#codeOptions, .btn-copy-clipboard1:hover {
+    background-color: #10c469;
+    color: #fff
+}

@@ -37,6 +37,10 @@
 
         <!-- code highlight css -->
         <link href="{% static 'css/prism.css' %}" rel="stylesheet" type="text/css" />
+        <link href="{% static 'css/prism-dark.css' %}" rel="stylesheet" type="text/css" disabled/>
+        <link href="{% static 'css/prism-twilight.css' %}" rel="stylesheet" type="text/css" disabled/>
+        <link href="{% static 'css/prsim-solarizedlight.css' %}" rel="stylesheet" type="text/css" disabled/>
+        <link href="{% static 'css/prsim-tomorrownight.css' %}" rel="stylesheet" type="text/css" disabled/>
         <script src="{% static 'js/prism.js' %}"></script>
         
     </head>
@@ -71,20 +75,20 @@
                             <!-- Logo light -->
                             <a href="{% url 'home' %}" class="logo-light">
                                 <span class="logo-lg">
-                                    <h3>VisualDatos</h3>
+                                    <img src="{% static 'images/logo-white6.png' %}" alt="" srcset="">
                                 </span>
                                 <span class="logo-sm">
-                                    <h6>VisualDatos</h6>
+                                    <img src="{% static 'assets/images/logo-sm2.png' %}" alt="" srcset="">
                                 </span>
                             </a>
 
                             <!-- Logo Dark -->
                             <a href="{% url 'home' %}" class="logo-dark">
                                 <span class="logo-lg">
-                                    <h3>VisualDatos</h3>
+                                    <h3>VisualDatos-dark-lg</h3>
                                 </span>
                                 <span class="logo-sm">
-                                    <h6>VisualDatos</h6>
+                                    <h6>VisualDatos-dark-sm</h6>
                                 </span>
                             </a>
                         </div>
@@ -333,7 +337,9 @@
                             <div class="col-lg-4">
                                 <!-- Personal-Information -->
                                 <div class="card">
-                                    <div class="d-flex card-header justify-content-between align-items-center">
+                                    <div class="d-flex card-header justify-content-between align-items-center mb-2" style="background-color: #536de6;
+                                    color: white;
+                                ">
                                         <h4 class="text-bold mb-1">
                                             CODE
                                         </h4>
@@ -351,10 +357,25 @@
                                                     </pre>
     
                                                 <!-- end highlight-->
+                                                <div id="#codeOptions" style="display: flex; 
+                                                justify-content: space-evenly; ">
+                                                <div class="">
+                                                    <button type="button" class="btn-copy-clipboard1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="theme-btn" style="margin:10px;">Change Theme</button>
+                                                    <div class="dropdown-menu dropdown-menu-animated" style="">
+                                                        <a class="dropdown-item" onclick="setTheme('light')">Light</a>
+                                                        <a class="dropdown-item" onclick="setTheme('dark')">Dark</a>
+                                                        <a class="dropdown-item" onclick="setTheme('twilight')">Twilight</a>
+                                                        <a class="dropdown-item" onclick="setTheme('solarized')">Solarized</a>
+                                                        <a class="dropdown-item" onclick="setTheme('tomorrow')">Tomorrow</a>
+                                                    </div>
+                                                </div>
                                                 <button class="btn-copy-clipboard" data-clipboard-action="copy" style="position:relative; top:0; right:0; margin:10px; ">
                                                     Copy
                                                 </button>
-                                            </div>
+                                                
+                                                    </div>
+                                                
+                                                </div>
                                             <!-- end preview code-->
                                         </div>
                                         <!-- end tab-content-->
@@ -372,7 +393,9 @@
 
                         <div class="col-lg-5">
                             <div class="card">
-                                <div class="d-flex card-header justify-content-between align-items-center">
+                                <div class="d-flex card-header justify-content-between align-items-center mb-2" style="background-color: #536de6;
+                                color: white;
+                            ">
                                     <h4 class="text-bold mb-1">
                                         DATASET
                                     </h4>
@@ -406,7 +429,9 @@
 
                         <div class="col-lg-3">
                             <div class="card">
-                                <div class="d-flex card-header justify-content-between align-items-center">
+                                <div class="d-flex card-header justify-content-between align-items-center mb-2" style="background-color: #536de6;
+                                color: white;
+                            ">
                                     <h4 class="text-bold mb-1">
                                         STATISTICS
                                     </h4>
@@ -1192,10 +1217,58 @@
                 }
               };
               
-              
+              /*function toggleStyles() {
+                <!-- const lightStylesheet = document.querySelector('link[href="{% static 'css/prism.css' %}"]');
+                
+                const darkStylesheet = document.querySelector('link[href="{% static 'css/prism-dark.css' %}"]');
+                lightStylesheet.disabled = !lightStylesheet.disabled;
+                darkStylesheet.disabled = !darkStylesheet.disabled; -->
+
+                
+              }*/
+
+              const themes = [
+              {
+                name: 'light',
+                stylesheet: document.querySelector('link[href="{% static 'css/prism.css' %}"]')
+              },
+              {
+                name: 'dark',
+                stylesheet: document.querySelector('link[href="{% static 'css/prism-dark.css' %}"]')
+              },
+              {
+                name: 'twilight',
+                stylesheet: document.querySelector('link[href="{% static 'css/prism-twilight.css' %}"]')
+              },
+              {
+                name: 'solarized',
+                stylesheet: document.querySelector('link[href="{% static 'css/prsim-solarizedlight.css' %}"]')
+              },
+              {
+                name: 'tomorrow',
+                stylesheet: document.querySelector('link[href="{% static 'css/prsim-tomorrownight.css' %}"]')
+              }
+            ];
+            /*function changeTheme() {
+                const selector = document.getElementById('theme-selector');
+                const selectedTheme = themes.find(theme => theme.name === selector.value);
+                themes.forEach(theme => {
+                  theme.stylesheet.disabled = true;
+                });
+                selectedTheme.stylesheet.disabled = false;
+            }*/
+            const themeBtn = document.getElementById('theme-btn');
+            function setTheme(themeName) {
+                const selectedTheme = themes.find(theme => theme.name === themeName);
+                themes.forEach(theme => {
+                  theme.stylesheet.disabled = true;
+                });
+                selectedTheme.stylesheet.disabled = false;
+                themeBtn.textContent = `${selectedTheme.name[0].toUpperCase() + selectedTheme.name.slice(1)}`;
+              }
             /*
             {% comment %} hljs.highlightAll(); {% endcomment %}
-            monaco.editor.colorizeElement(document.getElementById('CodeBlock'));   */         
+            monaco.editor.colorizeElement(document.getElementById('CodeBlock'));   */
         </script>
 
 
