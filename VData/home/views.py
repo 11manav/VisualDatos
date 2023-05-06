@@ -107,7 +107,6 @@ def home(request):
             settings.MEDIA_ROOT, "code"+session_key+".txt")
 
         codeFileName = "code"+session_key+".txt"
-        print("Code File Name: ", codeFileName)
 
         try:
             open(file_path, 'w')
@@ -757,6 +756,9 @@ def cat_data(request):
     return render(request, './categoricalData_form.html', context)
 
 
+# -------------------------------------- Visualization Part ---------------------------------------
+
+
 def visualisation(request):
     data, filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(
         request)
@@ -780,7 +782,6 @@ def pie_chart(request):
         request)
     if request.method == 'POST':
         column = request.POST.getlist('value-x')
-        # print(data[column].value_counts().count())
         grouped = data.groupby(column).groups
         categories = []  # all categories names
         for group in grouped:
@@ -827,6 +828,9 @@ def histogram(request):
         fig_location = './media/histoplot{}.png'.format(session_key)
         plt.savefig(fig_location)
 
+        with open('./media/{}'.format(codeFileName), 'a') as f:
+            f.write("sns.histplot(data{})\n".format(column))
+
         image_url = '../media/histoplot{}.png'.format(session_key)
         data_html = data.to_html()
         data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
@@ -860,6 +864,9 @@ def box_plot(request):
         fig_location = './media/boxplot{}.png'.format(session_key)
         plt.savefig(fig_location)
 
+        with open('./media/{}'.format(codeFileName), 'a') as f:
+            f.write("sns.boxplot(data{})\n".format(columns))
+
         image_url = '../media/boxplot{}.png'.format(session_key)
         data_html = data.to_html()
         data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
@@ -891,6 +898,9 @@ def line_plot(request):
         session_key = request.session.get('session_key', None)
         fig_location = './media/lineplot{}.png'.format(session_key)
         plt.savefig(fig_location)
+
+        with open('./media/{}'.format(codeFileName), 'a') as f:
+            f.write("sns.lineplot(data{})\n".format(columns))
 
         image_url = '../media/lineplot{}.png'.format(session_key)
         data_html = data.to_html()
