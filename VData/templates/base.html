@@ -1166,7 +1166,7 @@
         <script src="{% static 'assets/js/app.min.js' %}"></script>
 
         <!-- Code Highlight js -->
-        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script> -->
 
 
 
@@ -1198,6 +1198,15 @@
               });
               window.onload = function() {
                 // Retrieve previously selected values from session storage
+                const item = sessionStorage.getItem("theme");
+                /*if(item!=null){
+                    setTheme(item.name);
+                }*/
+                console.log(item.name);
+                console.log(item);
+                
+                
+                
                 var pageUrl = window.location.href;
                 var key = 'selectedValues_' + pageUrl;
                 var selectedValues = sessionStorage.getItem(key);
@@ -1265,7 +1274,14 @@
                 });
                 selectedTheme.stylesheet.disabled = false;
                 themeBtn.textContent = `${selectedTheme.name[0].toUpperCase() + selectedTheme.name.slice(1)}`;
-              }
+                sessionStorage.setItem('selectedTheme', themeName);
+                
+            }
+
+            const storedTheme = sessionStorage.getItem('selectedTheme');
+            if (storedTheme) {
+                setTheme(storedTheme);
+            }
             /*
             {% comment %} hljs.highlightAll(); {% endcomment %}
             monaco.editor.colorizeElement(document.getElementById('CodeBlock'));   */
