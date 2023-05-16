@@ -22,8 +22,8 @@ import numpy as np
 # --------Common data required for all pages--------------
 
 def getContext(data_html, data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix):
-    if (len(columns) == 0):
-        data_html = ""
+    # if (len(columns) == 0):
+    #     data_html = ""  //temprory fix for pie chart but after dleteing all columns some nos are left thats all..
     with open('./media/{}'.format(codeFileName), 'r') as f:
         file_content = f.read()
     context = {'loaded_data': data_html,
@@ -353,7 +353,7 @@ def fillingNullMedian(request):
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
     context = getContext(data_html, data_shape, nullValues,
-                         datatypes, memory_usage, dataframe_size, columns_send, codeFileName)
+                         datatypes, memory_usage, dataframe_size, columns_send, codeFileName, codeFileName)
     return render(request, './medianForm.html', context)
 
 
@@ -383,7 +383,8 @@ def fillingNullMode(request):
                              datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
         return render(request, './preprocessing.html', context)
     data_html = data.head(10).to_html()
-    data_shape, nullValues, columns = getStatistics(data)
+    data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+        data)
     columns_send = []
     for col in data.columns:
         datatypes = data.dtypes[col]
@@ -780,6 +781,7 @@ def visualisation(request):
 def pie_chart(request):
     data, filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(
         request)
+    print(filename)
     if request.method == 'POST':
         column = request.POST.getlist('value-x')
         grouped = data.groupby(column).groups
@@ -805,11 +807,14 @@ def pie_chart(request):
         context.update({'image_url': image_url})
         return render(request, './visualization_output.html', context)
     data_html = data.head(10).to_html()
+    # print("SOME",data)
+    # print("CHKED",data.columns)
     columns_send = []
     for col in data.columns:
         datatypes = data.dtypes[col].name
         if datatypes != 'float64' and datatypes != 'int64':
             columns_send.append(col)
+    
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
     context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
