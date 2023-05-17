@@ -655,7 +655,7 @@
 	<div id="popup" style="padding-top: 40px; line-height:1;">
 		<div class="close-toggle"><a href="#" onclick="toggle()"><em class="ti ti-close"></em></a></div>
 		
-		<h2>Upload your dataset here</h2>
+		<h3>Upload your dataset here</h3>
 		<form method="post" enctype="multipart/form-data" style="display: flex; justify-content: space-between;">
           {% csrf_token %}
           <input type="file" accept=".csv" name="myfile" style="width: 80%;" required>
@@ -678,7 +678,7 @@
 				blur.classList.toggle('active')
 				var popup= document.getElementById('popup');
 				popup.classList.toggle('active')
-				}
+			}
 		</script>
 		
 	</body>

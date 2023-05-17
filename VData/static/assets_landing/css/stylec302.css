@@ -195,7 +195,7 @@ h1,.h1, h2,.h2, h3,.h3, h4,.h4, h5,.h5, h6,.h6 {
 	font-family: 'Quicksand', sans-serif;
 	line-height: 1.25;
 	font-weight: 700;
-	margin-bottom: 28px;
+	margin-bottom: 50px;
 	color: #666;
 }
 p:last-child, ul:last-child, ol:last-child, blockquote:last-child, table:last-child, h1:last-child,.h1:last-child, h2:last-child,.h2:last-child, h3:last-child,.h3:last-child, h4:last-child,.h4:last-child, h5:last-child,.h5:last-child, h6:last-child,.h6:last-child {
@@ -209,7 +209,7 @@ h2,.h2{
 	font-size:2.5em;
 }
 h3,.h3{
-	font-size:1.375em;
+	font-size:3.95rem;
 }
 h4,.h4{
 	font-size:1.125em;

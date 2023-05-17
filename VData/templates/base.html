@@ -78,17 +78,17 @@
                                     <img src="{% static 'images/logo-white6.png' %}" alt="" srcset="">
                                 </span>
                                 <span class="logo-sm">
-                                    <img src="{% static 'assets/images/logo-sm2.png' %}" alt="" srcset="">
+                                    <img src="{% static 'assets/images/logo-sm4.png' %}" alt="" srcset="">
                                 </span>
                             </a>
 
                             <!-- Logo Dark -->
                             <a href="{% url 'home' %}" class="logo-dark">
                                 <span class="logo-lg">
-                                    <h3>VisualDatos-dark-lg</h3>
+                                    <img src="{% static 'assets/images/logo-dark2.png' %}" alt="" srcset="">
                                 </span>
                                 <span class="logo-sm">
-                                    <h6>VisualDatos-dark-sm</h6>
+                                    <img src="{% static 'images/logo3.png' %}" alt="" srcset="">
                                 </span>
                             </a>
                         </div>
@@ -106,7 +106,12 @@
 
                     <ul class="topbar-menu d-flex align-items-center gap-3">
 
-                    
+                        <li class="dropdown notification-list">
+                            <a class="nav-link" href="{% url 'home' %}" role="button" aria-haspopup="false" aria-expanded="false"
+                            data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="Upload Dataset Again">
+                                <i class="ri-upload-line font-22"></i>
+                            </a>
+                        </li>
 
                         
 
@@ -141,20 +146,20 @@
                 <!-- Brand Logo Light -->
                 <a href="index.html" class="logo logo-light">
                     <span class="logo-lg">
-                        <h3>VisualDatos</h3>
+                        <img src="{% static 'assets/images/logo-sm4.png' %}" alt="" srcset="">
                     </span>
                     <span class="logo-sm">
-                        <h6>VisualDatos</h6>
+                        <img src="{% static 'assets/images/logo-sidebar-sm.png' %}" alt="" srcset="">
                     </span>
                 </a>
 
                 <!-- Brand Logo Dark -->
                 <a href="index.html" class="logo logo-dark">
                     <span class="logo-lg">
-                        <h3>VisualDatos</h3>
+                        <img src="{% static 'images/logo3.png' %}" alt="" srcset="">
                     </span>
                     <span class="logo-sm">
-                        <h6>VisualDatos</h6>
+                        <img src="{% static 'assets/images/logo-sidebar-sm.png' %}" alt="" srcset="">
                     </span>
                 </a>
 
@@ -310,8 +315,15 @@
                                 </ul>
                             </div>
                         </li>
+                        <li class="side-nav-item">
+                            <a href="{% url 'home' %}" class="side-nav-link">
+                                <i class="uil-upload"></i>
+                                <span> Upload Dataset Again </span>
+                            </a>
+                        </li>
                     </ul>
                     <!--- End Sidemenu -->
+            
 
                     <div class="clearfix"></div>
                 </div>
@@ -1165,9 +1177,6 @@
         <!-- App js -->
         <script src="{% static 'assets/js/app.min.js' %}"></script>
 
-        <!-- Code Highlight js -->
-        <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script> -->
-
 
 
         <script>
@@ -1197,16 +1206,6 @@
                 });
               });
               window.onload = function() {
-                // Retrieve previously selected values from session storage
-                const item = sessionStorage.getItem("theme");
-                /*if(item!=null){
-                    setTheme(item.name);
-                }*/
-                console.log(item.name);
-                console.log(item);
-                
-                
-                
                 var pageUrl = window.location.href;
                 var key = 'selectedValues_' + pageUrl;
                 var selectedValues = sessionStorage.getItem(key);
