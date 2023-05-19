@@ -705,12 +705,30 @@ def kmeans(request):
         plt.savefig(fig_location)
         image_url = '../media/kmeans{}.png'.format(session_key)
 
+      
+
         data_html = data.to_html()
         data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
             data)
         context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
                              dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-        context.update({'y_predict': y_pred, 'image_url': image_url,'ss':ss, 'dbs':dbs, 'chs':chs })
+        
+        #elbow plot
+        wcss_list = []
+        cluster_limit=data_shape[0]//2
+        for i in range(1, cluster_limit+1):
+            kmeans = KMeans(n_clusters=i, init='k-means++', random_state=42)
+            kmeans.fit(data[X1])
+            wcss_list.append(kmeans.inertia_)
+        plt.plot(range(1, cluster_limit+1), wcss_list)
+        plt.title('The Elobw Method Graph')
+        plt.xlabel('Number of clusters(k)')
+        plt.ylabel('wcss_list')
+        fig_location = './media/elbowplotkmeans{}.png'.format(session_key)
+        plt.savefig(fig_location)
+
+        image_kmeans_elbw = '../media/elbowplotkmeans{}.png'.format(session_key)
+        context.update({'y_predict': y_pred, 'image_url': image_url,'image_kmeans_elbw': image_kmeans_elbw,'ss':ss, 'dbs':dbs, 'chs':chs })
 
         # different template will come need to change kept it temprory
         return render(request, './results.html', context)
@@ -959,7 +977,7 @@ def elbow_plot(request):
         context.update({'image_url': image_url})
         return render(request, './visualization_output.html', context)
 
-    data_html = data.head(10).to_html()
+    data_html = data.head(10).to_html() 
     columns_send = []
     for col in data.columns:
         datatypes = data.dtypes[col].name
@@ -967,8 +985,11 @@ def elbow_plot(request):
             columns_send.append(col)
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
+     
     context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
                          dataframe_size, columns_send, codeFileName, image_url_correlation_matrix)
+    row_limit=data_shape[0]
+    context.update({'row_limit':row_limit})
     return render(request, './elbow_plot.html', context)
 
 

@@ -47,7 +47,7 @@
                             <div class="col-lg-6 mb-3">
                                 <div>
                                     <label for="no_of_clusters" class="form-label">Test for number of K clusters</label>
-                                    <input class="form-control" id="no_of_clusters" type="number" name="test_for_no_of_clusters" placeholder="Enter Test for Number of K Clusters">
+                                    <input class="form-control" id="no_of_clusters" type="number" name="test_for_no_of_clusters" placeholder="Enter Test for Number of K Clusters" min="1" max="{{row_limit|safe}}">
                                 </div>  
                             </div>
                           </div>

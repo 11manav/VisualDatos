@@ -196,6 +196,15 @@
                                     {% endif%}
 
 
+                                    {% if image_kmeans_elbw is not None%}
+                                    <h4>Elbow Plot</h4>
+                                    <div class="table-responsive" data-simplebar style="max-height: 499px;">
+                                        <img src= {{ image_kmeans_elbw}} alt="">
+                                    </div>
+                                    {% endif%}
+
+
+
                                     {% if ari is not None%}
                                     <tr>
                                     <th>Adjusted Rand Index</th>
