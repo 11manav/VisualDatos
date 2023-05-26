@@ -704,6 +704,7 @@ def kmeans(request):
         fig_location = './media/kmeans{}.png'.format(session_key)
         plt.savefig(fig_location)
         image_url = '../media/kmeans{}.png'.format(session_key)
+        plt.clf()
 
       
 
