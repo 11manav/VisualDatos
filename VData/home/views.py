@@ -322,7 +322,9 @@ def fillingNullMean(request):
     for col in data.columns:
         datatypes = data.dtypes[col]
         if datatypes == 'float64' or datatypes == 'int64':
-            columns_send.append(col)
+            x=data[col]
+            if data[col].isnull().any():
+                columns_send.append(col)
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
     context = getContext(data_html, data_shape, nullValues,
@@ -364,7 +366,9 @@ def fillingNullMedian(request):
     for col in data.columns:
         datatypes = data.dtypes[col]
         if datatypes == 'float64' or datatypes == 'int64':
-            columns_send.append(col)
+            x=data[col]
+            if data[col].isnull().any():
+                columns_send.append(col)
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
     context = getContext(data_html, data_shape, nullValues,
@@ -404,7 +408,9 @@ def fillingNullMode(request):
     for col in data.columns:
         datatypes = data.dtypes[col]
         if datatypes == 'float64' or datatypes == 'int64':
-            columns_send.append(col)
+            x=data[col]
+            if data[col].isnull().any():
+                columns_send.append(col)
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
     context = getContext(data_html, data_shape, nullValues,

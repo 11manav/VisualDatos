@@ -193,7 +193,9 @@
                                 <ul class="side-nav-second-level">
                                     <li>
                                         {% if null_count %}
-                                        <a href="{% url 'preprocessing' %}">Remove Null Values</a>
+                                
+                                        <a href="{% url 'dropnull_preprocessing' %}">Remove Null Values</a>
+                                    
                                         {% else %}
                                         
                                         <a data-bs-toggle="collapse" href="#removeNullValues" aria-expanded="false" aria-controls="removeNullValues">
