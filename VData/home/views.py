@@ -19,6 +19,9 @@ import seaborn as sns
 import numpy as np
 
 
+from django.contrib import messages
+
+
 # --------Common data required for all pages--------------
 
 def getContext(data_html, data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix):
@@ -120,11 +123,23 @@ def home(request):
         with open('./media/{}'.format(codeFileName), 'a') as f:
             f.write(
                 'import pandas as pd\ndata = pd.read_csv("{}")\n'.format(myfile.name))
+        print(data.dtypes)
+        show_corr_matr=False
+        for col in data.columns:
+            datatypes = data.dtypes[col]
+            if datatypes == 'float64' or datatypes == 'int64':
+                show_corr_matr=True
+                break
 
-        plt.switch_backend('Agg')
-        sns.heatmap(data.corr(), cmap="YlGnBu", annot=True)
-        fig_location = './media/correlational_matrix{}.png'.format(session_key)
-        plt.savefig(fig_location)
+
+        if show_corr_matr:
+            plt.switch_backend('Agg')
+            plt_1 = plt.figure(figsize=(10, 10))
+            sns.heatmap(data.corr(), cmap="YlGnBu", annot=True)
+            fig_location = './media/correlational_matrix{}.png'.format(session_key)
+            plt.savefig(fig_location)
+            return redirect('dashboard')
+            
         return redirect('dashboard')
     return render(request, './landing.html')
 
@@ -307,7 +322,9 @@ def fillingNullMean(request):
     for col in data.columns:
         datatypes = data.dtypes[col]
         if datatypes == 'float64' or datatypes == 'int64':
-            columns_send.append(col)
+            x=data[col]
+            if data[col].isnull().any():
+                columns_send.append(col)
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
     context = getContext(data_html, data_shape, nullValues,
@@ -349,7 +366,9 @@ def fillingNullMedian(request):
     for col in data.columns:
         datatypes = data.dtypes[col]
         if datatypes == 'float64' or datatypes == 'int64':
-            columns_send.append(col)
+            x=data[col]
+            if data[col].isnull().any():
+                columns_send.append(col)
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
     context = getContext(data_html, data_shape, nullValues,
@@ -389,7 +408,9 @@ def fillingNullMode(request):
     for col in data.columns:
         datatypes = data.dtypes[col]
         if datatypes == 'float64' or datatypes == 'int64':
-            columns_send.append(col)
+            x=data[col]
+            if data[col].isnull().any():
+                columns_send.append(col)
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
     context = getContext(data_html, data_shape, nullValues,
@@ -479,10 +500,15 @@ def linear_reg(request):
 
         return render(request, './results.html', context)
     data_html = data.head(10).to_html()
+    columns_send = []
+    for col in data.columns:
+        datatypes = data.dtypes[col]
+        if datatypes == 'float64' or datatypes == 'int64':
+            columns_send.append(col)
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
     context = getContext(data_html, data_shape, nullValues,
-                         datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+                         datatypes, memory_usage, dataframe_size, columns_send, codeFileName, image_url_correlation_matrix)
     return render(request, './linear.html', context)
 
 
@@ -502,6 +528,9 @@ def logistic_reg(request):
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=int(test_size1)/100, random_state=10)
         model = LogisticRegression()
+        st_x= StandardScaler()    
+        X_train= st_x.fit_transform(X_train)    
+        X_test= st_x.transform(X_test)  
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
         #statistics
@@ -527,8 +556,12 @@ def logistic_reg(request):
 
         plt.switch_backend('Agg')
 
-        sns.regplot(x=X_test, y=y_test, data=data, logistic=True, ci=None, scatter_kws={
-                    'color': 'black'}, line_kws={'color': 'red'})
+        #cm_image
+        f, ax =plt.subplots(figsize = (5,5))
+        cm= confusion_matrix(y_test, y_pred)
+        sns.heatmap(cm,annot = True, linewidths= 0.5, linecolor="red", fmt=".0f", ax=ax)
+        plt.xlabel("y_pred")
+        plt.ylabel("y_true")
 
         session_key = request.session.get('session_key', None)
 
@@ -536,18 +569,9 @@ def logistic_reg(request):
         plt.savefig(fig_location)
 
         image_url = '../media/logisticReg{}.png'.format(session_key)
-        #cm_image
-        f, ax =plt.subplots(figsize = (5,5))
-        cm= confusion_matrix(y_test, y_pred)
-        sns.heatmap(cm,annot = True, linewidths= 0.5, linecolor="red", fmt=".0f", ax=ax)
-        plt.xlabel("y_pred")
-        plt.ylabel("y_true")
-        fig_location = './media/logistic_CM{}.png'.format(session_key)
-        plt.savefig(fig_location)
-        confusion_mtx_imgurl = '../media/logistic_CM{}.png'.format(session_key)
-
 
         data_html = data.to_html()
+       
         data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
             data)
         context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
@@ -557,10 +581,15 @@ def logistic_reg(request):
 
         return render(request, './results.html', context)
     data_html = data.head(10).to_html()
+    columns_send = []
+    for col in data.columns:
+            datatypes = data.dtypes[col]
+            if datatypes == 'float64' or datatypes == 'int64':
+                columns_send.append(col)
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
     context = getContext(data_html, data_shape, nullValues,
-                         datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+                         datatypes, memory_usage, dataframe_size, columns_send, codeFileName, image_url_correlation_matrix)
     return render(request, './logistic.html', context)
 
 
@@ -646,6 +675,7 @@ def knn(request):
 
 
         data_html = data.to_html()
+       
         data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
             data)
         context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
@@ -655,89 +685,108 @@ def knn(request):
 
         return render(request, './results.html', context)
     data_html = data.to_html()
+    columns_send = []
+    for col in data.columns:
+            datatypes = data.dtypes[col]
+            if datatypes == 'float64' or datatypes == 'int64':
+                columns_send.append(col)
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
     context = getContext(data_html, data_shape, nullValues,
-                         datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+                         datatypes, memory_usage, dataframe_size, columns_send, codeFileName, image_url_correlation_matrix)
     return render(request, './knn.html', context)
 
 
 def kmeans(request):
     data, filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(
         request)
+    try:
+         
+         if request.method == 'POST':
+             
+             no_of_clusters = request.POST['no_of_clusters']
+             X1 = request.POST.getlist('value-x')
+            # no test size required in this algo
+             X = data[X1]
+             kmeans = KMeans(n_clusters=int(no_of_clusters),
+                            init='k-means++', random_state=42)
+             y_pred = kmeans.fit_predict(X)
+            
+            #stats
+            # accuracy = "NA"  # not avialable so kept zero
+            # variance_score = "NA"  # not avialable so kept zero
+            # X=data[X1].values.reshape(-1,1)
+            # ari= adjusted_rand_score(X, kmeans.labels_)
+            # ris = rand_score(X, kmeans.labels_)
+             ss = silhouette_score(X, kmeans.labels_)
+            # print(ss)
+            # print(ris)
+             dbs = davies_bouldin_score(X, kmeans.labels_)
+             chs=calinski_harabasz_score(X,kmeans.labels_)
+            # print(dbs)
+            # mis = mutual_info_score(X, kmeans.labels_)
 
-    if request.method == 'POST':
-        no_of_clusters = request.POST['no_of_clusters']
-        X1 = request.POST.getlist('value-x')
-        # no test size required in this algo
-        X = data[X1]
-        kmeans = KMeans(n_clusters=int(no_of_clusters),
-                        init='k-means++', random_state=42)
-        y_pred = kmeans.fit_predict(X)
+
+             with open('./media/{}'.format(codeFileName), 'a') as f:
+                f.write("kmeans = KMeans(n_clusters={},init='k-means++', random_state=42)\ny_pred=kmeans.fit_predict(data{})".format(int(no_of_clusters), X1))
+
+            # Visualization
+             plt.switch_backend('Agg')
+             plt.scatter(X.iloc[:, 0], X.iloc[:, 1], c=y_pred, s=50, cmap='viridis')
+             centers = kmeans.cluster_centers_
+             plt.scatter(centers[:, 0], centers[:, 1], c='black', s=200, alpha=0.5)
+
+             session_key = request.session.get('session_key', None)
+
+             fig_location = './media/kmeans{}.png'.format(session_key)
+             plt.savefig(fig_location)
+             image_url = '../media/kmeans{}.png'.format(session_key)
+             plt.clf()
+
         
-        #stats
-        # accuracy = "NA"  # not avialable so kept zero
-        # variance_score = "NA"  # not avialable so kept zero
-        # X=data[X1].values.reshape(-1,1)
-        # ari= adjusted_rand_score(X, kmeans.labels_)
-        # ris = rand_score(X, kmeans.labels_)
-        ss = silhouette_score(X, kmeans.labels_)
-        # print(ss)
-        # print(ris)
-        dbs = davies_bouldin_score(X, kmeans.labels_)
-        chs=calinski_harabasz_score(X,kmeans.labels_)
-        # print(dbs)
-        # mis = mutual_info_score(X, kmeans.labels_)
 
+             data_html = data.to_html()
+             data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+                data)
+             context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
+                                dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+            
+            #elbow plot
+             wcss_list = []
+             cluster_limit=data_shape[0]//2
+             for i in range(1, cluster_limit+1):
+                kmeans = KMeans(n_clusters=i, init='k-means++', random_state=42)
+                kmeans.fit(data[X1])
+                wcss_list.append(kmeans.inertia_)
+             plt.plot(range(1, cluster_limit+1), wcss_list)
+             plt.title('The Elobw Method Graph')
+             plt.xlabel('Number of clusters(k)')
+             plt.ylabel('wcss_list')
+             fig_location = './media/elbowplotkmeans{}.png'.format(session_key)
+             plt.savefig(fig_location)
 
-        with open('./media/{}'.format(codeFileName), 'a') as f:
-            f.write("kmeans = KMeans(n_clusters={},init='k-means++', random_state=42)\ny_pred=kmeans.fit_predict(data{})".format(int(no_of_clusters), X1))
+             image_kmeans_elbw = '../media/elbowplotkmeans{}.png'.format(session_key)
+             context.update({'y_predict': y_pred, 'image_url': image_url,'image_kmeans_elbw': image_kmeans_elbw,'ss':ss, 'dbs':dbs, 'chs':chs })
 
-        # Visualization
-        plt.switch_backend('Agg')
-        plt.scatter(X.iloc[:, 0], X.iloc[:, 1], c=y_pred, s=50, cmap='viridis')
-        centers = kmeans.cluster_centers_
-        plt.scatter(centers[:, 0], centers[:, 1], c='black', s=200, alpha=0.5)
-
-        session_key = request.session.get('session_key', None)
-
-        fig_location = './media/kmeans{}.png'.format(session_key)
-        plt.savefig(fig_location)
-        image_url = '../media/kmeans{}.png'.format(session_key)
-
-      
-
-        data_html = data.to_html()
-        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
-            data)
-        context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
-                             dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-        
-        #elbow plot
-        wcss_list = []
-        cluster_limit=data_shape[0]//2
-        for i in range(1, cluster_limit+1):
-            kmeans = KMeans(n_clusters=i, init='k-means++', random_state=42)
-            kmeans.fit(data[X1])
-            wcss_list.append(kmeans.inertia_)
-        plt.plot(range(1, cluster_limit+1), wcss_list)
-        plt.title('The Elobw Method Graph')
-        plt.xlabel('Number of clusters(k)')
-        plt.ylabel('wcss_list')
-        fig_location = './media/elbowplotkmeans{}.png'.format(session_key)
-        plt.savefig(fig_location)
-
-        image_kmeans_elbw = '../media/elbowplotkmeans{}.png'.format(session_key)
-        context.update({'y_predict': y_pred, 'image_url': image_url,'image_kmeans_elbw': image_kmeans_elbw,'ss':ss, 'dbs':dbs, 'chs':chs })
-
-        # different template will come need to change kept it temprory
-        return render(request, './results.html', context)
+            # different template will come need to change kept it temprory
+             return render(request, './results.html', context)
+       
+    except Exception as e:
+       # By this way we can know about the type of error occurring
+        messages.error(request, e)
+        print("The error is: ",e)
+   
 
     data_html = data.head(10).to_html()
+    columns_send = []
+    for col in data.columns:
+        datatypes = data.dtypes[col]
+        if datatypes == 'float64' or datatypes == 'int64':
+            columns_send.append(col)
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
     context = getContext(data_html, data_shape, nullValues,
-                         datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+                         datatypes, memory_usage, dataframe_size, columns_send, codeFileName, image_url_correlation_matrix)
     return render(request, './kmeans.html', context)
 
 
@@ -782,17 +831,10 @@ def visualisation(request):
     data, filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(
         request)
     data_html = data.head(10).to_html()
-    plt.switch_backend('Agg')
-    sns.heatmap(data.corr(), cmap="YlGnBu", annot=True)
-    session_key = request.session.get('session_key', None)
-    fig_location = './media/correlational_matrix{}.png'.format(session_key)
-    plt.savefig(fig_location)
-    image_url = '../media/correlational_matrix{}.png'.format(session_key)
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
     context = getContext(data_html, data_shape, nullValues,
                          datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-    context.update({'image_url': image_url})
     return render(request, './visualisation.html', context)
 
 
