@@ -522,6 +522,9 @@ def logistic_reg(request):
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=int(test_size1)/100, random_state=10)
         model = LogisticRegression()
+        st_x= StandardScaler()    
+        X_train= st_x.fit_transform(X_train)    
+        X_test= st_x.transform(X_test)  
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
         #statistics
@@ -547,8 +550,12 @@ def logistic_reg(request):
 
         plt.switch_backend('Agg')
 
-        sns.regplot(x=X_test, y=y_test, data=data, logistic=True, ci=None, scatter_kws={
-                    'color': 'black'}, line_kws={'color': 'red'})
+        #cm_image
+        f, ax =plt.subplots(figsize = (5,5))
+        cm= confusion_matrix(y_test, y_pred)
+        sns.heatmap(cm,annot = True, linewidths= 0.5, linecolor="red", fmt=".0f", ax=ax)
+        plt.xlabel("y_pred")
+        plt.ylabel("y_true")
 
         session_key = request.session.get('session_key', None)
 
@@ -556,16 +563,6 @@ def logistic_reg(request):
         plt.savefig(fig_location)
 
         image_url = '../media/logisticReg{}.png'.format(session_key)
-        #cm_image
-        f, ax =plt.subplots(figsize = (5,5))
-        cm= confusion_matrix(y_test, y_pred)
-        sns.heatmap(cm,annot = True, linewidths= 0.5, linecolor="red", fmt=".0f", ax=ax)
-        plt.xlabel("y_pred")
-        plt.ylabel("y_true")
-        fig_location = './media/logistic_CM{}.png'.format(session_key)
-        plt.savefig(fig_location)
-        confusion_mtx_imgurl = '../media/logistic_CM{}.png'.format(session_key)
-
 
         data_html = data.to_html()
        
