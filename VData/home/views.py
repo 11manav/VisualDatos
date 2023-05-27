@@ -19,6 +19,9 @@ import seaborn as sns
 import numpy as np
 
 
+from django.contrib import messages
+
+
 # --------Common data required for all pages--------------
 
 def getContext(data_html, data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix):
@@ -694,74 +697,82 @@ def knn(request):
 def kmeans(request):
     data, filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(
         request)
+    try:
+         
+         if request.method == 'POST':
+             
+             no_of_clusters = request.POST['no_of_clusters']
+             X1 = request.POST.getlist('value-x')
+            # no test size required in this algo
+             X = data[X1]
+             kmeans = KMeans(n_clusters=int(no_of_clusters),
+                            init='k-means++', random_state=42)
+             y_pred = kmeans.fit_predict(X)
+            
+            #stats
+            # accuracy = "NA"  # not avialable so kept zero
+            # variance_score = "NA"  # not avialable so kept zero
+            # X=data[X1].values.reshape(-1,1)
+            # ari= adjusted_rand_score(X, kmeans.labels_)
+            # ris = rand_score(X, kmeans.labels_)
+             ss = silhouette_score(X, kmeans.labels_)
+            # print(ss)
+            # print(ris)
+             dbs = davies_bouldin_score(X, kmeans.labels_)
+             chs=calinski_harabasz_score(X,kmeans.labels_)
+            # print(dbs)
+            # mis = mutual_info_score(X, kmeans.labels_)
 
-    if request.method == 'POST':
-        no_of_clusters = request.POST['no_of_clusters']
-        X1 = request.POST.getlist('value-x')
-        # no test size required in this algo
-        X = data[X1]
-        kmeans = KMeans(n_clusters=int(no_of_clusters),
-                        init='k-means++', random_state=42)
-        y_pred = kmeans.fit_predict(X)
+
+             with open('./media/{}'.format(codeFileName), 'a') as f:
+                f.write("kmeans = KMeans(n_clusters={},init='k-means++', random_state=42)\ny_pred=kmeans.fit_predict(data{})".format(int(no_of_clusters), X1))
+
+            # Visualization
+             plt.switch_backend('Agg')
+             plt.scatter(X.iloc[:, 0], X.iloc[:, 1], c=y_pred, s=50, cmap='viridis')
+             centers = kmeans.cluster_centers_
+             plt.scatter(centers[:, 0], centers[:, 1], c='black', s=200, alpha=0.5)
+
+             session_key = request.session.get('session_key', None)
+
+             fig_location = './media/kmeans{}.png'.format(session_key)
+             plt.savefig(fig_location)
+             image_url = '../media/kmeans{}.png'.format(session_key)
+             plt.clf()
+
         
-        #stats
-        # accuracy = "NA"  # not avialable so kept zero
-        # variance_score = "NA"  # not avialable so kept zero
-        # X=data[X1].values.reshape(-1,1)
-        # ari= adjusted_rand_score(X, kmeans.labels_)
-        # ris = rand_score(X, kmeans.labels_)
-        ss = silhouette_score(X, kmeans.labels_)
-        # print(ss)
-        # print(ris)
-        dbs = davies_bouldin_score(X, kmeans.labels_)
-        chs=calinski_harabasz_score(X,kmeans.labels_)
-        # print(dbs)
-        # mis = mutual_info_score(X, kmeans.labels_)
 
+             data_html = data.to_html()
+             data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+                data)
+             context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
+                                dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+            
+            #elbow plot
+             wcss_list = []
+             cluster_limit=data_shape[0]//2
+             for i in range(1, cluster_limit+1):
+                kmeans = KMeans(n_clusters=i, init='k-means++', random_state=42)
+                kmeans.fit(data[X1])
+                wcss_list.append(kmeans.inertia_)
+             plt.plot(range(1, cluster_limit+1), wcss_list)
+             plt.title('The Elobw Method Graph')
+             plt.xlabel('Number of clusters(k)')
+             plt.ylabel('wcss_list')
+             fig_location = './media/elbowplotkmeans{}.png'.format(session_key)
+             plt.savefig(fig_location)
 
-        with open('./media/{}'.format(codeFileName), 'a') as f:
-            f.write("kmeans = KMeans(n_clusters={},init='k-means++', random_state=42)\ny_pred=kmeans.fit_predict(data{})".format(int(no_of_clusters), X1))
+             image_kmeans_elbw = '../media/elbowplotkmeans{}.png'.format(session_key)
+             context.update({'y_predict': y_pred, 'image_url': image_url,'image_kmeans_elbw': image_kmeans_elbw,'ss':ss, 'dbs':dbs, 'chs':chs })
 
-        # Visualization
-        plt.switch_backend('Agg')
-        plt.scatter(X.iloc[:, 0], X.iloc[:, 1], c=y_pred, s=50, cmap='viridis')
-        centers = kmeans.cluster_centers_
-        plt.scatter(centers[:, 0], centers[:, 1], c='black', s=200, alpha=0.5)
-
-        session_key = request.session.get('session_key', None)
-
-        fig_location = './media/kmeans{}.png'.format(session_key)
-        plt.savefig(fig_location)
-        image_url = '../media/kmeans{}.png'.format(session_key)
-        plt.clf()
-
-      
-
-        data_html = data.to_html()
-        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
-            data)
-        context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
-                             dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-        
-        #elbow plot
-        wcss_list = []
-        cluster_limit=data_shape[0]//2
-        for i in range(1, cluster_limit+1):
-            kmeans = KMeans(n_clusters=i, init='k-means++', random_state=42)
-            kmeans.fit(data[X1])
-            wcss_list.append(kmeans.inertia_)
-        plt.plot(range(1, cluster_limit+1), wcss_list)
-        plt.title('The Elobw Method Graph')
-        plt.xlabel('Number of clusters(k)')
-        plt.ylabel('wcss_list')
-        fig_location = './media/elbowplotkmeans{}.png'.format(session_key)
-        plt.savefig(fig_location)
-
-        image_kmeans_elbw = '../media/elbowplotkmeans{}.png'.format(session_key)
-        context.update({'y_predict': y_pred, 'image_url': image_url,'image_kmeans_elbw': image_kmeans_elbw,'ss':ss, 'dbs':dbs, 'chs':chs })
-
-        # different template will come need to change kept it temprory
-        return render(request, './results.html', context)
+            # different template will come need to change kept it temprory
+             return render(request, './results.html', context)
+       
+    except Exception as e:
+       # By this way we can know about the type of error occurring
+        messages.error(request, e)
+        print("The error is: ",e)
+   
 
     data_html = data.head(10).to_html()
     columns_send = []
