@@ -120,11 +120,23 @@ def home(request):
         with open('./media/{}'.format(codeFileName), 'a') as f:
             f.write(
                 'import pandas as pd\ndata = pd.read_csv("{}")\n'.format(myfile.name))
+        print(data.dtypes)
+        show_corr_matr=False
+        for col in data.columns:
+            datatypes = data.dtypes[col]
+            if datatypes == 'float64' or datatypes == 'int64':
+                show_corr_matr=True
+                break
 
-        plt.switch_backend('Agg')
-        sns.heatmap(data.corr(), cmap="YlGnBu", annot=True)
-        fig_location = './media/correlational_matrix{}.png'.format(session_key)
-        plt.savefig(fig_location)
+
+        if show_corr_matr:
+            plt.switch_backend('Agg')
+            plt_1 = plt.figure(figsize=(10, 10))
+            sns.heatmap(data.corr(), cmap="YlGnBu", annot=True)
+            fig_location = './media/correlational_matrix{}.png'.format(session_key)
+            plt.savefig(fig_location)
+            return redirect('dashboard')
+            
         return redirect('dashboard')
     return render(request, './landing.html')
 
@@ -479,10 +491,15 @@ def linear_reg(request):
 
         return render(request, './results.html', context)
     data_html = data.head(10).to_html()
+    columns_send = []
+    for col in data.columns:
+        datatypes = data.dtypes[col]
+        if datatypes == 'float64' or datatypes == 'int64':
+            columns_send.append(col)
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
     context = getContext(data_html, data_shape, nullValues,
-                         datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+                         datatypes, memory_usage, dataframe_size, columns_send, codeFileName, image_url_correlation_matrix)
     return render(request, './linear.html', context)
 
 
@@ -548,6 +565,7 @@ def logistic_reg(request):
 
 
         data_html = data.to_html()
+       
         data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
             data)
         context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
@@ -557,10 +575,15 @@ def logistic_reg(request):
 
         return render(request, './results.html', context)
     data_html = data.head(10).to_html()
+    columns_send = []
+    for col in data.columns:
+            datatypes = data.dtypes[col]
+            if datatypes == 'float64' or datatypes == 'int64':
+                columns_send.append(col)
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
     context = getContext(data_html, data_shape, nullValues,
-                         datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+                         datatypes, memory_usage, dataframe_size, columns_send, codeFileName, image_url_correlation_matrix)
     return render(request, './logistic.html', context)
 
 
@@ -646,6 +669,7 @@ def knn(request):
 
 
         data_html = data.to_html()
+       
         data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
             data)
         context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
@@ -655,10 +679,15 @@ def knn(request):
 
         return render(request, './results.html', context)
     data_html = data.to_html()
+    columns_send = []
+    for col in data.columns:
+            datatypes = data.dtypes[col]
+            if datatypes == 'float64' or datatypes == 'int64':
+                columns_send.append(col)
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
     context = getContext(data_html, data_shape, nullValues,
-                         datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+                         datatypes, memory_usage, dataframe_size, columns_send, codeFileName, image_url_correlation_matrix)
     return render(request, './knn.html', context)
 
 
@@ -735,10 +764,15 @@ def kmeans(request):
         return render(request, './results.html', context)
 
     data_html = data.head(10).to_html()
+    columns_send = []
+    for col in data.columns:
+        datatypes = data.dtypes[col]
+        if datatypes == 'float64' or datatypes == 'int64':
+            columns_send.append(col)
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
     context = getContext(data_html, data_shape, nullValues,
-                         datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+                         datatypes, memory_usage, dataframe_size, columns_send, codeFileName, image_url_correlation_matrix)
     return render(request, './kmeans.html', context)
 
 
@@ -783,17 +817,10 @@ def visualisation(request):
     data, filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(
         request)
     data_html = data.head(10).to_html()
-    plt.switch_backend('Agg')
-    sns.heatmap(data.corr(), cmap="YlGnBu", annot=True)
-    session_key = request.session.get('session_key', None)
-    fig_location = './media/correlational_matrix{}.png'.format(session_key)
-    plt.savefig(fig_location)
-    image_url = '../media/correlational_matrix{}.png'.format(session_key)
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
     context = getContext(data_html, data_shape, nullValues,
                          datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-    context.update({'image_url': image_url})
     return render(request, './visualisation.html', context)
 
 

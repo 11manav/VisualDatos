@@ -21,7 +21,10 @@
                                             aria-hidden="true"></button>
                                     </div>
                                     <div class="modal-body" data-simplebar style="height:550px;">
-                                        <img src = {{ image_url }} style="padding-right: 16px;"/>
+                                        {% if image_url_correlation_matrix is not None%}
+                                        <img src = {{ image_url_correlation_matrix }} style="padding-right: 16px;"alt="No numerical columns so no correlational matrix can be formed  "/>
+                                        {% endif%}
+                                    
                                     </div>
                                     <div class="modal-footer"></div>
                                 </div>
