@@ -1,4 +1,4 @@
-/* Template	:	AppsLand v1.3.1 */
+
 ;(function($){
 	'use strict';
 	var $win = $(window), $body = $('body');

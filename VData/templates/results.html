@@ -91,10 +91,9 @@
                     <div class="d-flex card-header justify-content-between align-items-center" style="background-color: #536de6;
                     color: white;
                 ">
-                        <h4 class="text-bold">STATISTICS</h4>
+                        <h4 class="text-bold">CONFUSION MATRIX</h4>
                     </div>
                     <div class="card-body">
-                        <h4 class="header-title mb-3">Confusion Matrix</h4>
 
                         <div class="table-responsive" data-simplebar>
                           
@@ -106,6 +105,28 @@
                 </div>
             </div>
             {% endif%}
+
+            {% if image_kmeans_elbw is not None%}
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="d-flex card-header justify-content-between align-items-center" style="background-color: #536de6;
+                    color: white;
+                ">
+                        <h4 class="text-bold">ELBOW PLOT</h4>
+                    </div>
+                    <div class="card-body">
+
+                        <div class="table-responsive" data-simplebar>
+                          
+                            <img src= {{ image_kmeans_elbw }} alt="">
+                      
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            {% endif%}
+
             <div class="col-lg-6">
                 <div class="card">
                     <div class="d-flex card-header justify-content-between align-items-center" style="background-color: #536de6;
@@ -196,12 +217,7 @@
                                     {% endif%}
 
 
-                                    {% if image_kmeans_elbw is not None%}
-                                    <h4>Elbow Plot</h4>
-                                    <div class="table-responsive" data-simplebar style="max-height: 499px;">
-                                        <img src= {{ image_kmeans_elbw}} alt="">
-                                    </div>
-                                    {% endif%}
+                                    
 
 
 

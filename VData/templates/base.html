@@ -15,13 +15,9 @@
         <!-- Select2 css -->
         <link href="{% static 'assets/vendor/select2/css/select2.min.css' %}" rel="stylesheet" type="text/css" />
 
-        <!-- Bootstrap Touchspin css -->
-        <link href="{% static 'assets/vendor/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css' %}" rel="stylesheet" type="text/css" />
 
 
-        <!-- Plugin css -->
-        <link rel="stylesheet" href="{% static 'assets/vendor/daterangepicker/daterangepicker.css' %}">
-        <link rel="stylesheet" href="{% static 'assets/vendor/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.css' %}">
+
 
         <!-- Theme Config Js -->
         <script src="{% static 'assets/js/hyper-config.js' %}"></script>
@@ -1109,70 +1105,10 @@
         <!-- Vendor js -->
         <script src="{% static 'assets/js/vendor.min.js' %}"></script>
 
-        <!-- Code Highlight js -->
-        <script src="{% static 'assets/vendor/highlightjs/highlight.pack.min.js' %}"></script>
-        <script src="{% static 'assets/vendor/clipboard/clipboard.min.js' %}"></script>
-        <script src="{% static 'assets/js/hyper-syntax.js' %}"></script>
 
         <!--  Select2 Plugin Js -->
         <script src="{% static 'assets/vendor/select2/js/select2.min.js' %}"></script>
 
-        <!-- Daterangepicker Plugin js -->
-        <script src="{% static 'assets/vendor/daterangepicker/moment.min.js' %}"></script>
-        <script src="{% static 'assets/vendor/daterangepicker/daterangepicker.js' %}"></script>
-
-        <!-- Bootstrap Datepicker Plugin js -->
-        <script src="{% static 'assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js' %}"></script>
-
-        <!-- Bootstrap Timepicker Plugin js -->
-        <script src="{% static 'assets/vendor/bootstrap-timepicker/js/bootstrap-timepicker.min.js' %}"></script>
-
-        <!-- Input Mask Plugin js -->
-        <script src="{% static 'assets/vendor/jquery-mask-plugin/jquery.mask.min.js' %}"></script>
-
-        <!-- Bootstrap Touchspin Plugin js -->
-        <script src="{% static 'assets/vendor/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js' %}"></script>
-
-        <!-- Bootstrap Maxlength Plugin js -->
-        <script src="{% static 'assets/vendor/bootstrap-maxlength/bootstrap-maxlength.min.js' %}"></script>
-
-        <!-- Typehead Plugin js -->
-        <script src="{% static 'assets/vendor/handlebars/handlebars.min.js' %}"></script>
-        <script src="{% static 'assets/vendor/typeahead.js/typeahead.bundle.min.js' %}"></script>
-
-        <!-- Flatpickr Timepicker Plugin js -->
-        <script src="{% static 'assets/vendor/flatpickr/flatpickr.min.js' %}"></script>
-
-        <!-- Typehead Demo js -->
-        <script src="{% static 'assets/js/pages/demo.typehead.js' %}"></script>
-
-        <!-- Timepicker Demo js -->
-        <script src="{% static 'assets/js/pages/demo.timepicker.js' %}"></script>
-
-        <!-- Daterangepicker js -->
-        <script src="{% static 'assets/vendor/daterangepicker/moment.min.js' %}"></script>
-        <script src="{% static 'assets/vendor/daterangepicker/daterangepicker.js' %}"></script>
-
-        <!-- Charts js -->
-        <script src="{% static 'assets/vendor/chart.js/chart.min.js' %}"></script>
-        <script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js' %}"></script>
-
-        <!-- Vector Map js -->
-        <script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js' %}"></script>
-        <script src="{% static 'assets/vendor/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js' %}"></script>
-
-        <!-- Analytics Dashboard App js -->
-        <script src="{% static 'assets/js/pages/demo.dashboard-analytics.js' %}"></script>
-
-        <!-- Plgins only -->
-        <script src="{% static 'assets/vendor/ion-rangeslider/js/ion.rangeSlider.min.js' %}"></script>
-        <script src="{% static 'assets/js/ui/component.range-slider.js' %}"></script>
-
-        <!-- Dropzone File Upload js -->
-        <script src="{% static 'assets/vendor/dropzone/min/dropzone.min.js' %}"></script>
-
-        <!-- File Upload Demo js -->
-        <script src="{% static 'assets/js/ui/component.fileupload.js' %}"></script>
 
         <!-- App js -->
         <script src="{% static 'assets/js/app.min.js' %}"></script>
@@ -1225,15 +1161,7 @@
                 }
               };
               
-              /*function toggleStyles() {
-                <!-- const lightStylesheet = document.querySelector('link[href="{% static 'css/prism.css' %}"]');
-                
-                const darkStylesheet = document.querySelector('link[href="{% static 'css/prism-dark.css' %}"]');
-                lightStylesheet.disabled = !lightStylesheet.disabled;
-                darkStylesheet.disabled = !darkStylesheet.disabled; -->
-
-                
-              }*/
+             
 
               const themes = [
               {
@@ -1281,9 +1209,6 @@
             if (storedTheme) {
                 setTheme(storedTheme);
             }
-            /*
-            {% comment %} hljs.highlightAll(); {% endcomment %}
-            monaco.editor.colorizeElement(document.getElementById('CodeBlock'));   */
         </script>
 
 
