@@ -535,12 +535,12 @@ def logistic_reg(request):
         y_pred = model.predict(X_test)
         #statistics
         accuracy = accuracy_score(y_test, y_pred)
-        precision=precision_score(y_test,y_pred)
-        recall=recall_score(y_test,y_pred)
-        tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
-        specificity=tn/fp+tn
-        f1_scr=f1_score(y_test,y_pred)
-        sensitivity=tp/tp+fn
+        precision=precision_score(y_test,y_pred, average="micro")
+        recall=recall_score(y_test,y_pred,average="micro")
+        # tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
+        # specificity=tn/fp+tn
+        # f1_scr=f1_score(y_test,y_pred)
+        # sensitivity=tp/tp+fn
         mean_abs_error = round(mean_absolute_error(y_test, y_pred), 4)
         mean_sqr_error= round(mean_squared_error(y_test, y_pred), 4)
         root_mean_squared_error=math.sqrt(mean_sqr_error)
@@ -577,8 +577,8 @@ def logistic_reg(request):
         context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
                              dataframe_size, columns, codeFileName, image_url_correlation_matrix)
         context.update({'accuracy': accuracy, 'variance_score': variance_score,
-                       'y_predict': y_pred, 'image_url': image_url, 'accuracy':accuracy, 'error':error, 'recall_score':recall, 'precision_score':precision, 'F1_score':f1_scr, 'sensitivity':sensitivity, 'specificity':specificity, 'mean_absolute_error':mean_abs_error, 'mean_squared_error':mean_sqr_error, 'root_mean_squared_error':root_mean_squared_error })
-
+                       'y_predict': y_pred, 'image_url': image_url, 'accuracy':accuracy, 'error':error, 'recall_score':recall, 'precision_score':precision,  'mean_absolute_error':mean_abs_error, 'mean_squared_error':mean_sqr_error, 'root_mean_squared_error':root_mean_squared_error })
+        # 'F1_score':f1_scr, 'sensitivity':sensitivity, 'specificity':specificity,
         return render(request, './results.html', context)
     data_html = data.head(10).to_html()
     columns_send = []
