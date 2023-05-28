@@ -451,54 +451,60 @@ def mlalgorithms(request):
 def linear_reg(request):
     data, filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(
         request)
-    if request.method == 'POST':
-        X1 = request.POST.getlist('value-x')
-        y1 = request.POST['value-y']
-        test_size = request.POST['test_size']
-        if len(X1) == 1:
-            X = data[X1].values.reshape(-1, 1)
-        else:
-            X = data[X1]
+    try:
+        if request.method == 'POST':
+            X1 = request.POST.getlist('value-x')
+            y1 = request.POST['value-y']
+            test_size = request.POST['test_size']
+            if len(X1) == 1:
+                X = data[X1].values.reshape(-1, 1)
+            else:
+                X = data[X1]
 
-        y = data[y1]
-        test_size = int(test_size)/100
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=test_size, random_state=10)
-        model = LinearRegression()
-        model.fit(X_train, y_train)
-       
-        y_pred = model.predict(X_test)
-        score = r2_score(y_test, y_pred)
-        variance_score = model.score(X_test, y_test)
-        mean_abs_error = round(mean_absolute_error(y_test, y_pred), 4)
-        mean_sqr_error= round(mean_squared_error(y_test, y_pred), 4)
-        root_mean_squared_error=math.sqrt(mean_sqr_error)
+            y = data[y1]
+            test_size = int(test_size)/100
+            X_train, X_test, y_train, y_test = train_test_split(
+                X, y, test_size=test_size, random_state=10)
+            model = LinearRegression()
+            model.fit(X_train, y_train)
+        
+            y_pred = model.predict(X_test)
+            score = r2_score(y_test, y_pred)
+            variance_score = model.score(X_test, y_test)
+            mean_abs_error = round(mean_absolute_error(y_test, y_pred), 4)
+            mean_sqr_error= round(mean_squared_error(y_test, y_pred), 4)
+            root_mean_squared_error=math.sqrt(mean_sqr_error)
 
-        with open('./media/{}'.format(codeFileName), 'a') as f:
-            f.write("X=data'{}'\ny=data['{}']\nX_train, X_test, y_train, y_test=train_test_split(X, y, {}, random_state=10)\nmodel=LinearRegression()\nmodel.fit(X_train, y_train)\ny_pred=model.predict(X_test)\nscore=r2_score(y_test, y_pred)\n".format(
-                X1, y1, test_size))
+            with open('./media/{}'.format(codeFileName), 'a') as f:
+                f.write("X=data'{}'\ny=data['{}']\nX_train, X_test, y_train, y_test=train_test_split(X, y, {}, random_state=10)\nmodel=LinearRegression()\nmodel.fit(X_train, y_train)\ny_pred=model.predict(X_test)\nscore=r2_score(y_test, y_pred)\n".format(
+                    X1, y1, test_size))
 
-        plt.switch_backend('Agg')
-        plt.scatter(X_test[:, 0], y_test, color="black")
-        plt.plot(X_test, y_pred, color="blue", linewidth=3)
+            plt.switch_backend('Agg')
+            plt.scatter(X_test[:, 0], y_test, color="black")
+            plt.plot(X_test, y_pred, color="blue", linewidth=3)
 
-        session_key = request.session.get('session_key', None)
+            session_key = request.session.get('session_key', None)
 
-        fig_location = './media/linearReg{}.png'.format(session_key)
-        plt.savefig(fig_location)
+            fig_location = './media/linearReg{}.png'.format(session_key)
+            plt.savefig(fig_location)
 
-        image_url = '../media/linearReg{}.png'.format(session_key)
+            image_url = '../media/linearReg{}.png'.format(session_key)
 
-        data_html = data.to_html()
-        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
-            data)
-        context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
-                             dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-    
-        context.update({ 'variance_score': variance_score,'r2_score': score,
-                       'y_predict': y_pred, 'image_url': image_url, 'mean_absolute_error':mean_abs_error, 'mean_squared_error':mean_sqr_error, 'root_mean_squared_error':root_mean_squared_error })
+            data_html = data.to_html()
+            data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+                data)
+            context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
+                                dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+        
+            context.update({ 'variance_score': variance_score,'r2_score': score,
+                        'y_predict': y_pred, 'image_url': image_url, 'mean_absolute_error':mean_abs_error, 'mean_squared_error':mean_sqr_error, 'root_mean_squared_error':root_mean_squared_error })
 
-        return render(request, './results.html', context)
+            return render(request, './results.html', context)
+        
+    except Exception as e:
+        messages.error(request, e)
+
+        
     data_html = data.head(10).to_html()
     columns_send = []
     for col in data.columns:
@@ -515,71 +521,78 @@ def linear_reg(request):
 def logistic_reg(request):
     data, filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(
         request)
-    if request.method == 'POST':
-        X1 = request.POST.getlist('value-x')
-        y1 = request.POST['value-y']
-        test_size1 = request.POST['test_size']
-        if len(X1) == 1:
-            X = data[X1].values.reshape(-1, 1)
-        else:
-            X = data[X1]
-        y = data[y1]
-        test1 = int(test_size1)/100
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=int(test_size1)/100, random_state=10)
-        model = LogisticRegression()
-        st_x= StandardScaler()    
-        X_train= st_x.fit_transform(X_train)    
-        X_test= st_x.transform(X_test)  
-        model.fit(X_train, y_train)
-        y_pred = model.predict(X_test)
-        #statistics
-        accuracy = accuracy_score(y_test, y_pred)
-        precision=precision_score(y_test,y_pred, average="micro")
-        recall=recall_score(y_test,y_pred,average="micro")
-        # tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
-        # specificity=tn/fp+tn
-        # f1_scr=f1_score(y_test,y_pred)
-        # sensitivity=tp/tp+fn
-        mean_abs_error = round(mean_absolute_error(y_test, y_pred), 4)
-        mean_sqr_error= round(mean_squared_error(y_test, y_pred), 4)
-        root_mean_squared_error=math.sqrt(mean_sqr_error)
-        error=1-accuracy
-        #todo
-        confusion = confusion_matrix(y_test, y_pred)
-        #AUC
-        #ROC
-        #CM
-        variance_score = model.score(X_test, y_test)
-        with open('./media/{}'.format(codeFileName), 'a') as f:
-            f.write("X_train, X_test, y_train, y_test = train_test_split({}, {}, test_size={}, random_state=10)\nlinear_model = LogisticRegression()\nlinear_model.fit(X_train, y_train)\ny_pred = model.predict(X_test)".format(X1, y1, test1))
+    try:
+        if request.method == 'POST':
+            X1 = request.POST.getlist('value-x')
+            y1 = request.POST['value-y']
+            test_size1 = request.POST['test_size']
+            if len(X1) == 1:
+                X = data[X1].values.reshape(-1, 1)
+            else:
+                X = data[X1]
+            y = data[y1]
+            test1 = int(test_size1)/100
+            X_train, X_test, y_train, y_test = train_test_split(
+                X, y, test_size=int(test_size1)/100, random_state=10)
+            model = LogisticRegression()
+            st_x= StandardScaler()    
+            X_train= st_x.fit_transform(X_train)    
+            X_test= st_x.transform(X_test)  
+            model.fit(X_train, y_train)
+            y_pred = model.predict(X_test)
+            #statistics
+            accuracy = accuracy_score(y_test, y_pred)
+            precision=precision_score(y_test,y_pred, average="micro")
+            recall=recall_score(y_test,y_pred,average="micro")
+            # tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
+            # specificity=tn/fp+tn
+            # f1_scr=f1_score(y_test,y_pred)
+            # sensitivity=tp/tp+fn
+            mean_abs_error = round(mean_absolute_error(y_test, y_pred), 4)
+            mean_sqr_error= round(mean_squared_error(y_test, y_pred), 4)
+            root_mean_squared_error=math.sqrt(mean_sqr_error)
+            error=1-accuracy
+            #todo
+            confusion = confusion_matrix(y_test, y_pred)
+            #AUC
+            #ROC
+            #CM
+            variance_score = model.score(X_test, y_test)
+            with open('./media/{}'.format(codeFileName), 'a') as f:
+                f.write("X_train, X_test, y_train, y_test = train_test_split({}, {}, test_size={}, random_state=10)\nlinear_model = LogisticRegression()\nlinear_model.fit(X_train, y_train)\ny_pred = model.predict(X_test)".format(X1, y1, test1))
 
-        plt.switch_backend('Agg')
+            plt.switch_backend('Agg')
 
-        #cm_image
-        f, ax =plt.subplots(figsize = (5,5))
-        cm= confusion_matrix(y_test, y_pred)
-        sns.heatmap(cm,annot = True, linewidths= 0.5, linecolor="red", fmt=".0f", ax=ax)
-        plt.xlabel("y_pred")
-        plt.ylabel("y_true")
+            #cm_image
+            f, ax =plt.subplots(figsize = (5,5))
+            cm= confusion_matrix(y_test, y_pred)
+            sns.heatmap(cm,annot = True, linewidths= 0.5, linecolor="red", fmt=".0f", ax=ax)
+            plt.xlabel("y_pred")
+            plt.ylabel("y_true")
 
-        session_key = request.session.get('session_key', None)
+            session_key = request.session.get('session_key', None)
 
-        fig_location = './media/logisticReg{}.png'.format(session_key)
-        plt.savefig(fig_location)
+            fig_location = './media/logisticReg{}.png'.format(session_key)
+            plt.savefig(fig_location)
 
-        image_url = '../media/logisticReg{}.png'.format(session_key)
+            image_url = '../media/logisticReg{}.png'.format(session_key)
 
-        data_html = data.to_html()
-       
-        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
-            data)
-        context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
-                             dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-        context.update({'accuracy': accuracy, 'variance_score': variance_score,
-                       'y_predict': y_pred, 'image_url': image_url, 'accuracy':accuracy, 'error':error, 'recall_score':recall, 'precision_score':precision,  'mean_absolute_error':mean_abs_error, 'mean_squared_error':mean_sqr_error, 'root_mean_squared_error':root_mean_squared_error })
-        # 'F1_score':f1_scr, 'sensitivity':sensitivity, 'specificity':specificity,
-        return render(request, './results.html', context)
+            data_html = data.to_html()
+        
+            data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+                data)
+            context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
+                                dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+            context.update({'accuracy': accuracy, 'variance_score': variance_score,
+                        'y_predict': y_pred, 'image_url': image_url, 'accuracy':accuracy, 'error':error, 'recall_score':recall, 'precision_score':precision,  'mean_absolute_error':mean_abs_error, 'mean_squared_error':mean_sqr_error, 'root_mean_squared_error':root_mean_squared_error })
+            # 'F1_score':f1_scr, 'sensitivity':sensitivity, 'specificity':specificity,
+            return render(request, './results.html', context)
+        
+
+    except Exception as e:
+        messages.error(request, e)
+        
+
     data_html = data.head(10).to_html()
     columns_send = []
     for col in data.columns:
@@ -596,94 +609,107 @@ def logistic_reg(request):
 def knn(request):
     data, filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(
         request)
-    if request.method == 'POST':
-        no_of_neighbours = request.POST['no_of_neighbors']
-        X1 = request.POST.getlist('value-x')
-        y1 = request.POST['value-y']
-        test_size1 = request.POST['test_size']
-        X = data[X1]
-        y = data[y1]
+    try:
 
-        test1 = int(test_size1)/100
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=int(test_size1)/100, random_state=10)
-        knn = KNeighborsClassifier(int(no_of_neighbours))
-        knn.fit(X_train, y_train)
-        y_pred = knn.predict(X_test)
+        if request.method == 'POST':
+            no_of_neighbours = request.POST['no_of_neighbors']
+            X1 = request.POST.getlist('value-x')
+            y1 = request.POST['value-y']
+            test_size1 = request.POST['test_size']
+            X = data[X1]
+            y = data[y1]
 
-        #checking
-        target_names=np.array(pd.Categorical(data[y1]).categories)
-        class_report = classification_report(y_test,
-                                   y_pred,
-                                   target_names=target_names,
-                                   output_dict=True)
-        # print(class_report)
-        # print(target_names)
-        # class_report=classification_report(y_test, y_pred, digits=3)
-        # print(class_report)
-        # for i in class_report:
-        #     print(i)
-        # class_report=class_report.split(",")
-        #statistics
-        # This statistics cannot be calculated due to multiclass
-        # accuracy = accuracy_score(y_test, y_pred, average='macro')
-        # precision=precision_score(y_test,y_pred,average='macro')
-        # recall=recall_score(y_test,y_pred,average='macro')
-        # tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
-        # specificity=tn/fp+tn
-        # f1_scr=f1_score(y_test,y_pred)
-        # sensitivity=tp/tp+fn
-        # mean_abs_error = round(mean_absolute_error(y_test, y_pred), 4)
-        # mean_sqr_error= round(mean_squared_error(y_test, y_pred), 4)
-        # root_mean_squared_error=math.sqrt(mean_sqr_error)
-        # error=1-accuracy
-        #todo
-        confusion = confusion_matrix(y_test, y_pred)
-        #AUC
-        #ROC
-        #CM
-    
-        variance_score = knn.score(X_test, y_test)
+            test1 = int(test_size1)/100
+            X_train, X_test, y_train, y_test = train_test_split(
+                X, y, test_size=int(test_size1)/100, random_state=10)
+            knn = KNeighborsClassifier(int(no_of_neighbours))
+            knn.fit(X_train, y_train)
+            y_pred = knn.predict(X_test)
 
-        with open('./media/{}'.format(codeFileName), 'a') as f:
-            f.write("X_train, X_test, y_train, y_test = train_test_split({}, {}, test_size={}, random_state=10)\nknn = KNeighborsClassifier({})\nknn.fit(X_train, y_train)\ny_pred = knn.predict(X_test)".format(
-                X1, y1, test1, no_of_neighbours))
+            #checking
+            target_names=np.array(pd.Categorical(data[y1]).categories)
+            class_report = classification_report(y_test,
+                                    y_pred,
+                                    target_names=target_names,
+                                    output_dict=True)
+            # print(class_report)
+            # print(target_names)
+            # class_report=classification_report(y_test, y_pred, digits=3)
+            # print(class_report)
+            # for i in class_report:
+            #     print(i)
+            # class_report=class_report.split(",")
+            #statistics
+            # This statistics cannot be calculated due to multiclass
+            # accuracy = accuracy_score(y_test, y_pred, average='macro')
+            # precision=precision_score(y_test,y_pred,average='macro')
+            # recall=recall_score(y_test,y_pred,average='macro')
+            # tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
+            # specificity=tn/fp+tn
+            # f1_scr=f1_score(y_test,y_pred)
+            # sensitivity=tp/tp+fn
+            # mean_abs_error = round(mean_absolute_error(y_test, y_pred), 4)
+            # mean_sqr_error= round(mean_squared_error(y_test, y_pred), 4)
+            # root_mean_squared_error=math.sqrt(mean_sqr_error)
+            # error=1-accuracy
+            #todo
+            confusion = confusion_matrix(y_test, y_pred)
+            #AUC
+            #ROC
+            #CM
+        
+            variance_score = knn.score(X_test, y_test)
 
-        plt.switch_backend('Agg')
-        plot_decision_regions(X_test.values, y_test.values, knn)
+            with open('./media/{}'.format(codeFileName), 'a') as f:
+                f.write("X_train, X_test, y_train, y_test = train_test_split({}, {}, test_size={}, random_state=10)\nknn = KNeighborsClassifier({})\nknn.fit(X_train, y_train)\ny_pred = knn.predict(X_test)".format(
+                    X1, y1, test1, no_of_neighbours))
 
-        session_key = request.session.get('session_key', None)
+            plt.switch_backend('Agg')
+            plot_decision_regions(X_test.values, y_test.values, knn)
 
-        fig_location = './media/knn{}.png'.format(session_key)
-        plt.savefig(fig_location)
-        image_url = '../media/knn{}.png'.format(session_key)
+            session_key = request.session.get('session_key', None)
 
-        #cm_image
-        f, ax =plt.subplots(figsize = (5,5))
-        cm= confusion_matrix(y_test, y_pred)
-        sns.heatmap(cm,annot = True, linewidths= 0.5, linecolor="red", fmt=".0f", ax=ax)
-        plt.xlabel("y_pred")
-        plt.ylabel("y_true")
-        fig_location = './media/knn_CM{}.png'.format(session_key)
-        plt.savefig(fig_location)
-        confusion_mtx_imgurl = '../media/knn_CM{}.png'.format(session_key)
-        #cr
-        sns.heatmap(pd.DataFrame(class_report).iloc[:-1, :].T, annot=True)
-        fig_location = './media/knn_CR{}.png'.format(session_key)
-        plt.savefig(fig_location)
-        class_report_url = '../media/knn_CR{}.png'.format(session_key)
+            fig_location = './media/knn{}.png'.format(session_key)
+            plt.savefig(fig_location)
+            image_url = '../media/knn{}.png'.format(session_key)
+
+            #cm_image
+            f, ax =plt.subplots(figsize = (5,5))
+            cm= confusion_matrix(y_test, y_pred)
+            sns.heatmap(cm,annot = True, linewidths= 0.5, linecolor="red", fmt=".0f", ax=ax)
+            plt.xlabel("y_pred")
+            plt.ylabel("y_true")
+            fig_location = './media/knn_CM{}.png'.format(session_key)
+            plt.savefig(fig_location)
+            confusion_mtx_imgurl = '../media/knn_CM{}.png'.format(session_key)
+            #cr
+            plt_cr=plt.figure(figsize=(6, 6))
+            sns.heatmap(pd.DataFrame(class_report).iloc[:-1, :].T, annot=True)
+            fig_location = './media/knn_CR{}.png'.format(session_key)
+            plt.savefig(fig_location)
+            class_report_url = '../media/knn_CR{}.png'.format(session_key)
 
 
-        data_html = data.to_html()
-       
-        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
-            data)
-        context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
-                             dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-        context.update({'variance_score': variance_score,
-                       'y_predict': y_pred, 'image_url': image_url, 'class_report':class_report_url, 'confusion_mtx_imgurl':confusion_mtx_imgurl })
+            data_html = data.to_html()
+        
+            data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+                data)
+            context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
+                                dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+            context.update({'variance_score': variance_score,
+                        'y_predict': y_pred, 'image_url': image_url, 'class_report':class_report_url, 'confusion_mtx_imgurl':confusion_mtx_imgurl })
 
-        return render(request, './results.html', context)
+            return render(request, './results.html', context)
+        
+
+            
+    except Exception as e:
+        messages.error(request, e)
+        
+
+
+
+
     data_html = data.to_html()
     columns_send = []
     for col in data.columns:
@@ -772,9 +798,8 @@ def kmeans(request):
              return render(request, './results.html', context)
        
     except Exception as e:
-       # By this way we can know about the type of error occurring
         messages.error(request, e)
-        print("The error is: ",e)
+     
    
 
     data_html = data.head(10).to_html()
