@@ -12,7 +12,7 @@
                     <div class="col-lg-6 mb-3">
                         <div>
                             <label for="no_of_neighbors" class="form-label">No. of Neighbours</label>
-                            <input class="form-control" id="no_of_neighbor" type="number" name="no_of_neighbors">
+                            <input class="form-control" id="no_of_neighbor" type="number" name="no_of_neighbors" required>
                         </div>  
                     </div>
                   </div> <!-- end row -->
@@ -22,7 +22,7 @@
                       <div class="col-lg-6 mb-3">
                           <p class="mb-1 fw-bold text-muted">X :</p>
                           <!-- Multiple Select -->
-                          <select class="js-select2 form-control select2-multiple" data-toggle="select2" multiple="multiple" data-placeholder="Choose Columns" id="my-select" name="value-x" >
+                          <select class="js-select2 form-control select2-multiple" data-toggle="select2" multiple="multiple" data-placeholder="Choose Columns" id="my-select" name="value-x" required >
                               {% for col in columns %}
                               <option value="{{col}}">
                                   {{col | safe}}
@@ -47,7 +47,7 @@
                               {% endfor %}
                             </select>
                         </div> {% endcomment %}
-                        <select class="form-control select2" data-toggle="select2" aria-hidden="true" name="value-y" id="my-select2">
+                        <select class="form-control select2" data-toggle="select2" aria-hidden="true" name="value-y" id="my-select2" required>
                             {% for col in columns %}
                               <option value="{{col}}">
                                   {{col | safe}}
@@ -63,7 +63,7 @@
                     <div class="col-lg-6 mb-3">
                         <div>
                             <label for="test_size" class="form-label">Enter Test Size</label>
-                            <input class="form-control" id="test_size" type="number" name="test_size" min="1" max="99">
+                            <input class="form-control" id="test_size" type="number" name="test_size" min="1" max="99" required>
                         </div>
                     </div>
 

@@ -803,7 +803,7 @@ def kmeans(request):
                 kmeans.fit(data[X1])
                 wcss_list.append(kmeans.inertia_)
              plt.plot(range(1, cluster_limit+1), wcss_list)
-             plt.title('The Elobw Method Graph')
+             plt.title('The Elbow Method Graph')
              plt.xlabel('Number of clusters(k)')
              plt.ylabel('wcss_list')
              fig_location = './media/elbowplotkmeans{}.png'.format(session_key)
