@@ -210,28 +210,31 @@ def dropingnull(request):
 def minmaxScaler(request):
     data, filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(
         request)
-    if request.method == 'POST':
-        X1 = request.POST.getlist('value-x')
-        min_range = request.POST.get('start_of_range')
-        max_range = request.POST.get('end_of_range')
-        print(min_range, max_range)
-        columns = []
-        for col in X1:
-            columns.append(col)
-        min_max_scaler = MinMaxScaler(
-            feature_range=(int(min_range), int(max_range)))
-        data[columns] = min_max_scaler.fit_transform(data[columns])
-        with open('./media/{}'.format(codeFileName), 'a') as f:
-            f.write('min_max_scaler = MinMaxScaler(feature_range=({},{}))\ndata[{}] = min_max_scaler.fit_transform(data[{}])\n'.format(
-                min_range, max_range, columns, columns))
-        data.to_csv('./media/{}'.format(filename), index=False)
-        data_html = data.head(10).to_html()
-        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
-            data)
+    try:
+        if request.method == 'POST':
+            X1 = request.POST.getlist('value-x')
+            min_range = request.POST.get('start_of_range')
+            max_range = request.POST.get('end_of_range')
+            print(min_range, max_range)
+            columns = []
+            for col in X1:
+                columns.append(col)
+            min_max_scaler = MinMaxScaler(
+                feature_range=(int(min_range), int(max_range)))
+            data[columns] = min_max_scaler.fit_transform(data[columns])
+            with open('./media/{}'.format(codeFileName), 'a') as f:
+                f.write('min_max_scaler = MinMaxScaler(feature_range=({},{}))\ndata[{}] = min_max_scaler.fit_transform(data[{}])\n'.format(
+                    min_range, max_range, columns, columns))
+            data.to_csv('./media/{}'.format(filename), index=False)
+            data_html = data.head(10).to_html()
+            data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+                data)
 
-        context = getContext(data_html, data_shape, nullValues,
-                             datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-        return render(request, './preprocessing.html', context)
+            context = getContext(data_html, data_shape, nullValues,
+                                datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+            return render(request, './preprocessing.html', context)
+    except Exception as e:
+        messages.error(request, e) 
     # only integer and float type columns will be send
     data_html = data.head(10).to_html()
 
@@ -252,24 +255,27 @@ def minmaxScaler(request):
 def standard_Scaler(request):
     data, filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(
         request)
-    if request.method == 'POST':
-        X1 = request.POST.getlist('value-x')
-        columns = []
-        for col in X1:
-            columns.append(col)
-        scaler = StandardScaler()
-        model = scaler.fit(data[columns])
-        data[columns] = model.transform(data[columns])
-        with open('./media/{}'.format(codeFileName), 'a') as f:
-            f.write('standard_scaler = StandardScaler()\ndata[{}] = standard_scaler.fit_transform(data[{}])\n'.format(
-                columns, columns))
-        data.to_csv('./media/{}'.format(filename), index=False)
-        data_html = data.head(10).to_html()
-        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
-            data)
-        context = getContext(data_html, data_shape, nullValues,
-                             datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-        return render(request, './preprocessing.html', context)
+    try:
+        if request.method == 'POST':
+            X1 = request.POST.getlist('value-x')
+            columns = []
+            for col in X1:
+                columns.append(col)
+            scaler = StandardScaler()
+            model = scaler.fit(data[columns])
+            data[columns] = model.transform(data[columns])
+            with open('./media/{}'.format(codeFileName), 'a') as f:
+                f.write('standard_scaler = StandardScaler()\ndata[{}] = standard_scaler.fit_transform(data[{}])\n'.format(
+                    columns, columns))
+            data.to_csv('./media/{}'.format(filename), index=False)
+            data_html = data.head(10).to_html()
+            data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+                data)
+            context = getContext(data_html, data_shape, nullValues,
+                                datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+            return render(request, './preprocessing.html', context)
+    except Exception as e:
+        messages.error(request, e)
 
     data_html = data.head(10).to_html()
     # only integer and float type columns will be send
@@ -288,33 +294,36 @@ def standard_Scaler(request):
 def fillingNullMean(request):
     data, filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(
         request)
-    if request.method == 'POST':
-        with open('./media/{}'.format(codeFileName), 'a') as f:
-            f.write('mean_of_columns = data.mean()\n')
-        mean_of_columns = data.mean()
-        columns = request.POST.getlist('value-x')
-        print(len(columns))
-        for col in range(len(columns)):
-            # code.append('data.fillna({})'.format(columns[col]))
-            try:
-                data[columns[col]].fillna(
-                    mean_of_columns[columns[col]], inplace=True)
-                with open('./media/{}'.format(codeFileName), 'a') as f:
-                    f.write("data['{}'].fillna(mean_of_columns['{}'], inplace=True)\n".format(
-                        columns[col], columns[col]))
-                print(columns[col], "mean")
-            except:
-                print(columns[col])
-                continue
-        print(data.isnull().sum())
-        data.to_csv('./media/{}'.format(filename), index=False)
-        data_html = data.head(10).to_html()
-        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
-            data)
+    try:
+        if request.method == 'POST':
+            with open('./media/{}'.format(codeFileName), 'a') as f:
+                f.write('mean_of_columns = data.mean()\n')
+            mean_of_columns = data.mean()
+            columns = request.POST.getlist('value-x')
+            print(len(columns))
+            for col in range(len(columns)):
+                # code.append('data.fillna({})'.format(columns[col]))
+                try:
+                    data[columns[col]].fillna(
+                        mean_of_columns[columns[col]], inplace=True)
+                    with open('./media/{}'.format(codeFileName), 'a') as f:
+                        f.write("data['{}'].fillna(mean_of_columns['{}'], inplace=True)\n".format(
+                            columns[col], columns[col]))
+                    print(columns[col], "mean")
+                except:
+                    print(columns[col])
+                    continue
+            print(data.isnull().sum())
+            data.to_csv('./media/{}'.format(filename), index=False)
+            data_html = data.head(10).to_html()
+            data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+                data)
 
-        context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
-                             dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-        return render(request, './preprocessing.html', context)
+            context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
+                                dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+            return render(request, './preprocessing.html', context)
+    except Exception as e:
+        messages.error(request, e)
     data_html = data.head(10).to_html()
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
@@ -335,32 +344,37 @@ def fillingNullMean(request):
 def fillingNullMedian(request):
     data, filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(
         request)
-    if request.method == 'POST':
-        median_of_columns = data.median()
-        with open('./media/{}'.format(codeFileName), 'a') as f:
-            f.write('median_of_columns = data.median()\n')
-        columns = request.POST.getlist('value-x')
-        print(len(columns))
-        for col in range(len(columns)):
-            try:
-                data[columns[col]].fillna(
-                    median_of_columns[columns[col]], inplace=True)
-                with open('./media/{}'.format(codeFileName), 'a') as f:
-                    f.write("data['{}'].fillna(median_of_columns['{}'], inplace=True)\n".format(
-                        columns[col], columns[col]))
-                print(columns[col], "median")
-            except:
-                print(columns[col])
-                continue
+    try:
+        if request.method == 'POST':
+            median_of_columns = data.median()
+            with open('./media/{}'.format(codeFileName), 'a') as f:
+                f.write('median_of_columns = data.median()\n')
+            columns = request.POST.getlist('value-x')
+            print(len(columns))
+            for col in range(len(columns)):
+                try:
+                    data[columns[col]].fillna(
+                        median_of_columns[columns[col]], inplace=True)
+                    with open('./media/{}'.format(codeFileName), 'a') as f:
+                        f.write("data['{}'].fillna(median_of_columns['{}'], inplace=True)\n".format(
+                            columns[col], columns[col]))
+                    print(columns[col], "median")
+                except:
+                    print(columns[col])
+                    continue
 
-        print(data.isnull().sum())
-        data.to_csv('./media/{}'.format(filename), index=False)
-        data_html = data.head(10).to_html()
-        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
-            data)
-        context = getContext(data_html, data_shape, nullValues,
-                             datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-        return render(request, './preprocessing.html', context)
+            print(data.isnull().sum())
+            data.to_csv('./media/{}'.format(filename), index=False)
+            data_html = data.head(10).to_html()
+            data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+                data)
+            context = getContext(data_html, data_shape, nullValues,
+                                datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+            return render(request, './preprocessing.html', context)
+    
+    except Exception as e:
+        messages.error(request, e)
+
     data_html = data.head(10).to_html()
     columns_send = []
     for col in data.columns:
@@ -379,28 +393,32 @@ def fillingNullMedian(request):
 def fillingNullMode(request):
     data, filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(
         request)
-    if request.method == 'POST':
-        columns = request.POST.getlist('value-x')
-        print(len(columns))
-        for col in range(len(columns)):
-            try:
-                data[columns[col]].fillna(
-                    data.mode()[columns[col]][0], inplace=True)
-                with open('./media/{}'.format(codeFileName), 'a') as f:
-                    f.write("data['{}'].fillna(data.mode()['{}'][0], inplace=True)\n".format(
-                        columns[col], columns[col]))
-                print(columns[col], "mode")
-            except:
-                print(columns[col])
-                continue
-        print(data.isnull().sum())
-        data.to_csv('./media/{}'.format(filename), index=False)
-        data_html = data.head(10).to_html()
-        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
-            data)
-        context = getContext(data_html, data_shape, nullValues,
-                             datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-        return render(request, './preprocessing.html', context)
+    try:
+        if request.method == 'POST':
+            columns = request.POST.getlist('value-x')
+            print(len(columns))
+            for col in range(len(columns)):
+                try:
+                    data[columns[col]].fillna(
+                        data.mode()[columns[col]][0], inplace=True)
+                    with open('./media/{}'.format(codeFileName), 'a') as f:
+                        f.write("data['{}'].fillna(data.mode()['{}'][0], inplace=True)\n".format(
+                            columns[col], columns[col]))
+                    print(columns[col], "mode")
+                except:
+                    print(columns[col])
+                    continue
+            print(data.isnull().sum())
+            data.to_csv('./media/{}'.format(filename), index=False)
+            data_html = data.head(10).to_html()
+            data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+                data)
+            context = getContext(data_html, data_shape, nullValues,
+                                datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+            return render(request, './preprocessing.html', context)
+    except Exception as e:
+        messages.error(request, e)
+
     data_html = data.head(10).to_html()
     data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
         data)
@@ -818,24 +836,28 @@ def kmeans(request):
 def cat_data(request):
     data, filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(
         request)
-    if request.method == 'POST':
-        columns = request.POST.getlist('value-x')
-        for col in columns:
-            label_encoder = LabelEncoder()
-            data[col] = label_encoder.fit_transform(data[col])
-            data[col].unique()
-            # we can also pass value of each category for user info in statistics
-            # print(label_encoder.fit_transform(data[col]))
-        data.to_csv('./media/{}'.format(filename), index=False)
-        with open('./media/{}'.format(codeFileName), 'a') as f:
-            f.write(
-                "data['{}'] = label_encoder.fit_transform(data['{}'])\n".format(col, col))
-        data_html = data.head(10).to_html()
-        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
-            data)
-        context = getContext(data_html, data_shape, nullValues,
-                             datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-        return render(request, './preprocessing.html', context)
+    try:
+        if request.method == 'POST':
+            columns = request.POST.getlist('value-x')
+            for col in columns:
+                label_encoder = LabelEncoder()
+                data[col] = label_encoder.fit_transform(data[col])
+                data[col].unique()
+                # we can also pass value of each category for user info in statistics
+                # print(label_encoder.fit_transform(data[col]))
+            data.to_csv('./media/{}'.format(filename), index=False)
+            with open('./media/{}'.format(codeFileName), 'a') as f:
+                f.write(
+                    "data['{}'] = label_encoder.fit_transform(data['{}'])\n".format(col, col))
+            data_html = data.head(10).to_html()
+            data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+                data)
+            context = getContext(data_html, data_shape, nullValues,
+                                datatypes, memory_usage, dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+            return render(request, './preprocessing.html', context)
+    except Exception as e:
+        messages.error(request, e)
+
     data_html = data.head(10).to_html()
     columns_send = []
     for col in data.columns:
@@ -867,30 +889,33 @@ def pie_chart(request):
     data, filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(
         request)
     print(filename)
-    if request.method == 'POST':
-        column = request.POST.getlist('value-x')
-        grouped = data.groupby(column).groups
-        categories = []  # all categories names
-        for group in grouped:
-            categories.append(group)
-        # particular column total count
-        single_column = data[column].value_counts()
-        cnts = []  # for storing cnt of individual categories
-        for cnt in categories:
-            cnts.append(single_column[cnt])
-        plt.switch_backend('Agg')
-        plt.pie(cnts, labels=categories, autopct='%.0f%%')
-        session_key = request.session.get('session_key', None)
-        fig_location = './media/pieplot{}.png'.format(session_key)
-        plt.savefig(fig_location)
-        image_url = '../media/pieplot{}.png'.format(session_key)
-        data_html = data.to_html()
-        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
-            data)
-        context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
-                             dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-        context.update({'image_url': image_url})
-        return render(request, './visualization_output.html', context)
+    try:
+        if request.method == 'POST':
+            column = request.POST.getlist('value-x')
+            grouped = data.groupby(column).groups
+            categories = []  # all categories names
+            for group in grouped:
+                categories.append(group)
+            # particular column total count
+            single_column = data[column].value_counts()
+            cnts = []  # for storing cnt of individual categories
+            for cnt in categories:
+                cnts.append(single_column[cnt])
+            plt.switch_backend('Agg')
+            plt.pie(cnts, labels=categories, autopct='%.0f%%')
+            session_key = request.session.get('session_key', None)
+            fig_location = './media/pieplot{}.png'.format(session_key)
+            plt.savefig(fig_location)
+            image_url = '../media/pieplot{}.png'.format(session_key)
+            data_html = data.to_html()
+            data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+                data)
+            context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
+                                dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+            context.update({'image_url': image_url})
+            return render(request, './visualization_output.html', context)
+    except Exception as e:
+        messages.error(request, e)
     data_html = data.head(10).to_html()
     # print("SOME",data)
     # print("CHKED",data.columns)
@@ -910,25 +935,29 @@ def pie_chart(request):
 def histogram(request):
     data, filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(
         request)
-    if request.method == 'POST':
-        column = request.POST.getlist('value-x')
-        plt.switch_backend('Agg')
-        sns.histplot(data[column])
-        session_key = request.session.get('session_key', None)
-        fig_location = './media/histoplot{}.png'.format(session_key)
-        plt.savefig(fig_location)
+    try:
+        if request.method == 'POST':
+            column = request.POST.getlist('value-x')
+            plt.switch_backend('Agg')
+            sns.histplot(data[column])
+            session_key = request.session.get('session_key', None)
+            fig_location = './media/histoplot{}.png'.format(session_key)
+            plt.savefig(fig_location)
 
-        with open('./media/{}'.format(codeFileName), 'a') as f:
-            f.write("sns.histplot(data{})\n".format(column))
+            with open('./media/{}'.format(codeFileName), 'a') as f:
+                f.write("sns.histplot(data{})\n".format(column))
 
-        image_url = '../media/histoplot{}.png'.format(session_key)
-        data_html = data.to_html()
-        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
-            data)
-        context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
-                             dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-        context.update({'image_url': image_url})
-        return render(request, './visualization_output.html', context)
+            image_url = '../media/histoplot{}.png'.format(session_key)
+            data_html = data.to_html()
+            data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+                data)
+            context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
+                                dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+            context.update({'image_url': image_url})
+            return render(request, './visualization_output.html', context)
+    
+    except Exception as e:
+        messages.error(request, e)
 
     data_html = data.head(10).to_html()
     columns_send = []
@@ -946,25 +975,30 @@ def histogram(request):
 def box_plot(request):
     data, filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(
         request)
-    if request.method == 'POST':
-        columns = request.POST.getlist('value-x')
-        plt.switch_backend('Agg')
-        sns.boxplot(data[columns])
-        session_key = request.session.get('session_key', None)
-        fig_location = './media/boxplot{}.png'.format(session_key)
-        plt.savefig(fig_location)
+    
+    try:
+        if request.method == 'POST':
+            columns = request.POST.getlist('value-x')
+            plt.switch_backend('Agg')
+            sns.boxplot(data[columns])
+            session_key = request.session.get('session_key', None)
+            fig_location = './media/boxplot{}.png'.format(session_key)
+            plt.savefig(fig_location)
 
-        with open('./media/{}'.format(codeFileName), 'a') as f:
-            f.write("sns.boxplot(data{})\n".format(columns))
+            with open('./media/{}'.format(codeFileName), 'a') as f:
+                f.write("sns.boxplot(data{})\n".format(columns))
 
-        image_url = '../media/boxplot{}.png'.format(session_key)
-        data_html = data.to_html()
-        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
-            data)
-        context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
-                             dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-        context.update({'image_url': image_url})
-        return render(request, './visualization_output.html', context)
+            image_url = '../media/boxplot{}.png'.format(session_key)
+            data_html = data.to_html()
+            data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+                data)
+            context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
+                                dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+            context.update({'image_url': image_url})
+            return render(request, './visualization_output.html', context)
+    except Exception as e:
+        messages.error(request, e)
+
     data_html = data.head(10).to_html()
     columns_send = []
     for col in data.columns:
@@ -981,25 +1015,29 @@ def box_plot(request):
 def line_plot(request):
     data, filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(
         request)
-    if request.method == 'POST':
-        columns = request.POST.getlist('value-x')
-        plt.switch_backend('Agg')
-        sns.lineplot(data[columns])
-        session_key = request.session.get('session_key', None)
-        fig_location = './media/lineplot{}.png'.format(session_key)
-        plt.savefig(fig_location)
+    try:
+        if request.method == 'POST':
+            columns = request.POST.getlist('value-x')
+            plt.switch_backend('Agg')
+            sns.lineplot(data[columns])
+            session_key = request.session.get('session_key', None)
+            fig_location = './media/lineplot{}.png'.format(session_key)
+            plt.savefig(fig_location)
 
-        with open('./media/{}'.format(codeFileName), 'a') as f:
-            f.write("sns.lineplot(data{})\n".format(columns))
+            with open('./media/{}'.format(codeFileName), 'a') as f:
+                f.write("sns.lineplot(data{})\n".format(columns))
 
-        image_url = '../media/lineplot{}.png'.format(session_key)
-        data_html = data.to_html()
-        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
-            data)
-        context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
-                             dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-        context.update({'image_url': image_url})
-        return render(request, './visualization_output.html', context)
+            image_url = '../media/lineplot{}.png'.format(session_key)
+            data_html = data.to_html()
+            data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+                data)
+            context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
+                                dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+            context.update({'image_url': image_url})
+            return render(request, './visualization_output.html', context)
+    except Exception as e:
+        messages.error(request, e)
+
     data_html = data.head(10).to_html()
     columns_send = []
     for col in data.columns:
@@ -1016,33 +1054,36 @@ def line_plot(request):
 def elbow_plot(request):
     data, filename, codeFileName, image_url_correlation_matrix = getDataAndCodeFileName(
         request)
-    if request.method == 'POST':
-        columns = request.POST.getlist('value-x')
-        # loop_cnt cant be more than the record size otherwise it willgive the error # ERROR HANDLING
-        loop_cnt = request.POST.get('test_for_no_of_clusters')
-        print(columns, loop_cnt)
-        wcss_list = []
-        for i in range(1, int(loop_cnt)+1):
-            kmeans = KMeans(n_clusters=i, init='k-means++', random_state=42)
-            kmeans.fit(data[columns])
-            wcss_list.append(kmeans.inertia_)
-        plt.switch_backend('Agg')
-        plt.plot(range(1, int(loop_cnt)+1), wcss_list)
-        plt.title('The Elobw Method Graph')
-        plt.xlabel('Number of clusters(k)')
-        plt.ylabel('wcss_list')
-        session_key = request.session.get('session_key', None)
-        fig_location = './media/elbowplot{}.png'.format(session_key)
-        plt.savefig(fig_location)
+    try:
+        if request.method == 'POST':
+            columns = request.POST.getlist('value-x')
+            # loop_cnt cant be more than the record size otherwise it willgive the error # ERROR HANDLING
+            loop_cnt = request.POST.get('test_for_no_of_clusters')
+            print(columns, loop_cnt)
+            wcss_list = []
+            for i in range(1, int(loop_cnt)+1):
+                kmeans = KMeans(n_clusters=i, init='k-means++', random_state=42)
+                kmeans.fit(data[columns])
+                wcss_list.append(kmeans.inertia_)
+            plt.switch_backend('Agg')
+            plt.plot(range(1, int(loop_cnt)+1), wcss_list)
+            plt.title('The Elobw Method Graph')
+            plt.xlabel('Number of clusters(k)')
+            plt.ylabel('wcss_list')
+            session_key = request.session.get('session_key', None)
+            fig_location = './media/elbowplot{}.png'.format(session_key)
+            plt.savefig(fig_location)
 
-        image_url = '../media/elbowplot{}.png'.format(session_key)
-        data_html = data.to_html()
-        data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
-            data)
-        context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
-                             dataframe_size, columns, codeFileName, image_url_correlation_matrix)
-        context.update({'image_url': image_url})
-        return render(request, './visualization_output.html', context)
+            image_url = '../media/elbowplot{}.png'.format(session_key)
+            data_html = data.to_html()
+            data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
+                data)
+            context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
+                                dataframe_size, columns, codeFileName, image_url_correlation_matrix)
+            context.update({'image_url': image_url})
+            return render(request, './visualization_output.html', context)
+    except Exception as e:
+        messages.error(request, e)
 
     data_html = data.head(10).to_html() 
     columns_send = []
