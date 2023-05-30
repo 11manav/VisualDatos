@@ -20,7 +20,7 @@
 
 
         <!-- Theme Config Js -->
-        <script src="{% static 'assets/js/hyper-config.js' %}"></script>
+        <script src="{% static 'assets/js/config.js' %}"></script>
 
         
 
@@ -29,6 +29,7 @@
 
         <!-- Icons css -->
         <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
+        <!-- <link href="{% static 'css/cursor.css' %}" rel="stylesheet" type="text/css" /> -->
 
 
         <!-- code highlight css -->
@@ -50,6 +51,12 @@
             </div>
         </div>
         <!-- End Preloader-->
+         <!--  Cursor -->
+  {% comment %} <div class="cursor-dot-outline">
+</div>
+<div class="cursor-dot">
+</div> {% endcomment %}
+<!-- Cursor ends -->
 
 
         <!-- Begin page -->
@@ -348,7 +355,7 @@
                                 <!-- Personal-Information -->
                                 <div class="card">
                                     <div class="d-flex card-header justify-content-between align-items-center mb-2" style="background-color: #536de6;
-                                    color: white;
+                                    color: white; padding-top:12px; padding-bottom:12px;
                                 ">
                                         <h4 class="text-bold mb-1">
                                             CODE
@@ -362,8 +369,7 @@
                                                 <!-- <button class="btn-copy-clipboard" data-clipboard-action="copy">
                                                     Copy
                                                 </button> -->
-                                                <pre class="mb-0 html escape" style="height: 304px; border-bottom: 1px solid var(--ct-gray-300);">
-<code class="language-python">{{file_content | safe}}</code>
+                                                <pre class="mb-0 html escape" style="height: 304px; border-bottom: 1px solid var(--ct-gray-300);"><code class="language-python">{{file_content | safe}}</code>
                                                     </pre>
     
                                                 <!-- end highlight-->
@@ -391,7 +397,6 @@
                                         <!-- end tab-content-->
                                     </div>
                                 </div>  
-                                <!-- Personal-Information -->
 
                              
 
@@ -404,7 +409,7 @@
                         <div class="col-lg-5">
                             <div class="card">
                                 <div class="d-flex card-header justify-content-between align-items-center mb-2" style="background-color: #536de6;
-                                color: white;
+                                color: white; padding-top:12px; padding-bottom:12px;
                             ">
                                     <h4 class="text-bold mb-1">
                                         DATASET
@@ -440,7 +445,7 @@
                         <div class="col-lg-3">
                             <div class="card">
                                 <div class="d-flex card-header justify-content-between align-items-center mb-2" style="background-color: #536de6;
-                                color: white;
+                                color: white; padding-top:12px; padding-bottom:12px;
                             ">
                                     <h4 class="text-bold mb-1">
                                         STATISTICS
@@ -1115,6 +1120,13 @@
         <!-- App js -->
         <script src="{% static 'assets/js/app.min.js' %}"></script>
 
+        <!-- Code Highlight js -->
+        <script src="{% static 'assets/vendor/clipboard/clipboard.min.js' %}"></script>
+        <script src="{% static 'assets/js/syntax.js' %}"></script>
+
+
+        <!-- <script src="{% static 'js/cursor.js' %}"></script> -->
+
 
 
         <script>
@@ -1212,7 +1224,8 @@
                 setTheme(storedTheme);
             }
         </script>
-
+        {% block script %}        
+        {% endblock script %}        
 
 
     </body>

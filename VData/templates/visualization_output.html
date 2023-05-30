@@ -9,7 +9,7 @@
             <div class="col-lg-8">
                 <div class="card">
                     <div class="d-flex card-header justify-content-between align-items-center" style="background-color: #536de6;
-                    color: white;
+                    color: white; padding-top:12px; padding-bottom:12px;
                 ">
                         <h4 class="text-bold">VISUALISATION PLOTS</h4>
                     </div>
@@ -24,7 +24,7 @@
             <div class="col-lg-4">
                 <div class="card">
                     <div class="d-flex card-header justify-content-between align-items-center mb-2" style="background-color: #536de6;
-                    color: white;
+                    color: white; padding-top:12px; padding-bottom:12px;
                 ">
                         <h4 class="text-bold">CODE</h4>
                     </div>
@@ -34,9 +34,8 @@
                                 <!-- <button class="btn-copy-clipboard" data-clipboard-action="copy">
                                     Copy
                                 </button> -->
-                                <pre class="mb-0" style="height: 385px; border-bottom: 1px solid var(--ct-gray-300);"><code class="html escape language-python">
-{{file_content | safe}}
-</code>
+                                <pre class="mb-0" style="height: 385px; border-bottom: 1px solid var(--ct-gray-300);">
+<code class="html escape language-python">{{file_content | safe}}</code>
                                     </pre>
 
                                 <!-- end highlight-->
