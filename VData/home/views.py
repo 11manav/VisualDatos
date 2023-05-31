@@ -10,7 +10,7 @@ from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, confusion_matrix, r2_score, precision_score, recall_score, f1_score, mean_squared_error,mean_absolute_error, classification_report, adjusted_rand_score,rand_score,silhouette_score,davies_bouldin_score,mutual_info_score,calinski_harabasz_score
+from sklearn.metrics import accuracy_score, confusion_matrix, r2_score, precision_score, recall_score, mean_squared_error,mean_absolute_error, classification_report,silhouette_score,davies_bouldin_score,calinski_harabasz_score
 # IMPORTANT!!! pip install scikit-learn
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, LabelEncoder
 import matplotlib.pyplot as plt
@@ -66,7 +66,7 @@ def delete_old_datasets():
         filename = os.path.join(settings.MEDIA_ROOT, file)
         age_of_file = time.time() - os.path.getmtime(filename)
 
-        if (age_of_file > 120):
+        if (age_of_file > 600):
             media_storage.delete(file)
 
 # ------------- Download Dataset --------------------
@@ -903,6 +903,8 @@ def pie_chart(request):
                 cnts.append(single_column[cnt])
             plt.switch_backend('Agg')
             plt.pie(cnts, labels=categories, autopct='%.0f%%')
+            with open('./media/{}'.format(codeFileName), 'a') as f:
+                f.write("plt.pie({}, labels={}, autopct='%.0f%%')\n".format(cnts,categories))
             session_key = request.session.get('session_key', None)
             fig_location = './media/pieplot{}.png'.format(session_key)
             plt.savefig(fig_location)
@@ -917,8 +919,6 @@ def pie_chart(request):
     except Exception as e:
         messages.error(request, e)
     data_html = data.head(10).to_html()
-    # print("SOME",data)
-    # print("CHKED",data.columns)
     columns_send = []
     for col in data.columns:
         datatypes = data.dtypes[col].name
@@ -1065,6 +1065,9 @@ def elbow_plot(request):
                 kmeans = KMeans(n_clusters=i, init='k-means++', random_state=42)
                 kmeans.fit(data[columns])
                 wcss_list.append(kmeans.inertia_)
+
+            with open('./media/{}'.format(codeFileName), 'a') as f:
+                f.write("loop_cnt={}\nwcss_list = []\nfor i in range(1, int(loop_cnt)+1):\n\tkmeans = KMeans(n_clusters=i, init='k-means++', random_state=42)\n\tkmeans.fit(data{})\n\twcss_list.append(kmeans.inertia_)\nplt.plot(range(1, int(loop_cnt)+1), wcss_list)\nplt.title('The Elobw Method Graph')\n\nplt.xlabel('Number of clusters(k)')\nplt.ylabel('wcss_list')".format(loop_cnt,columns))
             plt.switch_backend('Agg')
             plt.plot(range(1, int(loop_cnt)+1), wcss_list)
             plt.title('The Elobw Method Graph')
