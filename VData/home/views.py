@@ -3,23 +3,29 @@ from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 import os
 import math
-import pandas as pd
 import time
 from django.http import HttpResponse
+from django.contrib import messages
+
+# ML Libraries
+import pandas as pd
+import seaborn as sns
+import numpy as np
+import matplotlib.pyplot as plt
+from mlxtend.plotting import plot_decision_regions
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.cluster import KMeans
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix, r2_score, precision_score, recall_score, mean_squared_error,mean_absolute_error, classification_report,silhouette_score,davies_bouldin_score,calinski_harabasz_score
 # IMPORTANT!!! pip install scikit-learn
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, LabelEncoder
-import matplotlib.pyplot as plt
-from mlxtend.plotting import plot_decision_regions
-import seaborn as sns
-import numpy as np
 
 
-from django.contrib import messages
+
+
+
+
 
 
 # --------Common data required for all pages--------------
@@ -122,7 +128,7 @@ def home(request):
         data = pd.read_csv('./media/{}'.format(newFileName))
         with open('./media/{}'.format(codeFileName), 'a') as f:
             f.write(
-                'import pandas as pd\ndata = pd.read_csv("{}")\n'.format(myfile.name))
+                '###import libraries as per your requirement\nimport pandas as pd\nimport seaborn as sns\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom mlxtend.plotting import plot_decision_regions\nfrom sklearn.linear_model import LinearRegression, LogisticRegression\nfrom sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.cluster import KMeans\nfrom sklearn.preprocessing import MinMaxScaler, StandardScaler, LabelEncoder\nfrom sklearn.model_selection import train_test_split\ndata = pd.read_csv("{}")\n'.format(myfile.name))
         print(data.dtypes)
         show_corr_matr=False
         for col in data.columns:
