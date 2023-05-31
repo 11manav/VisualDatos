@@ -60,5 +60,15 @@ selectElement.addEventListener('change', function () {
         // this.value = '';
     }
 });</script> -->
+<script>
+    document.getElementById('kmeans-form').addEventListener('submit', function(event) {
+    var selectedOptions = $('#my-select').select2('data');
+    if (selectedOptions.length < 2) {
+        event.preventDefault(); // Prevent form submission
+        alert('Please select at least two options.');
+    }
+  });
+</script>
+
 
 {% endblock script %}
