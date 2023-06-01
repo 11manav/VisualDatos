@@ -150,30 +150,49 @@
 	pointer-events: none;
 	user-select: none;
 }
+#popup {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    padding: 50px;
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.30);
+    background: #fff;
+    visibility: visible;
+    opacity: 0;
+    transition: 0.5s;
+    display: none;
+}
 
-#popup
-{
-position: fixed;
-top: 40%;
-Left: 50%;
-transform: translate(-50%, -50%);
-width: 600px;
-padding: 50px;
-box-shadow:0 5px 30px rgba(0,0,0,.30);
-background: #fff;
-visibility: visible;
-opacity: 0;
-transition: 0.5s;
-display: none;
+#popup.active {
+    visibility: visible;
+    opacity: 1;
+    transition: 0.5s;
+    filter: none;
+    display: block;
 }
-#popup.active
-{	
-visibility: visible;
-opacity: 1;
-transition: 0.5s;
-filter: none;
-display: block;
+
+@media (max-width: 768px) {
+    #popup {
+        width: 90%;
+        padding: 20px;
+    }
+
+    form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    input[type="file"],
+    button[type="submit"] {
+        width: 100%;
+        margin-bottom: 10px;
+    }
 }
+
+
+
 
 /* .btn1,
 input::file-selector-button {
