@@ -808,7 +808,7 @@ def kmeans(request):
                 kmeans = KMeans(n_clusters=i, init='k-means++', random_state=42)
                 kmeans.fit(data[X1])
                 wcss_list.append(kmeans.inertia_)
-             plt.plot(range(1, cluster_limit+1), wcss_list)
+             plt.plot(range(1, 11), wcss_list)
              plt.title('The Elbow Method Graph')
              plt.xlabel('Number of clusters(k)')
              plt.ylabel('wcss_list')
