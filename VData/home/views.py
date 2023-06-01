@@ -1076,7 +1076,7 @@ def elbow_plot(request):
                 f.write("loop_cnt={}\nwcss_list = []\nfor i in range(1, int(loop_cnt)+1):\n\tkmeans = KMeans(n_clusters=i, init='k-means++', random_state=42)\n\tkmeans.fit(data{})\n\twcss_list.append(kmeans.inertia_)\nplt.plot(range(1, int(loop_cnt)+1), wcss_list)\nplt.title('The Elobw Method Graph')\n\nplt.xlabel('Number of clusters(k)')\nplt.ylabel('wcss_list')".format(loop_cnt,columns))
             plt.switch_backend('Agg')
             plt.plot(range(1, int(loop_cnt)+1), wcss_list)
-            plt.title('The Elobw Method Graph')
+            plt.title('The Elbow Method Graph')
             plt.xlabel('Number of clusters(k)')
             plt.ylabel('wcss_list')
             session_key = request.session.get('session_key', None)
