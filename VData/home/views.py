@@ -942,7 +942,7 @@ def histogram(request):
             plt.savefig(fig_location)
 
             with open('./media/{}'.format(codeFileName), 'a') as f:
-                f.write("sns.histplot(data{})\n".format(column))
+                f.write("sns.histplot(data{})\nplt.show()\nplt.clf()\n".format(column))
 
             image_url = '../media/histoplot{}.png'.format(session_key)
             data_html = data.to_html()
@@ -983,7 +983,7 @@ def box_plot(request):
             plt.savefig(fig_location)
 
             with open('./media/{}'.format(codeFileName), 'a') as f:
-                f.write("sns.boxplot(data{})\n".format(columns))
+                f.write("sns.boxplot(data[{}])\nplt.show()\nplt.clf()\n".format(columns))
 
             image_url = '../media/boxplot{}.png'.format(session_key)
             data_html = data.to_html()
@@ -1022,7 +1022,7 @@ def line_plot(request):
             plt.savefig(fig_location)
 
             with open('./media/{}'.format(codeFileName), 'a') as f:
-                f.write("sns.lineplot(data{})\n".format(columns))
+                f.write("sns.lineplot(data[{}])\nplt.show()\nplt.clf()\n".format(columns))
 
             image_url = '../media/lineplot{}.png'.format(session_key)
             data_html = data.to_html()
@@ -1064,7 +1064,7 @@ def elbow_plot(request):
                 wcss_list.append(kmeans.inertia_)
 
             with open('./media/{}'.format(codeFileName), 'a') as f:
-                f.write("loop_cnt={}\nwcss_list = []\nfor i in range(1, int(loop_cnt)+1):\n\tkmeans = KMeans(n_clusters=i, init='k-means++', random_state=42)\n\tkmeans.fit(data{})\n\twcss_list.append(kmeans.inertia_)\nplt.plot(range(1, int(loop_cnt)+1), wcss_list)\nplt.title('The Elobw Method Graph')\n\nplt.xlabel('Number of clusters(k)')\nplt.ylabel('wcss_list')".format(loop_cnt,columns))
+                f.write("loop_cnt={}\nwcss_list = []\nfor i in range(1, int(loop_cnt)+1):\n\tkmeans = KMeans(n_clusters=i, init='k-means++', random_state=42)\n\tkmeans.fit(data['{}'])\n\twcss_list.append(kmeans.inertia_)\nplt.plot(range(1, int(loop_cnt)+1), wcss_list)\nplt.title('The Elobw Method Graph')\n\nplt.xlabel('Number of clusters(k)')\nplt.ylabel('wcss_list')".format(loop_cnt,columns))
             plt.switch_backend('Agg')
             plt.plot(range(1, int(loop_cnt)+1), wcss_list)
             plt.title('The Elbow Method Graph')
