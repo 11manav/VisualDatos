@@ -1064,7 +1064,7 @@ def elbow_plot(request):
                 wcss_list.append(kmeans.inertia_)
 
             with open('./media/{}'.format(codeFileName), 'a') as f:
-                f.write("loop_cnt={}\nwcss_list = []\nfor i in range(1, int(loop_cnt)+1):\n\tkmeans = KMeans(n_clusters=i, init='k-means++', random_state=42)\n\tkmeans.fit(data['{}'])\n\twcss_list.append(kmeans.inertia_)\nplt.plot(range(1, int(loop_cnt)+1), wcss_list)\nplt.title('The Elobw Method Graph')\n\nplt.xlabel('Number of clusters(k)')\nplt.ylabel('wcss_list')".format(loop_cnt,columns))
+                f.write("loop_cnt={}\nwcss_list = []\nfor i in range(1, int(loop_cnt)+1):\n\tkmeans = KMeans(n_clusters=i, init='k-means++', random_state=42)\n\tkmeans.fit(data[{}])\n\twcss_list.append(kmeans.inertia_)\nplt.plot(range(1, int(loop_cnt)+1), wcss_list)\nplt.title('The Elobw Method Graph')\n\nplt.xlabel('Number of clusters(k)')\nplt.ylabel('wcss_list')\n".format(loop_cnt,columns))
             plt.switch_backend('Agg')
             plt.plot(range(1, int(loop_cnt)+1), wcss_list)
             plt.title('The Elbow Method Graph')
