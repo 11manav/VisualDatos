@@ -16,6 +16,7 @@ from mlxtend.plotting import plot_decision_regions
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix, r2_score, precision_score, recall_score, mean_squared_error,mean_absolute_error, classification_report,silhouette_score,davies_bouldin_score,calinski_harabasz_score
@@ -128,7 +129,7 @@ def home(request):
         data = pd.read_csv('./media/{}'.format(newFileName))
         with open('./media/{}'.format(codeFileName), 'a') as f:
             f.write(
-                '###import libraries as per your requirement\nimport pandas as pd\nimport seaborn as sns\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom mlxtend.plotting import plot_decision_regions\nfrom sklearn.linear_model import LinearRegression, LogisticRegression\nfrom sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.cluster import KMeans\nfrom sklearn.preprocessing import MinMaxScaler, StandardScaler, LabelEncoder\nfrom sklearn.model_selection import train_test_split\ndata = pd.read_csv("{}")\n'.format(myfile.name))
+                '###import libraries as per your requirement\nimport pandas as pd\nimport seaborn as sns\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom mlxtend.plotting import plot_decision_regions\nfrom sklearn.linear_model import LinearRegression, LogisticRegression\nfrom sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.cluster import KMeans\nfrom sklearn.decomposition import PCA\nfrom sklearn.preprocessing import MinMaxScaler, StandardScaler, LabelEncoder\nimport math\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score, confusion_matrix, r2_score, precision_score, recall_score, mean_squared_error,mean_absolute_error, classification_report,silhouette_score,davies_bouldin_score,calinski_harabasz_score\ndata = pd.read_csv("{}")\n'.format(myfile.name))
         print(data.dtypes)
         show_corr_matr=False
         for col in data.columns:
@@ -500,7 +501,7 @@ def linear_reg(request):
             root_mean_squared_error=math.sqrt(mean_sqr_error)
 
             with open('./media/{}'.format(codeFileName), 'a') as f:
-                f.write("X=data'{}'\ny=data['{}']\nX_train, X_test, y_train, y_test=train_test_split(X, y, {}, random_state=10)\nmodel=LinearRegression()\nmodel.fit(X_train, y_train)\ny_pred=model.predict(X_test)\nscore=r2_score(y_test, y_pred)\n".format(
+                f.write("X=data{}.values.reshape(-1,1)\ny=data['{}']\nX_train, X_test, y_train, y_test=train_test_split(X, y, test_size={}, random_state=10)\nmodel=LinearRegression()\nmodel.fit(X_train, y_train)\ny_pred=model.predict(X_test)\nscore=r2_score(y_test, y_pred)\nprint('R2 Score: ',score)\nvariance_score = model.score(X_test, y_test)\nprint('Variance Score: ',variance_score)\nmean_abs_error = round(mean_absolute_error(y_test, y_pred), 4)\nprint('Mean Absolute Error: ',mean_abs_error)\nmean_sqr_error= round(mean_squared_error(y_test, y_pred), 4)\nprint('Mean Square Error: ',mean_sqr_error)\nroot_mean_squared_error=math.sqrt(mean_sqr_error)\nprint('Root Mean Squared Error: ',root_mean_squared_error)\n".format(
                     X1, y1, test_size))
 
             plt.switch_backend('Agg')
@@ -577,13 +578,12 @@ def logistic_reg(request):
             root_mean_squared_error=math.sqrt(mean_sqr_error)
             error=1-accuracy
             #todo
-            confusion = confusion_matrix(y_test, y_pred)
             #AUC
             #ROC
             #CM
             variance_score = model.score(X_test, y_test)
             with open('./media/{}'.format(codeFileName), 'a') as f:
-                f.write("X_train, X_test, y_train, y_test = train_test_split({}, {}, test_size={}, random_state=10)\nlinear_model = LogisticRegression()\nlinear_model.fit(X_train, y_train)\ny_pred = model.predict(X_test)".format(X1, y1, test1))
+                f.write("X_train, X_test, y_train, y_test = train_test_split(data[{}], data['{}'], test_size={}, random_state=10)\nmodel = LogisticRegression()\nmodel.fit(X_train, y_train)\ny_pred = model.predict(X_test)\naccuracy = accuracy_score(y_test, y_pred)\nprint('Accuracy: ',accuracy)\nprecision=precision_score(y_test,y_pred, average='micro')\nprint('Precision: ',precision)\nrecall=recall_score(y_test,y_pred,average='micro')\nprint('Recall: ',recall)\nmean_abs_error = round(mean_absolute_error(y_test, y_pred), 4)\nprint('Mean Absolute Error: ',mean_abs_error)\nmean_sqr_error= round(mean_squared_error(y_test, y_pred), 4)\nprint('Mean Square Error: ',mean_sqr_error)\nroot_mean_squared_error=math.sqrt(mean_sqr_error)\nprint('Root Mean Squared Error: ',root_mean_squared_error)\nerror=1-accuracy\nprint('Error: ',error)\n".format(X1, y1, test1))
 
             plt.switch_backend('Agg')
 
@@ -646,6 +646,9 @@ def knn(request):
             test1 = int(test_size1)/100
             X_train, X_test, y_train, y_test = train_test_split(
                 X, y, test_size=int(test_size1)/100, random_state=10)
+            pca = PCA(n_components = 2)
+            X_test = pca.fit_transform(X_test)
+            X_train = pca.fit_transform(X_train)
             knn = KNeighborsClassifier(int(no_of_neighbours))
             knn.fit(X_train, y_train)
             y_pred = knn.predict(X_test)
@@ -656,28 +659,16 @@ def knn(request):
                                     y_pred,
                                     target_names=target_names,
                                     output_dict=True)
-            # print(class_report)
-            # print(target_names)
-            # class_report=classification_report(y_test, y_pred, digits=3)
-            # print(class_report)
-            # for i in class_report:
-            #     print(i)
-            # class_report=class_report.split(",")
+           
             #statistics
-            # This statistics cannot be calculated due to multiclass
-            # accuracy = accuracy_score(y_test, y_pred, average='macro')
-            # precision=precision_score(y_test,y_pred,average='macro')
-            # recall=recall_score(y_test,y_pred,average='macro')
-            # tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
-            # specificity=tn/fp+tn
-            # f1_scr=f1_score(y_test,y_pred)
-            # sensitivity=tp/tp+fn
-            # mean_abs_error = round(mean_absolute_error(y_test, y_pred), 4)
-            # mean_sqr_error= round(mean_squared_error(y_test, y_pred), 4)
-            # root_mean_squared_error=math.sqrt(mean_sqr_error)
-            # error=1-accuracy
-            #todo
-            confusion = confusion_matrix(y_test, y_pred)
+            accuracy = accuracy_score(y_test, y_pred)
+            precision=precision_score(y_test,y_pred,average='micro')
+            recall=recall_score(y_test,y_pred,average='micro')
+            mean_abs_error = round(mean_absolute_error(y_test, y_pred), 4)
+            mean_sqr_error= round(mean_squared_error(y_test, y_pred), 4)
+            root_mean_squared_error=math.sqrt(mean_sqr_error)
+            error=1-accuracy
+
             #AUC
             #ROC
             #CM
@@ -685,11 +676,9 @@ def knn(request):
             variance_score = knn.score(X_test, y_test)
 
             with open('./media/{}'.format(codeFileName), 'a') as f:
-                f.write("X_train, X_test, y_train, y_test = train_test_split({}, {}, test_size={}, random_state=10)\nknn = KNeighborsClassifier({})\nknn.fit(X_train, y_train)\ny_pred = knn.predict(X_test)".format(
-                    X1, y1, test1, no_of_neighbours))
-
+                f.write("X_train, X_test, y_train, y_test = train_test_split(data[{}],data['{}'], test_size={}, random_state=10)\npca = PCA(n_components = 2)\nX_test = pca.fit_transform(X_test)\nX_train = pca.fit_transform(X_train)\nknn = KNeighborsClassifier({})\nknn.fit(X_train, y_train)\ny_pred = knn.predict(X_test)\naccuracy = accuracy_score(y_test, y_pred)\nprecision=precision_score(y_test,y_pred,average='micro')\nrecall=recall_score(y_test,y_pred,average='micro')\nprint('Accuracy: ',accuracy)\nprint('Precision: ',precision)\nprint('Recall: ',recall)\nmean_abs_error = round(mean_absolute_error(y_test, y_pred), 4)\nprint('Mean Absolute Error: ',mean_abs_error)\nmean_sqr_error= round(mean_squared_error(y_test, y_pred), 4)\nprint('Mean Squared Error: ',mean_sqr_error)\nroot_mean_squared_error=math.sqrt(mean_sqr_error)\nprint('Root Mean Squared Error: ',root_mean_squared_error)\nerror=1-accuracy\nprint('Error: ',error)\n".format(X1, y1, test1, no_of_neighbours))
             plt.switch_backend('Agg')
-            plot_decision_regions(X_test.values, y_test.values, knn)
+            plot_decision_regions(X_test, y_test.values, knn)
 
             session_key = request.session.get('session_key', None)
 
@@ -721,7 +710,7 @@ def knn(request):
             context = getContext(data_html, data_shape, nullValues, datatypes, memory_usage,
                                 dataframe_size, columns, codeFileName, image_url_correlation_matrix)
             context.update({'variance_score': variance_score,
-                        'y_predict': y_pred, 'image_url': image_url, 'class_report':class_report_url, 'confusion_mtx_imgurl':confusion_mtx_imgurl })
+                        'y_predict': y_pred, 'image_url': image_url, 'class_report':class_report_url, 'confusion_mtx_imgurl':confusion_mtx_imgurl,'mean_absolute_error':mean_abs_error, 'mean_squared_error':mean_sqr_error, 'root_mean_squared_error':root_mean_squared_error,'accuracy':accuracy, 'error':error, 'recall_score':recall, 'precision_score':precision })
 
             return render(request, './results.html', context)
         
@@ -757,7 +746,9 @@ def kmeans(request):
              no_of_clusters = request.POST['no_of_clusters']
              X1 = request.POST.getlist('value-x')
             # no test size required in this algo
+             print("X1: ",X1)
              X = data[X1]
+             print("X: ",X)
              kmeans = KMeans(n_clusters=int(no_of_clusters),
                             init='k-means++', random_state=42)
              y_pred = kmeans.fit_predict(X)
@@ -778,7 +769,7 @@ def kmeans(request):
 
 
              with open('./media/{}'.format(codeFileName), 'a') as f:
-                f.write("kmeans = KMeans(n_clusters={},init='k-means++', random_state=42)\ny_pred=kmeans.fit_predict(data{})".format(int(no_of_clusters), X1))
+                f.write("X = data[{}]\nkmeans = KMeans(n_clusters={},init='k-means++', random_state=42)\ny_pred=kmeans.fit_predict(X)\nss = silhouette_score(X, kmeans.labels_)\ndbs = davies_bouldin_score(X, kmeans.labels_)\nchs=calinski_harabasz_score(X,kmeans.labels_)\nprint('Silhouette Score: ',ss)\nprint('Calinski Harabasz Score: ',chs)\nprint('Davies Bouldin Score: ',dbs)\n".format(X1,int(no_of_clusters), X1))
 
             # Visualization
              plt.switch_backend('Agg')
@@ -854,7 +845,7 @@ def cat_data(request):
             data.to_csv('./media/{}'.format(filename), index=False)
             with open('./media/{}'.format(codeFileName), 'a') as f:
                 f.write(
-                    "data['{}'] = label_encoder.fit_transform(data['{}'])\n".format(col, col))
+                    "label_encoder = LabelEncoder()\ndata['{}'] = label_encoder.fit_transform(data['{}'])\n".format(col, col))
             data_html = data.head(10).to_html()
             data_shape, nullValues, datatypes, memory_usage, dataframe_size, columns = getStatistics(
                 data)
